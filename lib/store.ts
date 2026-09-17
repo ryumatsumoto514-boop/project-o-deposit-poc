@@ -5,8 +5,17 @@ import type { DepositRecord } from "./types";
 // PoC-scope persistence: an in-memory Map backed by a JSON file on disk so
 // data survives dev-server hot reloads. NOT a real database — see README
 // "Known limitations". Do not use this in production.
-
-const DATA_FILE = path.join(process.cwd(), ".data", "deposits.json");
+//
+// Vercel's serverless functions have a read-only filesystem everywhere
+// except /tmp, and /tmp itself is wiped between cold starts / not shared
+// across instances. So on Vercel this file is best-effort only — the
+// module-level in-memory Map (below) is what actually keeps state alive
+// across requests within the same warm lambda instance, which is the real
+// persistence mechanism in production. Locally, the JSON file gives real
+// persistence across dev-server restarts.
+const DATA_FILE = process.env.VERCEL
+  ? path.join("/tmp", "projecto-deposits.json")
+  : path.join(process.cwd(), ".data", "deposits.json");
 
 function loadFromDisk(): Map<string, DepositRecord> {
   try {
@@ -19,8 +28,14 @@ function loadFromDisk(): Map<string, DepositRecord> {
 }
 
 function persistToDisk(map: Map<string, DepositRecord>) {
-  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(Array.from(map.values()), null, 2));
+  try {
+    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+    fs.writeFileSync(DATA_FILE, JSON.stringify(Array.from(map.values()), null, 2));
+  } catch (err) {
+    // Non-fatal: the in-memory Map is still authoritative for this
+    // process. Don't let a filesystem hiccup crash the API route.
+    console.error("depositStore: failed to persist to disk", err);
+  }
 }
 
 // Module-level singleton, reused across API route invocations within the

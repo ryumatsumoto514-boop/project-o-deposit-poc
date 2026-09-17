@@ -5,6 +5,7 @@ import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useFlow } from "./flow-context";
 import { KolBanner } from "./components/KolBanner";
+import { Brand } from "./components/Brand";
 
 function CaptureKolRef() {
   const searchParams = useSearchParams();
@@ -20,23 +21,26 @@ function CaptureKolRef() {
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-6">
+    <main className="page-shell min-h-screen justify-center">
       <Suspense fallback={null}>
         <CaptureKolRef />
       </Suspense>
+      <Brand />
       <KolBanner />
-      <h1 className="text-xl font-semibold">Exchange O</h1>
-      <p className="text-sm text-neutral-600">
-        Deposit USDC on Arbitrum and trade on Hyperliquid. This is a proof of
-        concept focused on making every step of depositing transparent and
-        honest — including the parts that are mocked.
+      <div className="card flex flex-col gap-3">
+        <h1 className="h1">Deposit with full visibility</h1>
+        <p className="text-sm leading-relaxed text-neutral-600">
+          Deposit USDC on Arbitrum and trade on Hyperliquid. This proof of
+          concept is focused on making every step of depositing transparent
+          and honest — including the parts that are mocked.
+        </p>
+        <Link href="/login" className="btn-primary mt-1 w-fit">
+          Get started
+        </Link>
+      </div>
+      <p className="text-center text-xs text-neutral-400">
+        Arbitrum Sepolia testnet · not real funds
       </p>
-      <Link
-        href="/login"
-        className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
-      >
-        Get started
-      </Link>
     </main>
   );
 }

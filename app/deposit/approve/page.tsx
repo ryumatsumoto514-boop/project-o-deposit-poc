@@ -8,6 +8,8 @@ import { parseUnits, maxUint256, formatEther, parseEther } from "viem";
 import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
+import { Brand } from "../../components/Brand";
+import { AlertIcon, SpinnerIcon } from "../../components/icons";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, USDC_ADDRESS, USDC_DECIMALS } from "@/lib/chain";
 import { wagmiConfig } from "@/lib/wagmiConfig";
@@ -161,19 +163,25 @@ export default function DepositApprovePage() {
     }
   }
 
+  const isBusy = step !== "form" && step !== "error";
+
   if (step === "blocked" && blockedDeposit) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-6">
+      <main className="page-shell">
+        <Brand />
         <KolBanner />
-        <h1 className="text-lg font-semibold">Deposit already in progress</h1>
-        <div className="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          You already have a deposit in progress for this amount, opened at{" "}
-          {new Date(blockedDeposit.createdAt).toLocaleString()}. Do not send
-          again — here&apos;s its current status.
+        <h1 className="h1">Deposit already in progress</h1>
+        <div className="banner-amber flex items-start gap-2.5">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <span>
+            You already have a deposit in progress for this amount, opened at{" "}
+            {new Date(blockedDeposit.createdAt).toLocaleString()}. Do not
+            send again — here&apos;s its current status.
+          </span>
         </div>
         <button
           onClick={() => router.push(`/deposit/status/${blockedDeposit.id}`)}
-          className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
+          className="btn-primary w-fit"
         >
           View deposit status
         </button>
@@ -182,9 +190,10 @@ export default function DepositApprovePage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-6">
+    <main className="page-shell">
+      <Brand />
       <KolBanner />
-      <h1 className="text-lg font-semibold">Approve + deposit</h1>
+      <h1 className="h1">Approve + deposit</h1>
 
       <WalletRoles
         signingInAs={mockIdentity}
@@ -192,21 +201,24 @@ export default function DepositApprovePage() {
         tradableIn={deriveMockTradingAccount(address)}
       />
 
-      <div className="rounded-md border border-neutral-200 p-3 text-sm">
+      <div className="card text-sm">
         Depositing <strong>{draftAmount} USDC</strong> on Arbitrum Sepolia.
       </div>
 
       {wrongNetwork && (
-        <div className="flex flex-col gap-2 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
-          <p>
-            <strong>Your wallet is connected to a different network.</strong>{" "}
-            This deposit only works on Arbitrum Sepolia — switch networks
-            before continuing, or the signature request will fail.
+        <div className="banner-amber flex flex-col gap-2.5">
+          <p className="flex items-start gap-2.5">
+            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+            <span>
+              <strong>Your wallet is connected to a different network.</strong>{" "}
+              This deposit only works on Arbitrum Sepolia — switch networks
+              before continuing, or the signature request will fail.
+            </span>
           </p>
           <button
             onClick={() => switchChain({ chainId: CHAIN.id })}
             disabled={isSwitchingChain}
-            className="w-fit rounded-md bg-red-700 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+            className="btn-warning w-fit"
           >
             {isSwitchingChain ? "Switching…" : "Switch to Arbitrum Sepolia"}
           </button>
@@ -214,33 +226,38 @@ export default function DepositApprovePage() {
       )}
 
       {lowGas && (
-        <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
-          <strong>{FAILURE_COPY.NO_GAS.title}.</strong> Current balance:{" "}
-          {ethBalance ? formatEther(ethBalance.value) : "0"} ETH.{" "}
-          {FAILURE_COPY.NO_GAS.detail}
+        <div className="banner-amber flex items-start gap-2.5">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <span>
+            <strong>{FAILURE_COPY.NO_GAS.title}.</strong> Current balance:{" "}
+            {ethBalance ? formatEther(ethBalance.value) : "0"} ETH.{" "}
+            {FAILURE_COPY.NO_GAS.detail}
+          </span>
         </div>
       )}
 
-      <fieldset className="flex flex-col gap-2 rounded-md border border-neutral-200 p-3">
-        <legend className="px-1 text-sm font-medium">Approval scope</legend>
-        <label className="flex items-start gap-2 text-sm">
+      <fieldset className="card flex flex-col gap-3">
+        <legend className="px-1 text-sm font-medium text-neutral-900">
+          Approval scope
+        </legend>
+        <label className="flex items-start gap-2.5 text-sm">
           <input
             type="radio"
             checked={approvalMode === "exact"}
             onChange={() => setApprovalMode("exact")}
-            className="mt-1"
+            className="mt-1 h-4 w-4 accent-blue-600"
           />
           <span>
             <strong>Approve this amount only</strong> (recommended) — the app
             can only ever move exactly {draftAmount} USDC, once.
           </span>
         </label>
-        <label className="flex items-start gap-2 text-sm">
+        <label className="flex items-start gap-2.5 text-sm">
           <input
             type="radio"
             checked={approvalMode === "unlimited"}
             onChange={() => setApprovalMode("unlimited")}
-            className="mt-1"
+            className="mt-1 h-4 w-4 accent-blue-600"
           />
           <span>
             <strong>Approve for future deposits too</strong> —{" "}
@@ -253,29 +270,33 @@ export default function DepositApprovePage() {
       </fieldset>
 
       {errorMessage && (
-        <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
-          <strong>{errorMessage.title}.</strong> {errorMessage.detail}
-          {orphanedDepositId && (
-            <>
-              {" "}
-              A deposit record was already created before this failed —{" "}
-              <a
-                href={`/deposit/status/${orphanedDepositId}`}
-                className="underline"
-              >
-                check its status
-              </a>
-              .
-            </>
-          )}
+        <div className="banner-red flex items-start gap-2.5">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+          <span>
+            <strong>{errorMessage.title}.</strong> {errorMessage.detail}
+            {orphanedDepositId && (
+              <>
+                {" "}
+                A deposit record was already created before this failed —{" "}
+                <a
+                  href={`/deposit/status/${orphanedDepositId}`}
+                  className="underline"
+                >
+                  check its status
+                </a>
+                .
+              </>
+            )}
+          </span>
         </div>
       )}
 
       <button
         onClick={handleApproveAndDeposit}
-        disabled={(step !== "form" && step !== "error") || wrongNetwork}
-        className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        disabled={isBusy || wrongNetwork}
+        className="btn-primary w-fit"
       >
+        {isBusy && <SpinnerIcon className="h-4 w-4" />}
         {step === "form" || step === "error"
           ? "Approve & deposit"
           : step === "checking"

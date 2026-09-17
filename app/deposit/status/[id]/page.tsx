@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { KolBanner } from "../../../components/KolBanner";
 import { WalletRoles } from "../../../components/WalletRoles";
+import { Brand } from "../../../components/Brand";
+import { AlertIcon, CheckIcon, SpinnerIcon } from "../../../components/icons";
 import type { DepositRecord, DepositStatus } from "@/lib/types";
 import { ARBISCAN_SEPOLIA_TX_URL } from "@/lib/chain";
 
@@ -14,7 +16,12 @@ const HAPPY_PATH: DepositStatus[] = [
   "CREDITED",
 ];
 
-const STATE_COPY: Record<DepositStatus, { label: string; description: string }> = {
+type Severity = "warning" | "error";
+
+const STATE_COPY: Record<
+  DepositStatus,
+  { label: string; description: string; severity?: Severity; nextStep?: string }
+> = {
   SIGNED: {
     label: "Signed — broadcasting",
     description: "Your approval was signed. Starting the deposit transfer now.",
@@ -34,20 +41,31 @@ const STATE_COPY: Record<DepositStatus, { label: string; description: string }> 
       "Both the on-chain transaction and the (mocked) Hyperliquid balance check agree: your funds are tradable.",
   },
   STALLED_NO_GAS: {
-    label: "Stalled — gas issue",
+    label: "Paused — needs a little ETH",
     description:
-      "A step in the pipeline couldn't proceed because a wallet involved didn't have enough ETH for gas.",
+      "A step in the pipeline couldn't proceed because a wallet involved didn't have enough ETH for gas. Your USDC is safe and nothing is lost.",
+    severity: "warning",
+    nextStep: "Top up a small amount of testnet ETH, then this will resume automatically — no need to restart.",
   },
   STALLED_TIMEOUT: {
     label: "Taking longer than expected",
     description:
-      "This deposit has been in progress longer than usual. We're still tracking it — no need to send another deposit.",
+      "This deposit has been in progress longer than usual. Your funds are not at risk.",
+    severity: "warning",
+    nextStep: "We're still tracking it in the background — no need to send another deposit or refresh.",
   },
   AMBIGUOUS: {
-    label: "Needs reconciliation",
+    label: "Under review",
     description:
-      "Arbitrum says this deposit is confirmed, but the (mocked) Hyperliquid balance check hasn't agreed within the expected window. We've flagged this for review instead of guessing.",
+      "Arbitrum confirms this deposit, but the (mocked) Hyperliquid balance check hasn't agreed within the expected window.",
+    severity: "error",
+    nextStep: "We've flagged this for manual reconciliation instead of guessing. Your funds are on-chain and accounted for.",
   },
+};
+
+const SEVERITY_STYLE: Record<Severity, { banner: string; icon: string; divider: string }> = {
+  warning: { banner: "banner-amber", icon: "text-amber-600", divider: "border-amber-300/60" },
+  error: { banner: "banner-red", icon: "text-red-600", divider: "border-red-300/60" },
 };
 
 const ACTIVE_STATUSES: DepositStatus[] = ["SIGNED", "CONFIRMED_ONCHAIN", "BRIDGING"];
@@ -62,7 +80,7 @@ function Stepper({ status }: { status: DepositStatus }) {
   const currentIndex = isException ? -1 : HAPPY_PATH.indexOf(status);
 
   return (
-    <div className="flex flex-col gap-0">
+    <div className="card flex flex-col gap-0 py-3">
       {HAPPY_PATH.map((s, i) => {
         const done = !isException && i < currentIndex;
         const active = !isException && i === currentIndex;
@@ -70,18 +88,26 @@ function Stepper({ status }: { status: DepositStatus }) {
           <div key={s} className="flex gap-3">
             <div className="flex flex-col items-center">
               <div
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs transition-colors ${
                   done
-                    ? "border-green-600 bg-green-600 text-white"
+                    ? "bg-green-600 text-white"
                     : active
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-neutral-300 bg-white text-neutral-400"
+                    ? "pulse-ring bg-blue-600 text-white"
+                    : "border border-neutral-300 bg-white text-neutral-400"
                 }`}
               >
-                {done ? "✓" : i + 1}
+                {done ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : active ? (
+                  <SpinnerIcon className="h-3.5 w-3.5" />
+                ) : (
+                  i + 1
+                )}
               </div>
               {i < HAPPY_PATH.length - 1 && (
-                <div className="h-8 w-px bg-neutral-200" />
+                <div
+                  className={`h-8 w-px ${done ? "bg-green-500" : "bg-neutral-200"}`}
+                />
               )}
             </div>
             <div className="pb-6 pt-0.5">
@@ -146,8 +172,9 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (notFound) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-6">
-        <h1 className="text-lg font-semibold">Deposit not found</h1>
+      <main className="page-shell">
+        <Brand />
+        <h1 className="h1">Deposit not found</h1>
         <p className="text-sm text-neutral-600">
           No deposit with id <code>{params.id}</code> exists. It may have
           been cleared (this PoC uses a local file store — see README).
@@ -161,8 +188,11 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (!deposit) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-6">
-        <p className="text-sm text-neutral-500">Loading deposit status…</p>
+      <main className="page-shell">
+        <Brand />
+        <p className="flex items-center gap-2 text-sm text-neutral-500">
+          <SpinnerIcon className="h-4 w-4" /> Loading deposit status…
+        </p>
       </main>
     );
   }
@@ -170,47 +200,64 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   const isException = !HAPPY_PATH.includes(deposit.status);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-6">
+    <main className="page-shell">
+      <Brand />
       <KolBanner />
-      <h1 className="text-lg font-semibold">Deposit status</h1>
+      <h1 className="h1">Deposit status</h1>
 
       <WalletRoles
         fundsFrom={deposit.userWallet}
         tradableIn={deposit.destinationAccount}
       />
 
-      <div className="rounded-md border border-neutral-200 p-3 text-sm">
+      <div className="card text-sm">
         <strong>{deposit.amount} USDC</strong> · opened{" "}
         {new Date(deposit.createdAt).toLocaleString()}
       </div>
 
-      {isException && (
-        <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
-          <strong>{STATE_COPY[deposit.status].label}.</strong>{" "}
-          {deposit.failureReason ?? STATE_COPY[deposit.status].description}
-        </div>
-      )}
+      {isException && (() => {
+        const copy = STATE_COPY[deposit.status];
+        const style = SEVERITY_STYLE[copy.severity ?? "error"];
+        return (
+          <div className={`${style.banner} flex flex-col gap-2`}>
+            <div className="flex items-start gap-2.5">
+              <AlertIcon className={`mt-0.5 h-4 w-4 shrink-0 ${style.icon}`} />
+              <span>
+                <strong>{copy.label}.</strong>{" "}
+                {deposit.failureReason ?? copy.description}
+              </span>
+            </div>
+            {copy.nextStep && (
+              <div className={`flex items-start gap-2.5 border-t ${style.divider} pt-2 text-sm`}>
+                <span className="label-caps shrink-0 opacity-70">Next step</span>
+                <span>{copy.nextStep}</span>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {deposit.status === "CREDITED" && (
-        <div className="rounded-md border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-900">
-          <strong>Credited — tradable now.</strong>{" "}
-          {STATE_COPY.CREDITED.description}
+        <div className="banner-green flex items-start gap-2.5">
+          <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+          <span>
+            <strong>Credited — tradable now.</strong>{" "}
+            {STATE_COPY.CREDITED.description}
+          </span>
         </div>
       )}
 
       <Stepper status={deposit.status} />
 
-      <div className="rounded-md border border-purple-300 bg-purple-50 px-4 py-3 text-sm text-purple-900">
+      <div className="banner-purple">
         <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance
         check above is simulated (no real Hyperliquid testnet access). The
         Arbitrum Sepolia transaction below is real.
       </div>
 
       {deposit.approveTxHash && (
-        <div className="flex flex-col gap-1 rounded-md border border-neutral-200 p-3 text-sm">
-          <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            Approval transaction (step 1 of 2)
-          </span>
+        <div className="card flex flex-col gap-1">
+          <span className="label-caps">Approval transaction (step 1 of 2)</span>
           <span className="break-all font-mono text-xs">{deposit.approveTxHash}</span>
           <a
             href={ARBISCAN_SEPOLIA_TX_URL(deposit.approveTxHash)}
@@ -224,10 +271,8 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       )}
 
       {deposit.txHash && (
-        <div className="flex flex-col gap-1 rounded-md border border-neutral-200 p-3 text-sm">
-          <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
-            Deposit transfer transaction (step 2 of 2)
-          </span>
+        <div className="card flex flex-col gap-1">
+          <span className="label-caps">Deposit transfer transaction (step 2 of 2)</span>
           <span className="break-all font-mono text-xs">{deposit.txHash}</span>
           {deposit.explorerUrl && (
             <a
@@ -243,7 +288,9 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       )}
 
       {ACTIVE_STATUSES.includes(deposit.status) && (
-        <p className="text-xs text-neutral-400">Checking every few seconds…</p>
+        <p className="flex items-center gap-1.5 text-xs text-neutral-400">
+          <SpinnerIcon className="h-3 w-3" /> Checking every few seconds…
+        </p>
       )}
     </main>
   );

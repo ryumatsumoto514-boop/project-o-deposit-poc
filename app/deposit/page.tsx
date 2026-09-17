@@ -6,6 +6,7 @@ import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { WalletRoles } from "../components/WalletRoles";
+import { Brand } from "../components/Brand";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 
 const MAX_DEMO_AMOUNT = 1000;
@@ -41,9 +42,10 @@ export default function DepositAmountPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col gap-6 p-6">
+    <main className="page-shell">
+      <Brand />
       <KolBanner />
-      <h1 className="text-lg font-semibold">Deposit amount</h1>
+      <h1 className="h1">Deposit amount</h1>
 
       <WalletRoles
         signingInAs={mockIdentity}
@@ -52,7 +54,7 @@ export default function DepositAmountPage() {
       />
 
       {!isConnected && (
-        <div className="flex flex-col gap-2 rounded-md border border-neutral-200 p-3">
+        <div className="card flex flex-col gap-3">
           <p className="text-sm text-neutral-600">
             Connect the wallet you&apos;ll fund this deposit from. This must
             be a real wallet with testnet ETH and USDC on Arbitrum Sepolia.
@@ -61,7 +63,7 @@ export default function DepositAmountPage() {
             <button
               key={connector.uid}
               onClick={() => connect({ connector })}
-              className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
+              className="btn-primary w-fit"
             >
               Connect {connector.name}
             </button>
@@ -70,7 +72,7 @@ export default function DepositAmountPage() {
       )}
 
       {isConnected && (
-        <div className="flex flex-col gap-2">
+        <div className="card flex flex-col gap-2">
           <label className="text-sm font-medium text-neutral-700">
             Amount (USDC)
           </label>
@@ -84,13 +86,10 @@ export default function DepositAmountPage() {
               setError(null);
             }}
             placeholder="10.00"
-            className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="input"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
-          <button
-            onClick={handleContinue}
-            className="mt-2 w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white"
-          >
+          <button onClick={handleContinue} className="btn-primary mt-2 w-fit">
             Continue
           </button>
         </div>
