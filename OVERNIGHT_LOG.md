@@ -1017,3 +1017,145 @@ Committed all of the above. Sourced `.overnight-env.sh`, pushed to
 `vercel --token "$VERCEL_TOKEN" --yes --prod` — see the next log entry
 appended immediately after this one for the exact commit hash, push
 confirmation, and live-URL re-verification output.
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-17T20:27:12Z
+
+## Cycle: real screenshots again — found 3 more concrete layout bugs (void spacing, header overflow, address-wrap clutter) instead of an 8th color pivot
+
+**Trigger:** the standing "UI/UX not good enough" feedback, now on its 8th
+tick. Seven prior cycles had already done substantial, verified visual work
+(three ground-up direction pivots, icons, favicon, display font, and — last
+cycle — real headless-Chromium screenshots that found and fixed 3 genuine
+interaction bugs). Before touching color/material an 8th time, I re-derived
+the same screenshot-driven method from scratch (no script was persisted
+on disk from the prior cycle — it was written inline in that session — so I
+rebuilt a small CDP driver against the pre-installed headless Chromium at
+`/opt/hermes/.playwright/chromium_headless_shell-1243`, driven over raw
+WebSocket/`fetch`, no npm install) and took fresh real PNG screenshots at a
+375×812 mobile viewport of every screen, including wallet-connected states
+via an injected fake EIP-1193 provider.
+
+### A process mistake, repeated from the prior cycle's own warning, and how I recovered
+The prior cycle's log entry explicitly warned "never run `next build` while
+`next dev` on the same project is still alive." I hit the same corruption
+anyway — found a stray `next-server` process already running from an earlier
+cycle, killed it, but then ran `npm run build` before confirming no dev
+server remained, which corrupted `.next`'s webpack cache (`ENOENT` on
+`vendor-chunks/*.js`, then every static asset 404ing, rendering completely
+unstyled default-browser HTML — which briefly looked like a catastrophic
+regression from my own edits). Root-caused it the same way the prior cycle
+documented (checked the dev server log for `404` on every `_next/static`
+asset rather than assuming the CSS itself was broken), did a full
+`pkill -9` sweep of every next process by exact PID, deleted `.next`, and
+restarted clean before trusting any further screenshot. Logging this
+explicitly again since it's now happened twice: **before any screenshot or
+build in this environment, always confirm zero next dev/start/server
+processes are running first** (`ps aux | grep next`), not just the one you
+remember starting.
+
+### Honest visual verdict (from actually looking at it, on a clean server)
+The seven prior cycles' design work holds up completely — dark-fintech
+component system, flat accent color, persistent header, animated
+severity-coded stepper, dedicated success screen, display font, favicon. I
+did not do an 8th color/material pivot. What the screenshots found instead
+were three concrete, fixable layout bugs invisible to markup-reading alone:
+
+1. **Short-content screens (`/login`, `/deposit` before wallet connect,
+   `/deposit/confirm`, `/deposit/approve`) vertically centered their content
+   in the viewport (`page-shell`'s `justify-center`), leaving large equal
+   voids of empty black space above AND below a single floating card** —
+   confirmed via screenshot: on `/login` at 375×812, roughly 180px of dead
+   space sat above the "Sign in" heading and another ~180px below the last
+   button. This is arguably the single biggest contributor to a "looks
+   unfinished" impression a sharp reviewer would have flagged immediately,
+   and no amount of color/component polish would have fixed it since it's a
+   layout problem, not a material one. Fixed by changing the shared
+   `.page-shell` class from `justify-center` to `justify-start` with
+   `pt-10`/`sm:pt-14` top padding — content now anchors right below the
+   persistent header like a normal product screen, with any remaining empty
+   space pushed to the bottom (a completely normal, expected pattern for a
+   short mobile form) instead of surrounding the content on both sides.
+   Removed the landing page's now-redundant explicit `justify-center`
+   override (its content already fills the screen either way — verified via
+   before/after screenshot, no visual regression). Left the `CREDITED`
+   success screen and other content-heavy screens on the same default —
+   they have enough content that top-alignment reads naturally, not as a
+   layout change.
+2. **The persistent app header overflowed/wrapped at 375px once a wallet is
+   connected** — `AppHeader` shows brand + a network pill ("Arbitrum
+   Sepolia") + (once connected) a truncated wallet-address pill, three items
+   competing for one row. Screenshot proof: the network pill's text wrapped
+   to two lines *inside the pill itself* ("Arbitrum" / "Sepolia"), visibly
+   broken chrome on every wallet-connected screen — exactly the kind of
+   "didn't test on a real phone" tell the brief called out. Fixed: added
+   `whitespace-nowrap` + `shrink-0` to the shared `.pill` class (pills must
+   never wrap internally), shortened the header's network label from
+   "Arbitrum Sepolia" to "Sepolia" (the fuller name is still used everywhere
+   in body copy — this is chrome-only shorthand, a real pattern mobile
+   wallet UIs use), and added a `compact` prop to `Brand` that hides the
+   "Exchange O" wordmark (keeping just the logo mark) once a wallet is
+   connected and the header needs the room for two pills. Re-screenshotted
+   after: all three header elements now sit cleanly on one line at 375px,
+   confirmed via CDP screenshot, not just Tailwind-class reasoning.
+3. **`WalletRoles` (the "Signing in as / Funds coming from / Will be
+   tradable in" summary card shown on every step) displayed full,
+   untruncated 42-character hex addresses that wrapped to two lines each**,
+   reading as raw-hex clutter on a screen that's supposed to be a quick
+   glanceable summary, not a security-review surface. Confirmed via
+   screenshot on `/deposit` and `/deposit/approve`. Fixed by truncating
+   address-like values in this component specifically (new shared
+   `lib/format.ts#truncateAddress`, also deduplicated out of `AppHeader`
+   which had its own copy of the same helper) while adding the full value as
+   a `title` attribute for inspection. Deliberately did **not** touch
+   `/deposit/confirm`'s separate, dedicated full-address block (the
+   `mono-box` under "You're about to send... to this address") — that one
+   full untruncated display is the actual spec-required security
+   confirmation step, and it's still there and unchanged (re-verified via
+   screenshot: `0xCEfAe626B7CFfC6Ab72f7df4F9609018Ee5a09a6` still rendered in
+   full inside its own bordered mono block, with the "we show the full
+   address here, not a shortened version" warning banner intact below it).
+
+### Verification
+- `npm run build` passes clean after the `.next` corruption was fixed and a
+  truly clean rebuild ran — identical pre-existing optional-peer-dep
+  warnings only (WalletConnect/pino/tempo/async-storage), no new errors.
+- Ran the actual **production build** (`npm run start`, not just `next
+  dev`) on port 3098 and curled `/`, `/login`, `/deposit`,
+  `/deposit/confirm`, `/deposit/approve`, `/?ref=kol_alex` — all HTTP 200.
+- Re-ran the duplicate-deposit-blocking check directly against the
+  production build: first `POST /api/deposits` → 201, identical second call
+  → 409 `DUPLICATE_IN_FLIGHT` with the existing deposit's status attached —
+  confirmed the idempotency guard is untouched by any of this cycle's
+  styling changes.
+- Real CDP screenshots (375×812, iPhone-ish) before and after each fix:
+  `/login`, `/deposit` (disconnected and wallet-connected via an injected
+  EIP-1193 mock), `/deposit/confirm`, `/deposit/approve`, and the landing
+  page — confirmed each fix visually, not just via markup grep.
+
+### Honest gap check
+This cycle deliberately did not touch color, typography, or the component
+system — eight cycles of that direction have been tried, and a fresh
+skeptical look (now backed by actual screenshots, not inference) found no
+defensible flaw left in the visual direction itself. What it found instead
+were three real, concrete, now-fixed layout bugs that only became visible
+once I could actually see pixels: dead vertical space on short screens, a
+wrapping header at the exact viewport width the brief calls out as this
+app's real audience, and untruncated-address clutter on a summary card. If
+the next wake still carries the same undifferentiated complaint, I'd treat
+that as strong evidence the remaining gap is genuinely subjective taste (a
+specific reference product, a specific color preference) rather than an
+execution flaw — nine cycles of alternating "redesign the whole thing" and
+"screenshot-audit for concrete bugs" have now covered color, material,
+typography, iconography, animation, mobile safety, and layout structure.
+The next-highest-value thing for a future cycle, if this keeps recurring
+with no new specifics, is exactly what the two most recent cycles have
+already flagged: a human looking at the live URL and naming one concrete
+thing, since blind iteration's return is now genuinely diminishing.
+
+### Deploy
+Committing this cycle's changes now; see the immediately following log
+entry for the exact commit hash, push confirmation, and live-URL
+re-verification (including a re-screenshot of the live site, not just
+localhost, if the tooling is still available at that point).
+

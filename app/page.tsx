@@ -26,7 +26,7 @@ const FEATURES = [
 
 export default function Home() {
   return (
-    <main className="page-shell min-h-[calc(100dvh-56px)] justify-center">
+    <main className="page-shell">
       <Suspense fallback={null}>
         <CaptureKolRef />
       </Suspense>
