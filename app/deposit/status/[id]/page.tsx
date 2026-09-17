@@ -195,13 +195,26 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   if (notFound) {
     return (
       <main className="page-shell">
-        <h1 className="h1">Deposit not found</h1>
-        <p className="body-text">
-          No deposit with id <code className="text-slate-300">{params.id}</code> exists. It may have
-          been cleared (this PoC uses a local file store — see README).
-        </p>
-        <Link href="/deposit" className="text-sm">
-          Start a new deposit →
+        <div className="flex flex-col items-center gap-3 py-4 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-400/30">
+            <AlertIcon className="h-7 w-7 text-amber-300" />
+          </div>
+          <h1 className="h1">We lost track of this deposit</h1>
+          <p className="body-text max-w-xs">
+            This demo runs on a free hosting tier without a persistent database, so its
+            server-side memory can reset between visits. If you had funds on-chain, they were
+            never at risk — only this app&apos;s local record of tracking them was lost.
+          </p>
+        </div>
+
+        <div className="banner-amber">
+          <strong>Why this happens:</strong> deposit records live in server memory for this
+          PoC (see README &ldquo;Known limitations&rdquo;) rather than a real database, so a
+          server restart between your last visit and now can drop the record.
+        </div>
+
+        <Link href="/deposit" className="btn-primary w-fit">
+          Start a new deposit
         </Link>
       </main>
     );

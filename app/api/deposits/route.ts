@@ -10,6 +10,13 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as CreateDepositInput;
 
+  if (!body.userWallet || !body.amount) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "userWallet and amount are required." },
+      { status: 400 }
+    );
+  }
+
   const conflict = findConflictingInFlightDeposit(body.userWallet, body.amount);
   if (conflict) {
     return NextResponse.json(

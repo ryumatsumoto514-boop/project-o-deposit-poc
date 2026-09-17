@@ -73,7 +73,7 @@ export const depositStore = {
   ): DepositRecord | undefined {
     return Array.from(deposits.values()).find(
       (d) =>
-        d.userWallet.toLowerCase() === userWallet.toLowerCase() &&
+        d.userWallet?.toLowerCase() === userWallet.toLowerCase() &&
         d.amount === amount &&
         d.status !== "CREDITED"
     );

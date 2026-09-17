@@ -148,9 +148,18 @@ mocked Hyperliquid balance agree.
 
 ## Known limitations (PoC scope)
 
-- **No real database.** An in-memory store backed by a local JSON file.
-  Restarting on a different machine (e.g. a Vercel redeploy) loses all
-  deposit records. Fine for a demo, not for production.
+- **No real database — and this is a real, observed risk, not just a
+  theoretical one.** Deposit records live in an in-memory Map per
+  serverless function instance, best-effort mirrored to `/tmp` on Vercel.
+  Confirmed live on 2026-09-17: a deposit created via the production API
+  returned `NOT_FOUND` a few minutes later with zero redeploys in between —
+  Vercel recycled the serverless instance holding it in memory, and `/tmp`
+  isn't shared across instances, so the record was gone. The status page
+  now shows a dedicated, reassuring "we lost track of this deposit" screen
+  for this case (any on-chain funds are never at risk, only the app's
+  local tracking of them) rather than a raw 404. A real deployment needs
+  an external store (Vercel KV / Postgres / etc.) — out of scope for an
+  overnight PoC with no database credentials available.
 - **No real Hyperliquid integration.** The credited check is a timer, not
   a real balance read. Clearly labeled everywhere it appears.
 - **No real authentication.** Login is a mocked identity string, not a
