@@ -50,7 +50,7 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
 
   const hyperliquidCredited =
     onchainConfirmed && onchainConfirmedAt
-      ? isHyperliquidCredited(onchainConfirmedAt)
+      ? isHyperliquidCredited(onchainConfirmedAt, deposit.id)
       : false;
 
   let status: DepositRecord["status"] = deposit.status;
@@ -60,13 +60,21 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
     status = "CREDITED";
     ambiguousSince = null;
   } else if (onchainConfirmed && !hyperliquidCredited && onchainConfirmedAt) {
-    status = status === "SIGNED" ? "CONFIRMED_ONCHAIN" : "BRIDGING";
     const sinceConfirmed = now - new Date(onchainConfirmedAt).getTime();
-    if (sinceConfirmed > AMBIGUOUS_THRESHOLD_MS && !ambiguousSince) {
-      // one side (chain) settled, other side (Hyperliquid) still lagging
-      // past the expected window — flag, don't silently keep polling forever.
+    if (ambiguousSince || sinceConfirmed > AMBIGUOUS_THRESHOLD_MS) {
+      // Once flagged, AMBIGUOUS must stick until it's actually resolved
+      // (credited) — checking `ambiguousSince` first, before recomputing
+      // status from scratch, matters: the naive version recomputed status
+      // as CONFIRMED_ONCHAIN/BRIDGING unconditionally on every poll and only
+      // *then* checked whether to escalate, so a deposit that had already
+      // been flagged AMBIGUOUS one poll earlier would silently revert to
+      // looking like normal in-progress BRIDGING on the very next poll
+      // (ambiguousSince was already set, so the escalation check never
+      // re-fired) — hiding the fact that manual review was ever needed.
       status = "AMBIGUOUS";
-      ambiguousSince = new Date().toISOString();
+      ambiguousSince = ambiguousSince ?? new Date().toISOString();
+    } else {
+      status = status === "SIGNED" ? "CONFIRMED_ONCHAIN" : "BRIDGING";
     }
   } else {
     const sinceCreated = now - new Date(deposit.createdAt).getTime();
