@@ -1305,8 +1305,23 @@ have now covered color, material, typography, iconography, animation,
 mobile safety, layout structure, and — this cycle — the live production URL
 itself, without finding further defensible execution flaws.
 
-### Deploy
-Committing now; pushing to `origin main` and redeploying to Vercel with
-`vercel --token "$VERCEL_TOKEN" --yes --prod`, then re-fetching the live URL
-to confirm the not-found screen and the validation fix are actually served
-in production — see the immediately following note for confirmation output.
+### Deploy confirmation
+- Commit `18943bd` pushed to `origin main` (`7c95897..18943bd main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-verified directly against **https://projecto-blond.vercel.app** (not
+  localhost): all six core routes still `200`; `POST /api/deposits` with a
+  missing `userWallet` now returns a clean `400 INVALID_REQUEST` instead of
+  a `500`; a fresh create → immediate duplicate returns `201` then
+  `409 DUPLICATE_IN_FLIGHT` with the original deposit attached (idempotency
+  guard intact); a real CDP screenshot of
+  `/deposit/status/does-not-exist-on-live` on the live URL shows the new
+  styled not-found screen (amber icon badge, reassuring headline, banner,
+  primary-button CTA) actually being served, not just committed. **This is
+  what Ryu will see if he reloads the same URL or hits a stale deposit
+  link.**
+
+All five prior definition-of-done items remain satisfied (real testnet txs,
+reconciliation engine + duplicate blocking, polished mobile-responsive UI,
+live Vercel deployment, honest README/testnet-evidence). Nothing in this
+cycle's scope was left half-done.
