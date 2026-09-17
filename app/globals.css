@@ -81,12 +81,17 @@
   /* Typography */
   .h1 {
     @apply text-[22px] font-semibold tracking-tight text-slate-50 sm:text-2xl;
+    font-family: var(--font-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   }
   .h1-hero {
-    @apply text-[34px] font-bold leading-[1.08] tracking-tight text-slate-50 sm:text-[40px];
+    @apply text-[34px] font-bold leading-[1.06] tracking-tight text-slate-50 sm:text-[42px];
+    font-family: var(--font-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   }
   .eyebrow {
     @apply text-xs font-semibold uppercase tracking-[0.14em] text-blue-300/80;
+  }
+  .brand-word {
+    font-family: var(--font-display), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   }
   .label-caps {
     @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500;

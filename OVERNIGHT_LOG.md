@@ -742,3 +742,94 @@ naming one concrete thing.
   the icon/suffix changes are actually served, not just committed.
 
 ### Deploy
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T19:01:12Z
+
+## Cycle: fresh-eyes design audit + display-font addition + stale README fix
+
+**Trigger:** standing brief again asserted "UI/UX not good enough, looks like
+a bare-minimum AI-generated scaffold" as top priority. Before touching
+anything, I did an independent fresh read of every current screen and shared
+component from the actual source (not the log's own summaries of prior
+cycles) — `globals.css`, `layout.tsx`, `AppHeader`, `Brand`, `page.tsx`,
+`login`, `deposit`, `deposit/confirm`, `deposit/approve`,
+`deposit/status/[id]`, `KolBanner`, `WalletRoles`, `icons.tsx` — specifically
+trying to see it the way a skeptical hiring reviewer would, not trusting five
+prior cycles' self-reported "this is solid now."
+
+### Honest finding
+On this fresh read, the app does **not** read as a bare-minimum scaffold: a
+real dark-fintech component system (`.card`/`.btn-*`/`.banner-*`/`.pill`),
+one flat considered accent color, a persistent sticky header with network
+pill + wallet address, a genuinely animated three-state stepper with
+color-coded severity, a dedicated full-screen success state, concrete
+"next step" copy on every exception state, tabular-nums numeric alignment,
+custom favicon/apple-icon, and consistent spacing/radius tokens across all
+six screens. Five previous cycles' worth of substantive, verifiable design
+work holds up. I considered doing a sixth full color/material pivot per the
+standing feedback, but decided against it: the same undifferentiated
+complaint has now triggered three prior ground-up visual pivots (light →
+dark/glassmorphism → dark/flat-accent) with no new concrete pointer between
+them, and a fresh independent read finds no defensible execution flaw in the
+current direction — only the one lever explicitly flagged as untried by the
+immediately prior cycle's own honest gap-check: brand personality via
+typography (a distinct display font), since Geist-everywhere is safe but
+generic.
+
+### What I changed this cycle
+1. **Added a distinctive display font** (`next/font/google`, Space Grotesk,
+   weights 500/700, `--font-display` CSS variable) applied to `.h1`,
+   `.h1-hero`, and a new `.brand-word` class used by the logo mark + "Exchange
+   O" wordmark in `Brand.tsx`. Body text, labels, and mono content stay on
+   Geist — this is a targeted hierarchy/personality change (headlines and
+   brand only), not another full system replacement. Verified Google Fonts
+   is reachable from this environment (`curl` to `fonts.googleapis.com`
+   returns 200) before committing to it, since `next/font/google` fetches
+   and self-hosts the font file at build time and would break the build
+   offline.
+2. **Fixed a real stale-content bug in `README.md`**: the "Live deployment"
+   section still said "see OVERNIGHT_LOG.md for the deployment attempt
+   status... check there for the final URL or the documented blocker" — a
+   leftover from Cycle 1 before the deploy actually succeeded. A reviewer
+   reading the README first (the normal entry point) would see a
+   non-answer about whether this ships at all, even though it's been live
+   at https://projecto-blond.vercel.app for five cycles. Replaced with the
+   actual live URL stated plainly. This is a more consequential fix for a
+   hiring reviewer's first impression than another visual tweak would have
+   been.
+
+### Verification
+- Confirmed the font variable actually resolves in compiled output before
+  trusting it: `npm run dev`, fetched `/`, extracted the compiled
+  `layout.css`, confirmed `--font-display: '__Space_Grotesk_4f4604',
+  '__Space_Grotesk_Fallback_4f4604'` is set on `<body>` and that `.h1-hero`
+  and `.h1` both carry `font-family: var(--font-display), var(--font-geist-sans), ...`
+  in the actual served CSS, not just the source file.
+- `npm run build` passes clean — identical pre-existing optional-peer-dep
+  warnings only (WalletConnect/pino/tempo/async-storage), no new errors.
+- Curled `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex` against `npm run dev` — all HTTP 200.
+- Did not touch any API route, state-machine, or store logic this cycle —
+  no re-verification of the reconciliation engine needed beyond confirming
+  `lib/store.ts`'s `/tmp`-on-Vercel fix (from an earlier cycle) is still
+  intact, which it is.
+
+### Honest gap check
+The visual design system itself has now been substantively iterated on for
+five-plus cycles and holds up under a genuinely skeptical fresh read; this
+cycle's addition (display font for headlines/brand) is a real but narrow
+personality upgrade, not a claim that everything was broken before. If the
+next wake still carries the exact same undifferentiated complaint with no
+new concrete detail, the honest read (reasserted from the prior cycle, now
+confirmed independently) is that further blind visual iteration has a low
+and shrinking chance of finding the actual gap — the highest-value next
+step at that point is a human looking at the live URL and naming one
+concrete thing ("the buttons feel cheap," "the spacing on X is off," "make
+it look like Y"), not a sixth full redesign. In the meantime, remaining
+cycles are better spent re-verifying the functional/backend side (reconciliation
+engine, evidence docs, README accuracy) stays correct, which is where this
+cycle actually found a real, fixable gap (the stale deploy-status README
+section above).
+
+### Deploy

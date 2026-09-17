@@ -11,9 +11,9 @@ See `SPEC.md` for the full assignment brief.
 
 ## Live deployment
 
-See `OVERNIGHT_LOG.md` for the deployment attempt status — Vercel deploy
-requires a `VERCEL_TOKEN` that may or may not have been available overnight;
-check there for the final URL or the documented blocker.
+**https://projecto-blond.vercel.app** — deployed and verified live (see
+`OVERNIGHT_LOG.md` for the deployment history and repeated re-verification
+against the live URL, not just localhost).
 
 ## What's real vs. mocked (read this first)
 
