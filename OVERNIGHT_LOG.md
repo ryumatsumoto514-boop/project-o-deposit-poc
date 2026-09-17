@@ -1471,3 +1471,30 @@ before wagmi's injected connector will report `isConnected`, rather than
 relying on a bare `window.ethereum` object.
 
 ### Deploy
+- Commit `f2b078b` pushed to `origin main` (`2cc2ed9..f2b078b main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-verified directly against **https://projecto-blond.vercel.app** (not
+  localhost): all six core routes still `200`; a fresh `POST /api/deposits`
+  → `201`, identical second call → `409 DUPLICATE_IN_FLIGHT` with the
+  original deposit attached — duplicate-blocking regression-checked on the
+  live URL after this cycle's `reconcile.ts` change, unaffected.
+
+### Definition-of-done status
+All prior definition-of-done items remain satisfied (real testnet txs,
+reconciliation engine, duplicate blocking, polished mobile-responsive UI
+across 10+ design cycles now backed by real screenshots, live Vercel
+deployment, honest README/testnet-evidence). This cycle's addition: the
+`AMBIGUOUS` state is now actually reachable and sticky (previously dead
+code / one-poll flicker), and all three of the brief's named exception
+screens are now real-screenshot-verified, not just markup-reasoned.
+
+**What's left, if the "not good enough" feedback persists with no new
+specifics:** the design itself has been iterated on 10+ times and
+real-screenshot-verified on both localhost and the live URL across three
+separate cycles now — further blind visual iteration has very low expected
+value. The two concrete, unverified-by-pixel items left are: (1) the
+duplicate-blocked screen (source-verified only, see above), and (2) genuine
+human judgment on subjective taste, which no amount of further autonomous
+iteration can resolve without a specific pointer.
+Claude Code tick finished, exit code 0
