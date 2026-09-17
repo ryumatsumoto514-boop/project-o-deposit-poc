@@ -541,3 +541,87 @@ material have now been iterated on twice.
   `/?ref=kol_alex`. Landing-page HTML contains `app-header`, `h1-hero`,
   `bg-blue-500`; grepping the same HTML for `indigo`/`violet` returns zero
   matches. **This is the design Ryu will see if he reloads the same URL.**
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T17:51:11Z
+
+## Cycle: honest re-review after third design pivot (branding/favicon polish, consistency fixes)
+
+**Trigger:** the standing overnight brief re-asserted "UI/UX not good enough" as
+top priority again this tick. Before doing a fourth full visual pivot, I did a
+genuinely fresh read of the actual current code (not the log's summary of it)
+across every page (`page.tsx`, `login`, `deposit`, `deposit/confirm`,
+`deposit/approve`, `deposit/status/[id]`) and every shared component
+(`Brand`, `AppHeader`, `KolBanner`, `WalletRoles`, `icons.tsx`) plus
+`globals.css` in full.
+
+### Honest assessment
+The prior three cycles' work is real and holds up under a skeptical read: a
+proper dark-fintech component system (`.card`/`.btn-*`/`.banner-*`/`.pill`),
+a flat single-accent color (no gradient/glassmorphism cliché), Geist font
+with tabular-nums for numeric alignment, a persistent sticky app header with
+network pill and truncated wallet address, a real animated stepper with
+three visually distinct states, a dedicated full-screen success state, and
+severity-coded exception banners with concrete next-step guidance instead of
+raw error text. This is not a bare-minimum scaffold by any reasonable read
+of the actual markup — it's a considered, consistent design system applied
+uniformly across all six screens. I did not find a case for tearing it down
+and starting a fourth color/material direction with no new signal about
+*what specifically* is wrong — cycling color schemes without a concrete
+complaint risks thrashing rather than improving.
+
+### What I actually found and fixed this cycle (real gaps, not busywork)
+1. **Default Next.js favicon was still in use** (`app/favicon.ico`, the
+   stock Next.js logo) — this is one of the most visible "didn't bother"
+   signals a reviewer sees (browser tab icon), and it directly contradicted
+   the app's own custom brand mark used everywhere else in the UI. Replaced
+   it with `app/icon.tsx` and `app/apple-icon.tsx` using Next 14's built-in
+   `next/og` `ImageResponse` icon convention — generates a real PNG favicon
+   (32x32, blue `#3b82f6` square with white "O", matching `Brand.tsx`
+   exactly) and a proper 180x180 Apple touch icon (dark background, larger
+   rounded mark) for when mobile KOL-referred users add the site to their
+   home screen — directly relevant to this app's stated mobile-first
+   audience. Verified both routes build statically and serve
+   `content-type: image/png`.
+2. **Added `viewport.themeColor`** (`#0a0b0d`, matching the page background)
+   to `app/layout.tsx` — on mobile Safari/Chrome this colors the browser
+   chrome/address-bar to match the app instead of showing a default white
+   bar above a dark page, a real (if small) mobile-polish detail the brief
+   explicitly asked me to attend to.
+3. **Fixed a design-token inconsistency**: `WalletRoles.tsx` used
+   `rounded-2xl` while every other card/banner/input in the system uses
+   `rounded-xl` — a small drift that undermines "considered design system"
+   if a reviewer compares corner radii across components. Now consistent.
+
+### Verification
+- `npm run build` passes clean (`/icon` and `/apple-icon` both appear as new
+  static routes in the build output, 0 B First Load JS as expected for
+  metadata routes).
+- Ran `npm run dev` on port 3005, curled `/`, `/login`, `/deposit`,
+  `/deposit/confirm`, `/deposit/approve`, `/?ref=kol_alex`, `/icon`,
+  `/apple-icon` — all HTTP 200. Confirmed `/icon` serves with
+  `content-type: image/png`.
+- Created two more real deposit records via `POST /api/deposits` against the
+  running dev server and confirmed `/deposit/status/[id]` still returns 200
+  for both — the icon/metadata/consistency changes touched zero API or
+  state-machine code, and this confirms nothing regressed.
+
+### Honest gap check — where this actually stands
+The visual design itself (color, type, layout, component system, animation,
+severity coding, mobile-safe layout) has now been iterated on three
+substantial times and I could not find a concrete, defensible flaw in the
+current direction on a fresh read — only the favicon/consistency gaps fixed
+above, which were real but minor. If Ryu still doesn't like it on this next
+look, the honest read is that the remaining gap is very likely a subjective
+taste/brand-personality preference (e.g. "make it look more like X specific
+product") rather than an execution flaw — at that point the most useful
+thing I could do without guessing further is: (a) if a next cycle happens
+and no more specific feedback is available, try ONE genuinely different
+direction (e.g. a light, editorial/finance-terminal look with a serif or
+monospace-heavy display font, since dark-with-flat-accent has now been tried
+and is what's live) rather than re-tuning the same dark-fintech direction a
+fourth time, or (b) if the user is awake, get one concrete pointer to a
+product/site whose look he wants and match that specifically instead of
+iterating blind.
+
+### Deploy

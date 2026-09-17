@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -18,6 +18,12 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Exchange O — Deposit (PoC)",
   description: "Deposit Reconciliation Engine PoC — Arbitrum Sepolia testnet",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0b0d",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

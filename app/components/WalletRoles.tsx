@@ -23,7 +23,7 @@ export function WalletRoles({
   tradableIn?: string | null;
 }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-3.5">
+    <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3.5">
       {signingInAs !== undefined && <Row label="Signing in as" value={signingInAs} />}
       {fundsFrom !== undefined && <Row label="Funds coming from" value={fundsFrom} />}
       {tradableIn !== undefined && <Row label="Will be tradable in" value={tradableIn} />}
