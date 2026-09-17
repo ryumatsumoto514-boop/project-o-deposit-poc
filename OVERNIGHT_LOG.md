@@ -407,3 +407,33 @@ already been rejected.
   fixed-width element that could overflow a 375px viewport.
 
 ### Deploy
+- Commit `3fc05af` pushed to `origin main` (confirmed: `fd43469..3fc05af main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-fetched **https://projecto-blond.vercel.app** live afterward (not just
+  the deployment alias) and confirmed the new design is actually served:
+  HTML contains `h1-hero` and the gradient brand-badge classes; the
+  compiled CSS bundle (`/_next/static/css/3fc84947436a73ea.css`) contains
+  the new `#05060a` background token and the indigo/violet/emerald accent
+  colors; zero `text-neutral`/`bg-neutral` matches remain in the rendered
+  HTML. `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex` all return HTTP 200 on the live URL. **This is the
+  design Ryu will see if he reloads the same URL he looked at.**
+
+### Honest gap check
+What's genuinely done now: a full visual-direction pivot applied
+consistently across every screen (not just landing), a real component
+system (gradient buttons/cards/banners, not utility soup), animated
+severity-coded exception states, a dedicated success screen, and verified
+mobile-safe layout reasoning (no fixed-width elements, `min-h-[46px]` tap
+targets throughout, `max-w-md` container everywhere). This closes every
+open item the prior cycle flagged in its own honest self-review.
+
+What I still can't fully substitute for: an actual human eyeballing this at
+a real 375px viewport in a real browser — no browser is available in this
+environment, so verification here is JSX/CSS/Tailwind-class reasoning plus
+HTTP/HTML/compiled-CSS checks, not a visual screenshot. If anything still
+looks off, it's most likely to be in an interaction I couldn't observe
+(hover/active states, animation timing feel) rather than layout or color,
+since those were checked mechanically against the actual markup and
+compiled output.
