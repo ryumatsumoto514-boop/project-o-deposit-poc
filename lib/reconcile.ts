@@ -28,9 +28,17 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
     }
   }
 
-  const hyperliquidCredited = onchainConfirmed
-    ? isHyperliquidCredited(deposit.updatedAt)
-    : false;
+  // Frozen the moment this first flips true. depositStore.update() bumps
+  // `updatedAt` on every poll tick, so that field can't be used as a stand-in
+  // for "when did this confirm" — it would never accumulate any elapsed time.
+  const onchainConfirmedAt = onchainConfirmed
+    ? deposit.reconciliation.onchainConfirmedAt ?? new Date().toISOString()
+    : null;
+
+  const hyperliquidCredited =
+    onchainConfirmed && onchainConfirmedAt
+      ? isHyperliquidCredited(onchainConfirmedAt)
+      : false;
 
   let status: DepositRecord["status"] = deposit.status;
   let ambiguousSince = deposit.reconciliation.ambiguousSince;
@@ -38,9 +46,9 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
   if (onchainConfirmed && hyperliquidCredited) {
     status = "CREDITED";
     ambiguousSince = null;
-  } else if (onchainConfirmed && !hyperliquidCredited) {
+  } else if (onchainConfirmed && !hyperliquidCredited && onchainConfirmedAt) {
     status = status === "SIGNED" ? "CONFIRMED_ONCHAIN" : "BRIDGING";
-    const sinceConfirmed = now - new Date(deposit.updatedAt).getTime();
+    const sinceConfirmed = now - new Date(onchainConfirmedAt).getTime();
     if (sinceConfirmed > AMBIGUOUS_THRESHOLD_MS && !ambiguousSince) {
       // one side (chain) settled, other side (Hyperliquid) still lagging
       // past the expected window — flag, don't silently keep polling forever.
@@ -58,6 +66,7 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
     status,
     reconciliation: {
       onchainConfirmed,
+      onchainConfirmedAt,
       hyperliquidCredited,
       lastCheckedAt: new Date().toISOString(),
       ambiguousSince,

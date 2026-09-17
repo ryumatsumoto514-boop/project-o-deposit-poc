@@ -29,6 +29,7 @@ export interface DepositRecord {
   failureReason: string | null; // plain-language classification, see lib/failures.ts
   reconciliation: {
     onchainConfirmed: boolean;
+    onchainConfirmedAt: string | null; // frozen the moment it first flips true — NOT touched by later updates
     hyperliquidCredited: boolean;
     lastCheckedAt: string | null;
     ambiguousSince: string | null;

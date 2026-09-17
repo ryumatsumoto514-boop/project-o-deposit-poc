@@ -1,6 +1,6 @@
 // Poll for the L2 (Arbitrum Sepolia) side of a previously-submitted bridge deposit.
 const { ethers } = require('ethers');
-const { L1TransactionReceipt } = require('@arbitrum/sdk');
+const { ParentTransactionReceipt } = require('@arbitrum/sdk');
 
 async function main() {
   const l1TxHash = process.argv[2];
@@ -12,7 +12,7 @@ async function main() {
   const l1Receipt = await l1Provider.getTransactionReceipt(l1TxHash);
   if (!l1Receipt) throw new Error('L1 tx not found/confirmed yet');
 
-  const l1TxReceipt = new L1TransactionReceipt(l1Receipt);
+  const l1TxReceipt = new ParentTransactionReceipt(l1Receipt);
   console.log('Checking L2 status for L1 tx', l1TxHash, '...');
   const result = await l1TxReceipt.waitForChildTransactionReceipt(l2Provider, undefined, 1000 * 60 * 8);
   console.log('Complete:', result.complete);

@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     failureReason: null,
     reconciliation: {
       onchainConfirmed: false,
+      onchainConfirmedAt: null,
       hyperliquidCredited: false,
       lastCheckedAt: null,
       ambiguousSince: null,
