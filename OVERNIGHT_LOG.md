@@ -731,4 +731,14 @@ continued blind iteration has a shrinking chance of finding the actual gap,
 and the highest-value next step is a human looking at the live URL and
 naming one concrete thing.
 
+### Deploy confirmation
+- Commit `9fdb69f` pushed to `origin main` (`5493b1b..9fdb69f main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-fetched **https://projecto-blond.vercel.app** live afterward: `/`,
+  `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex` all HTTP 200. Confirmed the login page's live HTML
+  contains "Continue with Google" and the new `ml-auto` mock-badge markup —
+  the icon/suffix changes are actually served, not just committed.
+
 ### Deploy
