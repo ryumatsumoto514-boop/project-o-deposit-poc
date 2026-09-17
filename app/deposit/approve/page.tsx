@@ -9,6 +9,7 @@ import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
 import { AlertIcon, SpinnerIcon } from "../../components/icons";
+import { StepProgress, FlowFooter } from "../../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, USDC_ADDRESS, USDC_DECIMALS } from "@/lib/chain";
 import { wagmiConfig } from "@/lib/wagmiConfig";
@@ -169,6 +170,7 @@ export default function DepositApprovePage() {
     return (
       <main className="page-shell">
         <KolBanner />
+        <StepProgress step={4} />
         <h1 className="h1">Deposit already in progress</h1>
         <div className="banner-amber flex items-start gap-2.5">
           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
@@ -184,6 +186,7 @@ export default function DepositApprovePage() {
         >
           View deposit status
         </button>
+        <FlowFooter />
       </main>
     );
   }
@@ -191,6 +194,7 @@ export default function DepositApprovePage() {
   return (
     <main className="page-shell">
       <KolBanner />
+      <StepProgress step={4} />
       <h1 className="h1">Approve + deposit</h1>
 
       <WalletRoles
@@ -305,6 +309,7 @@ export default function DepositApprovePage() {
           ? "Starting deposit transfer…"
           : "Done"}
       </button>
+      <FlowFooter />
     </main>
   );
 }

@@ -7,6 +7,7 @@ import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
 import { AlertIcon } from "../../components/icons";
+import { StepProgress, FlowFooter } from "../../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { DEPOSIT_ADDRESS } from "@/lib/chain";
 
@@ -25,6 +26,7 @@ export default function DepositConfirmPage() {
   return (
     <main className="page-shell">
       <KolBanner />
+      <StepProgress step={3} />
       <h1 className="h1">Confirm destination address</h1>
 
       <WalletRoles
@@ -72,6 +74,7 @@ export default function DepositConfirmPage() {
       >
         Continue
       </button>
+      <FlowFooter />
     </main>
   );
 }

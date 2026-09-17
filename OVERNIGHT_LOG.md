@@ -1498,3 +1498,161 @@ duplicate-blocked screen (source-verified only, see above), and (2) genuine
 human judgment on subjective taste, which no amount of further autonomous
 iteration can resolve without a specific pointer.
 Claude Code tick finished, exit code 0
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T23:14:14Z
+
+## Cycle: persisted the screenshot tooling + closed the last unverified exception screen + found and fixed a real dead-space layout bug and a real hydration bug
+
+**Trigger:** the standing "UI/UX not good enough" feedback, on its 13th tick.
+Twelve prior cycles had already done substantial, real-screenshot-verified
+design work (three ground-up visual pivots, icons, favicon, display font,
+plus four screenshot-driven bug-fixing passes on localhost and the live URL).
+Rather than a color/material pivot with no new signal, I picked up the two
+concrete open items the immediately prior cycle's own honest gap-check
+named: (1) the duplicate-blocked screen had only ever been source-verified,
+never pixel-verified, and (2) no prior cycle had persisted its CDP
+screenshot driver to disk, so every cycle rewrote it from scratch.
+
+### Screenshot tooling persisted (`scripts/screenshot.mjs`, `scripts/run-shots.mjs`, `scripts/shot-blocked.mjs`)
+A reusable raw-CDP screenshot driver (no npm deps, Node 26's native
+WebSocket/fetch) against the pre-installed headless Chromium at
+`/opt/hermes/.playwright/chromium_headless_shell-1243`, plus a dedicated
+multi-step script that click-walks the *real* flow (connect wallet -> enter
+amount -> confirm -> approve) in a single continuous CDP session so wagmi's
+in-memory connection state survives client-side navigation between steps,
+rather than faking connection state per-page. This is committed so future
+cycles don't re-derive it (six+ prior cycles independently rewrote inline
+versions of the same driver).
+
+### Closed the last unverified item: real pixel screenshot of the duplicate-blocked screen
+Seeded a real in-flight deposit via `POST /api/deposits`, then used
+`shot-blocked.mjs` to actually click through Connect -> amount -> confirm
+checkbox -> "Approve & deposit" with a fake EIP-1193 provider, landing on the
+real `step === "blocked"` branch of `/deposit/approve`. Confirmed via actual
+pixels (not source-reading) that it renders correctly: amber banner with
+alert icon, clear "Deposit already in progress" headline, opened-at
+timestamp, "View deposit status" CTA — matches every other screen's
+component system. All three of the brief's named exception screens
+(`STALLED_NO_GAS`/`AMBIGUOUS` from two cycles ago, `duplicate-blocked` now)
+are now real-screenshot-verified, closing the item the prior four cycles'
+gap-checks kept flagging as outstanding.
+
+### Real bug #1 (found via the same screenshots): massive dead vertical space on every short screen, despite a prior cycle believing it had fixed this
+A cycle three ticks ago changed `.page-shell` from `justify-center` to
+`justify-start` specifically to fix "large equal voids of empty space above
+AND below" on short screens, and concluded the remaining bottom-only gap was
+"a completely normal, expected pattern for a short mobile form." Screenshotting
+`/login` fresh this cycle showed that conclusion was too generous: at
+375x812, roughly 550px (68% of the viewport) below the last button was pure
+flat dark background with nothing in it — exactly the "looks unfinished"
+signal driving Ryu's repeated feedback, not a normal short-form pattern.
+**Fixed properly this time**, not by re-centering (which just moves the void
+around) but by giving that space real, useful content: a new
+`app/components/FlowChrome.tsx` exports `StepProgress` (a "Step X of 4" label
++ 4-segment progress bar, shown under the KOL banner on all four flow steps —
+login, amount, confirm, approve/blocked — genuinely useful orientation in a
+multi-step deposit flow, not filler) and `FlowFooter` (a small
+shield-icon reassurance line — "Arbitrum Sepolia testnet · no real funds are
+used" plus a one-line trust statement about real on-chain verification),
+placed with `mt-auto` as the last child of `.page-shell` so it's pinned to
+the bottom *only when there's leftover space* — verified this doesn't
+disturb longer screens (confirm, approve-with-scope-cards) where content
+already fills the viewport, since `mt-auto` only has an effect when the flex
+container has slack. Wired into all four flow-step pages plus the
+`deposit/status/[id]` "deposit not found" screen (also short). Re-screenshotted
+after: login's dead space dropped from ~550px to ~450px with two real content
+anchors (progress + trust footer) instead of one floating card in a void —
+a real, verified improvement, though a person on a genuinely tiny form will
+still see *some* empty space in the middle, which is an honest structural
+limit of a 3-button screen on a 812px-tall viewport, not something further
+copy/component tuning can eliminate without adding filler content that would
+itself look like padding.
+
+### Real bug #2 (found while building the screenshot repro): resumed draft amount silently didn't pre-fill the amount input
+While seeding `sessionStorage` to skip straight to a mid-flow screen for the
+blocked-screen repro, `/deposit`'s amount field rendered empty even though
+`draftAmount` was seeded to `"42.0"`, and clicking "Continue" silently failed
+validation. Root cause: `app/deposit/page.tsx` initializes its local `amount`
+state as `useState(draftAmount || "")` — but `draftAmount` comes from
+`FlowProvider`'s `sessionStorage` read, which happens in a `useEffect` that
+resolves *after* this component's first render (see `flow-context.tsx`'s own
+comment: "so a refresh mid-flow doesn't lose progress"). React's `useState`
+initializer only runs once, on that very first render, when `draftAmount` is
+still `""` — so a resumed session (refresh, or arriving here with a prior
+draft already set from a previous visit) always shows an empty field despite
+the context correctly holding the old value under the hood. This directly
+undermines the sessionStorage-persistence feature's own stated purpose. Fixed
+with a second `useEffect` that syncs `amount` from `draftAmount` once
+`hydrated` is true. Verified the fix with a real screenshot
+(`deposit-connected.png`): the amount field now correctly shows the seeded
+"5.0" instead of blank.
+
+### A process mistake repeated for the third cycle in a row, and the actual root cause this time
+Hit the same ".next corruption from a stray server" class of issue two prior
+cycles already logged warnings about — but this time root-caused it more
+precisely: it wasn't a `next dev`/`next build` conflict, it was **`npm run
+start` failing with `EADDRINUSE` on port 3200 because an old `next-server`
+from earlier in this same cycle was still bound to it**, silently leaving the
+*old* build serving stale HTML that referenced the *new* build's
+CSS-hash filename (since `.next` had been wiped and rebuilt in between) —
+hence a 404 on the CSS bundle and a briefly alarming "completely unstyled"
+screenshot. Found it by reading `/tmp/next-start.log` for the actual
+`EADDRINUSE` error rather than assuming the CSS itself was broken, killed the
+stale PID directly, restarted, and confirmed the CSS bundle now returns 200
+before trusting any further screenshot. Logging the specific lesson since two
+prior "kill stray next processes" warnings didn't cover this exact failure
+mode: **after any rebuild, verify the *new* server actually bound successfully
+(check its own log for `EADDRINUSE`), not just that some server responds on
+the port** — an old server can keep answering 200s on HTML while serving a
+stale build that 404s on its own assets.
+
+### Verification
+- `npm run build` passes clean on a from-scratch `.next` — identical
+  pre-existing optional-peer-dep warnings only, no new errors.
+- Fresh `npm run start` production build: all six core routes (`/`, `/login`,
+  `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/?ref=kol_alex`) return
+  HTTP 200.
+- Re-ran the duplicate-blocking and malformed-request regression checks
+  against this cycle's build: `POST /api/deposits` with a full valid body ->
+  `201`, identical repeat -> `409 DUPLICATE_IN_FLIGHT`; a body missing
+  `userWallet` -> clean `400 INVALID_REQUEST` (not a 500) — both guards
+  fixed in an earlier cycle remain intact, confirmed live against this
+  cycle's actual build, not assumed unchanged.
+- Real CDP screenshots (375x812) of all seven states: landing, landing+KOL,
+  login, deposit-amount (wallet-connected, with the pre-fill fix visible),
+  deposit-confirm, deposit-approve (form), duplicate-blocked, and
+  deposit-not-found — all reviewed directly as images, not inferred from
+  markup, confirming the step-progress/footer addition renders correctly and
+  consistently with the existing dark-fintech component system across every
+  screen it touches.
+- All test data (`.data/deposits.json`) deleted before finishing; screenshot
+  tooling committed under `scripts/` since it's dev-only and doesn't touch
+  the app bundle.
+
+### Honest gap check
+This cycle didn't touch color, material, or typography — a 13th color pivot
+with no new signal would be thrashing, and real screenshots (this cycle and
+four prior ones) continue to show no defensible flaw in the visual direction
+itself. What it did instead: closed the very last screen the brief names that
+had never been pixel-verified, found and fixed a genuinely real "still looks
+unfinished" layout bug that a *prior* cycle had incorrectly marked as fixed
+(a good reminder that "I reasoned about the CSS" is weaker evidence than "I
+looked at the pixels," even for a cycle as thorough as the one three ticks
+ago), and found a real hydration bug in the resume-a-session code path this
+whole app's persistence claim depends on. If the next wake still carries the
+same undifferentiated complaint, the honest read (now stronger than the last
+few cycles' version of the same conclusion, since this cycle specifically
+went looking for and found two more real defects rather than finding none):
+there is very likely at least one more concrete, findable defect somewhere in
+this app that screenshot-driven auditing can still surface, and that
+continues to be a better use of budget than further blind color iteration.
+The remaining honest structural limit (some empty space in the middle of the
+shortest screens even after the footer fix) is not fixable without adding
+non-functional filler content, which would trade one "looks unfinished"
+signal for another ("padding for padding's sake").
+
+### Deploy
+Committing this cycle's changes now; see the immediately following log entry
+for the exact commit hash, push confirmation, and live-URL re-verification.
+Claude Code tick finished, exit code 0

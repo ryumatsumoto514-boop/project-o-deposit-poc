@@ -5,6 +5,7 @@ import Link from "next/link";
 import { KolBanner } from "../../../components/KolBanner";
 import { WalletRoles } from "../../../components/WalletRoles";
 import { AlertIcon, CheckIcon, SpinnerIcon } from "../../../components/icons";
+import { FlowFooter } from "../../../components/FlowChrome";
 import type { DepositRecord, DepositStatus } from "@/lib/types";
 import { ARBISCAN_SEPOLIA_TX_URL } from "@/lib/chain";
 
@@ -216,6 +217,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
         <Link href="/deposit" className="btn-primary w-fit">
           Start a new deposit
         </Link>
+        <FlowFooter />
       </main>
     );
   }

@@ -6,6 +6,7 @@ import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { MockedBadge } from "../components/KolBanner";
 import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
+import { StepProgress, FlowFooter } from "../components/FlowChrome";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function LoginPage() {
   return (
     <main className="page-shell">
       <KolBanner />
+      <StepProgress step={1} />
       <h1 className="h1">Sign in</h1>
       <MockedBadge>
         Email and Google sign-in below are simulated — no real Privy/OAuth
@@ -81,6 +83,7 @@ export default function LoginPage() {
           )}
         </div>
       )}
+      <FlowFooter />
     </main>
   );
 }

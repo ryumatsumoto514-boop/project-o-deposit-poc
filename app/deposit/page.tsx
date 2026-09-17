@@ -6,6 +6,7 @@ import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { WalletRoles } from "../components/WalletRoles";
+import { StepProgress, FlowFooter } from "../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 
 const MAX_DEMO_AMOUNT = 1000;
@@ -21,6 +22,16 @@ export default function DepositAmountPage() {
   useEffect(() => {
     if (hydrated && !mockIdentity) router.replace("/login");
   }, [hydrated, mockIdentity, router]);
+
+  // `draftAmount` only becomes available after FlowProvider's async
+  // sessionStorage read resolves (see flow-context.tsx), which happens after
+  // this component's first render — so the useState initializer above misses
+  // it on a resumed session (refresh, or arriving here with a prior draft
+  // already set). Sync once hydration completes so a resumed draft actually
+  // shows up in the field instead of silently rendering empty.
+  useEffect(() => {
+    if (hydrated && draftAmount) setAmount(draftAmount);
+  }, [hydrated, draftAmount]);
 
   if (!hydrated || !mockIdentity) return null;
 
@@ -43,6 +54,7 @@ export default function DepositAmountPage() {
   return (
     <main className="page-shell">
       <KolBanner />
+      <StepProgress step={2} />
       <h1 className="h1">Deposit amount</h1>
 
       <WalletRoles
@@ -96,6 +108,7 @@ export default function DepositAmountPage() {
           </button>
         </div>
       )}
+      <FlowFooter />
     </main>
   );
 }
