@@ -13,6 +13,7 @@ interface FlowState {
   mockIdentity: string | null; // e.g. "demo@exchangeo.test" or a wallet address
   draftAmount: string;
   approvalMode: "exact" | "unlimited";
+  addressConfirmed: boolean; // set once the user checks the box on /deposit/confirm
 }
 
 const DEFAULT_STATE: FlowState = {
@@ -20,6 +21,7 @@ const DEFAULT_STATE: FlowState = {
   mockIdentity: null,
   draftAmount: "",
   approvalMode: "exact",
+  addressConfirmed: false,
 };
 
 const STORAGE_KEY = "exo_flow_state";
@@ -29,6 +31,7 @@ interface FlowContextValue extends FlowState {
   setMockIdentity: (identity: string | null) => void;
   setDraftAmount: (amount: string) => void;
   setApprovalMode: (mode: "exact" | "unlimited") => void;
+  setAddressConfirmed: (confirmed: boolean) => void;
 }
 
 const FlowContext = createContext<FlowContextValue | null>(null);
@@ -60,8 +63,13 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
     ...state,
     setKolRef: (kolRef) => setState((s) => ({ ...s, kolRef })),
     setMockIdentity: (mockIdentity) => setState((s) => ({ ...s, mockIdentity })),
-    setDraftAmount: (draftAmount) => setState((s) => ({ ...s, draftAmount })),
+    // Changing the amount re-requires address confirmation — don't let a
+    // confirmation from a previous deposit amount silently carry over.
+    setDraftAmount: (draftAmount) =>
+      setState((s) => ({ ...s, draftAmount, addressConfirmed: false })),
     setApprovalMode: (approvalMode) => setState((s) => ({ ...s, approvalMode })),
+    setAddressConfirmed: (addressConfirmed) =>
+      setState((s) => ({ ...s, addressConfirmed })),
   };
 
   return <FlowContext.Provider value={value}>{children}</FlowContext.Provider>;

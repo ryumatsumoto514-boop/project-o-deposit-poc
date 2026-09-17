@@ -13,15 +13,20 @@ async function main() {
   if (!l1Receipt) throw new Error('L1 tx not found/confirmed yet');
 
   const l1TxReceipt = new ParentTransactionReceipt(l1Receipt);
-  console.log('Checking L2 status for L1 tx', l1TxHash, '...');
-  const result = await l1TxReceipt.waitForChildTransactionReceipt(l2Provider, undefined, 1000 * 60 * 8);
-  console.log('Complete:', result.complete);
-  if (result.complete) {
-    console.log('L2 tx hash:', result.childTxReceipt.transactionHash);
-    console.log('Arbiscan Sepolia:', `https://sepolia.arbiscan.io/tx/${result.childTxReceipt.transactionHash}`);
-  } else {
-    console.log('Not complete yet. Message status:', result.message ? await result.message.status() : 'n/a');
+  console.log('Fetching parent->child messages for', l1TxHash, '...');
+  const messages = await l1TxReceipt.getParentToChildMessages(l2Provider);
+  console.log('Found', messages.length, 'message(s)');
+  if (messages.length === 0) {
+    console.log('No messages found yet, try again shortly.');
+    return;
   }
+  const message = messages[0];
+  console.log('Waiting for status (this can take several minutes)...');
+  const status = await message.waitForStatus();
+  console.log('Status:', status.status, '(2 = FUNDS_DEPOSITED_ON_CHILD success for ETH deposits)');
+
+  const l2Balance = await l2Provider.getBalance(l1Receipt.from);
+  console.log('Relayer L2 (Arbitrum Sepolia) balance now:', ethers.utils.formatEther(l2Balance), 'ETH');
 }
 
 main().catch((err) => {

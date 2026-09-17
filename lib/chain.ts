@@ -3,11 +3,18 @@ import { createPublicClient, http } from "viem";
 
 export const CHAIN = arbitrumSepolia; // chainId 421614
 
-// Circle's official testnet USDC on Arbitrum Sepolia. Verified live on-chain
-// (name/symbol/decimals read via RPC) before wiring this in.
-// Faucet: https://faucet.circle.com (select "Arbitrum Sepolia")
+// Official Circle testnet USDC exists at this address on Arbitrum Sepolia,
+// but faucet.circle.com's public drip UI returned 404 for the unauthenticated
+// endpoint overnight (it now requires a Circle API key we don't have), and
+// neither the relayer nor the test wallet had any pre-existing testnet USDC
+// balance to test with. So this PoC uses a self-deployed MockUSDC instead —
+// identical approve()/transferFrom()/balanceOf() semantics, 6 decimals,
+// deployed live to Arbitrum Sepolia by the relayer wallet. See
+// testnet-evidence.md for the deploy tx + the real approve()+transferFrom()
+// proof transactions. To switch back to real Circle USDC once a faucet key
+// is available, just change this constant.
 export const USDC_ADDRESS: `0x${string}` =
-  "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+  "0x950A2C07CD9d6489691625272a8f9f4df4D0342C"; // MockUSDC (PoC testnet only)
 
 export const USDC_DECIMALS = 6;
 

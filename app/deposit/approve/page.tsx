@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useSwitchChain } from "wagmi";
 import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
 import { parseUnits, maxUint256, formatEther, parseEther } from "viem";
 import { useFlow } from "../../flow-context";
@@ -28,26 +28,44 @@ type Step =
 
 export default function DepositApprovePage() {
   const router = useRouter();
-  const { mockIdentity, draftAmount, kolRef, approvalMode, setApprovalMode } = useFlow();
-  const { address } = useAccount();
+  const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode } =
+    useFlow();
+  const { address, chainId } = useAccount();
   const { data: ethBalance } = useBalance({ address, chainId: CHAIN.id });
+  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
 
   const [step, setStep] = useState<Step>("form");
   const [errorMessage, setErrorMessage] = useState<{ title: string; detail: string } | null>(null);
   const [blockedDeposit, setBlockedDeposit] = useState<DepositRecord | null>(null);
+  const [orphanedDepositId, setOrphanedDepositId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!mockIdentity || !draftAmount || !address) router.replace("/deposit");
-  }, [mockIdentity, draftAmount, address, router]);
+    if (!mockIdentity || !draftAmount || !address) {
+      router.replace("/deposit");
+    } else if (!addressConfirmed) {
+      router.replace("/deposit/confirm");
+    }
+  }, [mockIdentity, draftAmount, address, addressConfirmed, router]);
 
-  if (!mockIdentity || !draftAmount || !address) return null;
+  if (!mockIdentity || !draftAmount || !address || !addressConfirmed) return null;
 
   const lowGas = ethBalance !== undefined && ethBalance.value < MIN_GAS_WEI;
+  const wrongNetwork = chainId !== undefined && chainId !== CHAIN.id;
 
   async function handleApproveAndDeposit() {
     if (!address) return;
+    if (wrongNetwork) {
+      setErrorMessage({
+        title: "Your wallet is on the wrong network",
+        detail: "Switch to Arbitrum Sepolia before continuing — see the banner above.",
+      });
+      setStep("error");
+      return;
+    }
     setErrorMessage(null);
+    setOrphanedDepositId(null);
     setStep("checking");
+    let createdDepositId: string | null = null;
 
     try {
       const checkRes = await fetch(
@@ -92,6 +110,7 @@ export default function DepositApprovePage() {
       }
       if (!createRes.ok) throw new Error(createBody.error ?? "CREATE_FAILED");
       const deposit: DepositRecord = createBody.deposit;
+      createdDepositId = deposit.id;
 
       setStep("confirming-approval");
       const receipt = await waitForTransactionReceipt(wagmiConfig, {
@@ -137,6 +156,7 @@ export default function DepositApprovePage() {
       } else {
         setErrorMessage(FAILURE_COPY.UNKNOWN);
       }
+      if (createdDepositId) setOrphanedDepositId(createdDepositId);
       setStep("error");
     }
   }
@@ -175,6 +195,23 @@ export default function DepositApprovePage() {
       <div className="rounded-md border border-neutral-200 p-3 text-sm">
         Depositing <strong>{draftAmount} USDC</strong> on Arbitrum Sepolia.
       </div>
+
+      {wrongNetwork && (
+        <div className="flex flex-col gap-2 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
+          <p>
+            <strong>Your wallet is connected to a different network.</strong>{" "}
+            This deposit only works on Arbitrum Sepolia — switch networks
+            before continuing, or the signature request will fail.
+          </p>
+          <button
+            onClick={() => switchChain({ chainId: CHAIN.id })}
+            disabled={isSwitchingChain}
+            className="w-fit rounded-md bg-red-700 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+          >
+            {isSwitchingChain ? "Switching…" : "Switch to Arbitrum Sepolia"}
+          </button>
+        </div>
+      )}
 
       {lowGas && (
         <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
@@ -218,12 +255,25 @@ export default function DepositApprovePage() {
       {errorMessage && (
         <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
           <strong>{errorMessage.title}.</strong> {errorMessage.detail}
+          {orphanedDepositId && (
+            <>
+              {" "}
+              A deposit record was already created before this failed —{" "}
+              <a
+                href={`/deposit/status/${orphanedDepositId}`}
+                className="underline"
+              >
+                check its status
+              </a>
+              .
+            </>
+          )}
         </div>
       )}
 
       <button
         onClick={handleApproveAndDeposit}
-        disabled={step !== "form" && step !== "error"}
+        disabled={(step !== "form" && step !== "error") || wrongNetwork}
         className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {step === "form" || step === "error"

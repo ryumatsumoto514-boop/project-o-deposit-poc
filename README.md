@@ -11,29 +11,34 @@ See `SPEC.md` for the full assignment brief.
 
 ## Live deployment
 
-Not yet deployed — this is still in local development. Will be deployed to
-Vercel and this section updated with the URL before final submission.
+See `OVERNIGHT_LOG.md` for the deployment attempt status — Vercel deploy
+requires a `VERCEL_TOKEN` that may or may not have been available overnight;
+check there for the final URL or the documented blocker.
 
 ## What's real vs. mocked (read this first)
 
 | Piece | Status |
 |---|---|
-| Wallet connection (MetaMask via wagmi/viem) | **Real** |
+| Wallet connection (MetaMask via wagmi/viem) | **Real** (SDK-wired; not manually click-tested overnight — no human available, see limitations) |
 | Arbitrum Sepolia network (chain id 421614) | **Real** testnet |
-| USDC contract (`0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d`) | **Real**, Circle's official testnet USDC — verified live on-chain (name/symbol/decimals read via RPC) before use |
-| `approve()` transaction, exact amount (or unlimited, opt-in) | **Real** signed transaction from the user's own wallet |
-| `transferFrom()` pulling the approved USDC to the deposit address | **Real** transaction, signed by a testnet-only relayer wallet (see below) |
-| On-chain confirmation check (`CONFIRMED_ONCHAIN`) | **Real** — the engine independently reads the transaction receipt via RPC, it does not trust the client |
+| USDC contract (`0x950A2C07CD9d6489691625272a8f9f4df4D0342C`) | **A self-deployed mock ERC-20 ("MockUSDC"), NOT Circle's official testnet USDC.** Circle's real testnet USDC exists at `0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d`, but its public faucet (`faucet.circle.com`) now requires an authenticated Circle API key we don't have, and neither wallet had a pre-existing balance. MockUSDC has identical `approve()`/`transferFrom()`/`balanceOf()` semantics (6 decimals) and was deployed live to Arbitrum Sepolia — see `testnet-evidence.md` for the deploy tx. Swapping back to real Circle USDC is a one-line change in `lib/chain.ts`. |
+| `approve()` transaction, exact amount (or unlimited, opt-in) | **Real**, signed and confirmed on Arbitrum Sepolia — see `testnet-evidence.md` for tx hashes (both a scripted proof and one triggered through the app's own live API) |
+| `transferFrom()` pulling the approved USDC to the deposit address | **Real** transaction, signed by a testnet-only relayer wallet, confirmed on-chain — see `testnet-evidence.md` |
+| On-chain confirmation check (`CONFIRMED_ONCHAIN`) | **Real** — the engine independently reads the transaction receipt via RPC, it does not trust the client. Verified live: see "state machine exercised live" in `testnet-evidence.md`. |
+| Duplicate-deposit blocking | **Real and verified working** — tested against the live API, returns HTTP 409 with the existing in-flight deposit. See `testnet-evidence.md` §5. |
 | Login (email / Google) | **Mocked** — no real Privy/OAuth. Clicking either button just sets a fake identity string. There is no real authentication in this PoC. |
 | Hyperliquid balance / "collateral credited" check | **Mocked** — we do not have Hyperliquid testnet access. A timer (15–30s after on-chain confirmation) simulates the balance becoming available. This is labeled in the UI on every status screen. |
 | "Trading account" / destination account shown to the user | **Mocked** — deterministically derived from the wallet address, cosmetic only, not a real Hyperliquid account |
 | Data store | **Mocked/PoC-scope** — an in-memory `Map`, backed by a local JSON file (`.data/deposits.json`) so it survives dev-server reloads. Not a real database. Wiped on redeploy. |
 
 **The one thing that must be real and is:** the approve() + transferFrom()
-pair moving actual testnet USDC from the user's wallet to a designated
-deposit address on Arbitrum Sepolia. Everything about "is it now tradable
-on Hyperliquid" downstream of that is explicitly mocked, because Hyperliquid
-testnet access isn't available to us — see SPEC.md.
+pair moving actual testnet ERC-20 tokens (a self-deployed mock USDC, see
+above) from a wallet to a designated deposit address on Arbitrum Sepolia,
+with the reconciliation engine's state machine independently verifying it
+via RPC — not the client's word for it. Full details and every tx hash in
+`testnet-evidence.md`. Everything about "is it now tradable on Hyperliquid"
+downstream of on-chain confirmation is explicitly mocked, because
+Hyperliquid testnet access isn't available to us — see SPEC.md.
 
 ## The relayer wallet (why it exists)
 
@@ -81,8 +86,12 @@ Open http://localhost:3000.
    Sepolia ETH.
 2. Get a MetaMask (or other injected-wallet) account with:
    - A small amount of Arbitrum Sepolia ETH (gas for the `approve()` tx).
-   - Some testnet USDC on Arbitrum Sepolia (get it from
-     [Circle's faucet](https://faucet.circle.com), select Arbitrum Sepolia).
+   - Some MockUSDC on Arbitrum Sepolia — since Circle's official faucet
+     requires an API key we don't have (see the table above), mint yourself
+     some by calling `transfer()` from the relayer address (which holds the
+     initial MockUSDC supply) — see `scripts/setup-test-user.js` for the
+     pattern, or use any block explorer's "Write Contract" tab against
+     `0x950A2C07CD9d6489691625272a8f9f4df4D0342C`.
 3. Add Arbitrum Sepolia to MetaMask if it isn't already there (chain id
    `421614`).
 4. Open the app, click through: landing → sign in (mock) → connect wallet →
@@ -94,9 +103,15 @@ Open http://localhost:3000.
 6. Once confirmed on-chain, wait ~15–30s for the (mocked) Hyperliquid check
    to agree — the deposit reaches `CREDITED`.
 
-**Testnet transaction:** _pending a real run — will be filled in with a
-tx hash + Arbiscan Sepolia link once step 6 above has been performed with
-a funded wallet._
+**Testnet transactions:** real — see `testnet-evidence.md` for every tx
+hash, block number, and before/after balance state. No human clicked
+through the MetaMask popup overnight (nobody was available), so the proof
+was run two ways instead: (a) a standalone script signing both
+`approve()`/`transferFrom()` directly with test private keys, and (b) the
+same flow driven through the app's own live `/api/deposits*` routes
+(including the reconciliation engine's automatic retry/pull logic) against
+a running `npm run dev` instance — both produced real, confirmed Arbitrum
+Sepolia transactions.
 
 ## Architecture
 
@@ -140,6 +155,20 @@ mocked Hyperliquid balance agree.
   a real balance read. Clearly labeled everywhere it appears.
 - **No real authentication.** Login is a mocked identity string, not a
   real session or Privy integration.
+- **MockUSDC, not official Circle testnet USDC.** Circle's real testnet
+  USDC exists and is documented in `lib/chain.ts`, but its faucet requires
+  an API key unavailable in this build; a self-deployed, identical-semantics
+  mock ERC-20 was used instead. See `testnet-evidence.md` for full
+  reasoning and every transaction.
+- **No human click-through of the MetaMask signature popup overnight** —
+  this PoC was built and tested autonomously while the user slept, so the
+  real testnet transactions were produced by scripts holding test private
+  keys directly and by driving the app's own live API routes, not by a
+  person clicking "Approve" in an actual browser wallet extension. The
+  underlying transactions, contract calls, and reconciliation logic are
+  identical either way, but a manual UI click-through has not yet been
+  performed by a human and is recommended before relying on this as final
+  proof of the UI's wallet-signing path.
 - **Single relayer wallet, single-threaded.** No queueing, retry, or nonce
   management beyond what viem does by default. Would need real
   infrastructure (a proper relayer service, monitoring, alerting) before

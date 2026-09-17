@@ -11,7 +11,7 @@ import { DEPOSIT_ADDRESS } from "@/lib/chain";
 
 export default function DepositConfirmPage() {
   const router = useRouter();
-  const { mockIdentity, draftAmount } = useFlow();
+  const { mockIdentity, draftAmount, setAddressConfirmed } = useFlow();
   const { address } = useAccount();
   const [confirmed, setConfirmed] = useState(false);
 
@@ -61,7 +61,10 @@ export default function DepositConfirmPage() {
       </label>
 
       <button
-        onClick={() => router.push("/deposit/approve")}
+        onClick={() => {
+          setAddressConfirmed(true);
+          router.push("/deposit/approve");
+        }}
         disabled={!confirmed}
         className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
       >
