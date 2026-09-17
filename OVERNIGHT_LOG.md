@@ -833,3 +833,18 @@ cycle actually found a real, fixable gap (the stale deploy-status README
 section above).
 
 ### Deploy
+- Commit `831745c` pushed to `origin main` (`056d86c..831745c main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-fetched **https://projecto-blond.vercel.app** live afterward (not just
+  localhost): `/`, `/login`, `/deposit`, `/deposit/confirm`,
+  `/deposit/approve`, `/?ref=kol_alex` all HTTP 200. Fetched the live
+  compiled CSS bundle directly and confirmed `--font-display:
+  "__Space_Grotesk_4f4604","__Space_Grotesk_Fallback_4f4604"` is set and
+  `.h1`/`.h1-hero` actually reference `var(--font-display)` in the bytes
+  served from production, not just in source. **This is what Ryu will see
+  if he reloads the same URL** — headlines and the brand wordmark now use a
+  distinct display typeface instead of the same Geist sans used everywhere
+  else, and the README no longer tells a reader to go check the log for an
+  unresolved deploy blocker.
+Claude Code tick finished, exit code 0
