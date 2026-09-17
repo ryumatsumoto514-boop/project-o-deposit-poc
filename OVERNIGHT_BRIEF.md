@@ -18,14 +18,24 @@ in the morning.
   on-chain -> bridging -> credited/tradable) instead of a silent spinner,
   plus 5 UX layers (exact-amount approval, plain-language failure states,
   full address confirmation, wallet-role labeling, KOL attribution banner).
+- CREDENTIALS: run `source /opt/data/projecto/.overnight-env.sh` at the start
+  of EVERY cycle (every fresh shell needs this — it sets GH_TOKEN,
+  VERCEL_TOKEN, and PATH). GitHub CLI (`gh`) is ALSO persistently
+  authenticated via /opt/data/home/.config/gh/hosts.yml (survives fresh
+  shells without sourcing anything) — verify with `gh auth status`.
+  Git push should work directly: `cd /opt/data/projecto && git push -u
+  origin main` (git credential helper is configured globally, stored at
+  /opt/data/home/.git-credentials). If push fails with "no remote", run:
+  `git remote add origin https://github.com/ryumatsumoto514-boop/project-o-deposit-poc.git`
+  first, then push.
 - GitHub repo: https://github.com/ryumatsumoto514-boop/project-o-deposit-poc
-  (gh CLI is authenticated as GH_TOKEN env var if needed, or already logged
-  in via `gh auth status` — check first)
-- Vercel: `vercel` CLI is installed at /opt/data/npm-global/bin/vercel,
-  authenticate with VERCEL_TOKEN if needed (ask nothing — if you don't have
-  the token cached, check /opt/data/projecto/.env.local or prior shell
-  history; if truly unavailable, still finish everything else and leave
-  deployment as the last documented open step)
+- Vercel: `vercel` CLI is installed at /opt/data/npm-global/bin/vercel.
+  After sourcing .overnight-env.sh, deploy with:
+  `vercel --token "$VERCEL_TOKEN" --yes --prod` from the project directory
+  (first run will ask project setup questions — pass `--yes` to auto-accept
+  defaults, and if it still prompts, answer non-interactively via
+  `printf 'y\\n'` piped in, or check `vercel --token "$VERCEL_TOKEN" ls`
+  first to see if a project already exists from a prior cycle).
 - Claude Code CLI is installed and logged in (OAuth via Claude Pro, already
   authenticated) — use it via `claude -p "task" --max-turns N` (print mode,
   non-interactive, preferred) for actual code-writing to conserve resources.
