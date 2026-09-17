@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { KolBanner } from "../../../components/KolBanner";
 import { WalletRoles } from "../../../components/WalletRoles";
-import { Brand } from "../../../components/Brand";
 import { AlertIcon, CheckIcon, SpinnerIcon } from "../../../components/icons";
 import type { DepositRecord, DepositStatus } from "@/lib/types";
 import { ARBISCAN_SEPOLIA_TX_URL } from "@/lib/chain";
@@ -92,7 +91,7 @@ function Stepper({ status }: { status: DepositStatus }) {
                   done
                     ? "bg-emerald-500 text-white shadow-[0_0_0_3px_rgba(16,185,129,0.15)]"
                     : active
-                    ? "pulse-ring bg-gradient-to-br from-indigo-400 to-violet-600 text-white"
+                    ? "pulse-ring bg-blue-500 text-white"
                     : "border border-white/15 bg-white/[0.03] text-slate-600"
                 }`}
               >
@@ -115,7 +114,7 @@ function Stepper({ status }: { status: DepositStatus }) {
             <div className="pb-6 pt-0.5">
               <p
                 className={`text-sm font-medium transition-colors duration-300 ${
-                  active ? "text-indigo-300" : done ? "text-emerald-300" : "text-slate-600"
+                  active ? "text-blue-300" : done ? "text-emerald-300" : "text-slate-600"
                 }`}
               >
                 {STATE_COPY[s].label}
@@ -175,7 +174,6 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   if (notFound) {
     return (
       <main className="page-shell">
-        <Brand />
         <h1 className="h1">Deposit not found</h1>
         <p className="body-text">
           No deposit with id <code className="text-slate-300">{params.id}</code> exists. It may have
@@ -191,7 +189,6 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   if (!deposit) {
     return (
       <main className="page-shell">
-        <Brand />
         <p className="flex items-center gap-2 text-sm text-slate-500">
           <SpinnerIcon className="h-4 w-4" /> Loading deposit status…
         </p>
@@ -203,8 +200,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (deposit.status === "CREDITED") {
     return (
-      <main className="page-shell min-h-screen justify-center">
-        <Brand />
+      <main className="page-shell min-h-[calc(100dvh-56px)] justify-center">
         <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
             <CheckIcon className="h-8 w-8 text-white" />
@@ -256,7 +252,6 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   return (
     <main className="page-shell">
-      <Brand />
       <KolBanner />
       <h1 className="h1">Deposit status</h1>
 

@@ -6,7 +6,6 @@ import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { WalletRoles } from "../components/WalletRoles";
-import { Brand } from "../components/Brand";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 
 const MAX_DEMO_AMOUNT = 1000;
@@ -43,7 +42,6 @@ export default function DepositAmountPage() {
 
   return (
     <main className="page-shell">
-      <Brand />
       <KolBanner />
       <h1 className="h1">Deposit amount</h1>
 

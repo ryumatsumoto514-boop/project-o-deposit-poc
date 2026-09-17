@@ -6,7 +6,6 @@ import { useAccount } from "wagmi";
 import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
-import { Brand } from "../../components/Brand";
 import { AlertIcon } from "../../components/icons";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { DEPOSIT_ADDRESS } from "@/lib/chain";
@@ -25,7 +24,6 @@ export default function DepositConfirmPage() {
 
   return (
     <main className="page-shell">
-      <Brand />
       <KolBanner />
       <h1 className="h1">Confirm destination address</h1>
 
@@ -58,7 +56,7 @@ export default function DepositConfirmPage() {
           type="checkbox"
           checked={confirmed}
           onChange={(e) => setConfirmed(e.target.checked)}
-          className="mt-0.5 h-4 w-4 accent-indigo-500"
+          className="mt-0.5 h-4 w-4 accent-blue-500"
         />
         I&apos;ve checked the full address above and it matches what I
         expect.

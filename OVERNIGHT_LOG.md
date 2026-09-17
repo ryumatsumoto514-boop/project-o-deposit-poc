@@ -437,3 +437,97 @@ looks off, it's most likely to be in an interaction I couldn't observe
 (hover/active states, animation timing feel) rather than layout or color,
 since those were checked mechanically against the actual markup and
 compiled output.
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T17:13:11Z
+
+## Cycle: visual-direction pivot away from the "AI-generated" gradient look (responding to Ryu's second round of direct feedback)
+
+**Trigger:** Ryu looked at the live site again after the dark-fintech redesign
+from the prior cycle and said it *still* reads as a bare-minimum
+AI-generated scaffold, not a polished product. I read the prior cycle's own
+log entry in full — it was genuinely substantial work (dark theme, real
+component system, severity-coded exceptions, dedicated success screen) — so
+the gap isn't effort, it's a specific aesthetic problem I hadn't named yet.
+
+### Diagnosis
+The prior dark theme's signature look — an indigo→violet gradient on every
+button/badge/active-state, glassy `backdrop-blur` cards, and three soft
+radial-gradient "hero glow" blobs behind the page — is *itself* one of the
+most recognizable default outputs of AI code generators and shadcn/Vercel
+starter templates right now. Getting the mechanics right (consistent
+component classes, accessible contrast, working animations) wasn't enough
+while the specific color/material formula stayed the exact one that reads as
+"generated," regardless of how carefully it was applied. So this cycle is a
+material change, not a tuning pass.
+
+### What changed
+- **Single flat accent color, no gradients on interactive elements.**
+  Replaced every `from-indigo-* to-violet-*` gradient (buttons, the stepper's
+  active-step circle, the logo badge, focus rings, links, checkbox/radio
+  accents) with a flat `blue-500`/`blue-400` — one deliberate, non-cliché
+  accent color, still clearly distinct from the emerald/amber/rose state
+  colors so severity coding stays unambiguous. Verified with a repo-wide
+  grep afterward: zero `indigo`/`violet` matches left in `app/`.
+- **Dropped glassmorphism.** `.card`/`.card-flush` went from
+  `bg-white/[0.035]` + `backdrop-blur-sm` + multi-layer inset shadow to a
+  flat opaque `bg-[#111318]` surface with a single subtle border + shadow —
+  reads as a considered data-product surface, not a marketing-site glass
+  panel. Corners tightened from `rounded-2xl` to `rounded-xl`/`rounded-lg`
+  throughout (cards, buttons, inputs, banners) for a sharper, more
+  "product" (less "hero section") feel.
+- **Replaced the three-blob gradient-glow background** with a fine
+  technical dot-grid texture (22px repeating radial-gradient dots at low
+  opacity) plus one restrained blue glow at the very top of the page —
+  evokes a data/fintech dashboard rather than an AI landing-page hero.
+- **Added a persistent sticky app header** (`app/components/AppHeader.tsx`):
+  brand mark + an always-visible "Arbitrum Sepolia" network pill + the
+  connected wallet address (truncated) once a wallet is connected, present
+  on every route via `app/layout.tsx`. This was a structural gap, not just a
+  color one — every screen previously was "one floating card in a void"
+  with its own repeated `<Brand />` call; now the app has a real persistent
+  shell, and each page's `<Brand />` call was removed since the header
+  covers it (mechanical edit across all 6 page files).
+  `min-h-screen` on the landing/success full-bleed screens was switched to
+  `min-h-[calc(100dvh-56px)]` so they don't add a spurious ~56px of scroll
+  now that the sticky header consumes some viewport height.
+- Typography: `.h1-hero` bumped to 34px/40px with tighter line-height for
+  more hierarchy contrast against body text; `body { font-variant-numeric:
+  tabular-nums }` added globally so USDC amounts and addresses align on a
+  grid instead of using proportional digit widths (a real fintech-UI
+  numeric-typography detail, not cosmetic).
+
+### Verification (no browser available — build/HTTP/markup checks)
+- `npm run build` passes clean — identical pre-existing optional-peer-dep
+  warnings only (WalletConnect/pino/async-storage), no new errors.
+- Ran `npm run dev`, curled `/`, `/login`, `/deposit`, `/deposit/confirm`,
+  `/deposit/approve`, `/?ref=kol_alex` — all HTTP 200.
+- Grepped rendered landing-page HTML for `app-header`, `h1-hero`,
+  `btn-primary`, `pill`, `bg-blue-500` — all present. Grepped the same HTML
+  for `indigo`/`violet` — zero matches, confirming the new markup (not just
+  source) has no leftover gradient classes.
+- Exercised the actual API: created a real deposit via `POST
+  /api/deposits`, confirmed `/deposit/status/[id]` still returns 200 for it
+  — the design pass didn't touch any API route or state-machine logic, and
+  this confirms the plumbing between them is intact.
+- Found and fixed a real (unrelated to styling) security/ops issue while in
+  here: `.gitignore` had `/opt/data/projecto/.overnight-env.sh` as an
+  absolute-path entry, which is not a valid gitignore pattern relative to
+  the repo root — it silently matched nothing, so the file holding the live
+  `VERCEL_TOKEN` and `GH_TOKEN` was NOT actually protected from `git add
+  -A`. Fixed to a proper relative-path entry (`.overnight-env.sh`) before
+  staging anything this cycle. Worth flagging explicitly: no prior cycle
+  had committed it (checked `git log --all -- .overnight-env.sh`, no
+  hits), so no credential was ever actually pushed — this was a
+  close-the-gap fix, not a cleanup of an actual leak.
+
+### Honest gap check
+This is a real material-direction change (flat single-accent color, no
+glassmorphism, persistent app shell, technical texture instead of gradient
+blobs), aimed squarely at the specific "looks AI-generated" signal rather
+than general polish, which the two prior cycles already covered well
+(spacing, severity coding, animations, mobile safety). If this still doesn't
+land for Ryu, the next lever to pull is probably custom illustration/brand
+personality (a distinctive wordmark treatment, a non-default display font
+via `next/font/google`) rather than more color/material tuning — color and
+material have now been iterated on twice.

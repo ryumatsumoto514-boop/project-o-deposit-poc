@@ -8,7 +8,6 @@ import { parseUnits, maxUint256, formatEther, parseEther } from "viem";
 import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
-import { Brand } from "../../components/Brand";
 import { AlertIcon, SpinnerIcon } from "../../components/icons";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, USDC_ADDRESS, USDC_DECIMALS } from "@/lib/chain";
@@ -168,7 +167,6 @@ export default function DepositApprovePage() {
   if (step === "blocked" && blockedDeposit) {
     return (
       <main className="page-shell">
-        <Brand />
         <KolBanner />
         <h1 className="h1">Deposit already in progress</h1>
         <div className="banner-amber flex items-start gap-2.5">
@@ -191,7 +189,6 @@ export default function DepositApprovePage() {
 
   return (
     <main className="page-shell">
-      <Brand />
       <KolBanner />
       <h1 className="h1">Approve + deposit</h1>
 
@@ -238,12 +235,12 @@ export default function DepositApprovePage() {
 
       <fieldset className="card flex flex-col gap-3">
         <legend className="label-caps px-1">Approval scope</legend>
-        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-indigo-400/40 has-[:checked]:bg-indigo-500/[0.06]">
+        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-blue-400/40 has-[:checked]:bg-blue-500/[0.06]">
           <input
             type="radio"
             checked={approvalMode === "exact"}
             onChange={() => setApprovalMode("exact")}
-            className="mt-1 h-4 w-4 accent-indigo-500"
+            className="mt-1 h-4 w-4 accent-blue-500"
           />
           <span>
             <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app

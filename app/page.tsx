@@ -5,7 +5,6 @@ import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useFlow } from "./flow-context";
 import { KolBanner } from "./components/KolBanner";
-import { Brand } from "./components/Brand";
 
 function CaptureKolRef() {
   const searchParams = useSearchParams();
@@ -27,11 +26,10 @@ const FEATURES = [
 
 export default function Home() {
   return (
-    <main className="page-shell min-h-screen justify-center">
+    <main className="page-shell min-h-[calc(100dvh-56px)] justify-center">
       <Suspense fallback={null}>
         <CaptureKolRef />
       </Suspense>
-      <Brand />
       <KolBanner />
 
       <div className="fade-up flex flex-col gap-4">

@@ -5,7 +5,6 @@ import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { MockedBadge } from "../components/KolBanner";
-import { Brand } from "../components/Brand";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +19,6 @@ export default function LoginPage() {
 
   return (
     <main className="page-shell">
-      <Brand />
       <KolBanner />
       <h1 className="h1">Sign in</h1>
       <MockedBadge>

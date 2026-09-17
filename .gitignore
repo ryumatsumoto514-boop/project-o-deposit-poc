@@ -37,4 +37,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-/opt/data/projecto/.overnight-env.sh
+# overnight automation (contains live tokens — never commit)
+.overnight-env.sh
+.overnight-claude-stdout.log
