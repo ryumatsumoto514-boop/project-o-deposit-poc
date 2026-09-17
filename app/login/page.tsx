@@ -5,6 +5,7 @@ import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { MockedBadge } from "../components/KolBanner";
+import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -41,16 +42,20 @@ export default function LoginPage() {
       ) : (
         <div className="flex flex-col gap-3">
           <button
-            onClick={() => continueTo("demo@exchangeo.test")}
-            className="btn-secondary"
-          >
-            Continue with Email (mock) — demo@exchangeo.test
-          </button>
-          <button
             onClick={() => continueTo("google:demo.user")}
             className="btn-secondary"
           >
-            Continue with Google (mock)
+            <GoogleIcon className="h-[18px] w-[18px] shrink-0" />
+            Continue with Google
+            <span className="ml-auto text-xs font-normal text-slate-600">mock</span>
+          </button>
+          <button
+            onClick={() => continueTo("demo@exchangeo.test")}
+            className="btn-secondary"
+          >
+            <MailIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
+            Continue with Email
+            <span className="ml-auto text-xs font-normal text-slate-600">mock</span>
           </button>
           <div className="flex items-center gap-3 text-xs text-slate-600">
             <div className="h-px flex-1 bg-white/10" />
@@ -59,6 +64,7 @@ export default function LoginPage() {
           </div>
           {isConnected && address ? (
             <button onClick={() => continueTo(address)} className="btn-secondary min-w-0">
+              <WalletIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
               <span className="min-w-0 truncate">Continue with connected wallet — {address}</span>
             </button>
           ) : (
@@ -68,6 +74,7 @@ export default function LoginPage() {
                 onClick={() => connect({ connector })}
                 className="btn-secondary"
               >
+                <WalletIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
                 Sign in with {connector.name}
               </button>
             ))

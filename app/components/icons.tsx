@@ -31,6 +31,36 @@ export function AlertIcon({ className }: { className?: string }) {
   );
 }
 
+export function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" className={className} aria-hidden="true">
+      <path fill="#4285F4" d="M19.6 10.23c0-.68-.06-1.32-.17-1.95H10v3.69h5.38a4.6 4.6 0 01-1.99 3.02v2.5h3.22c1.89-1.74 2.99-4.3 2.99-7.26z" />
+      <path fill="#34A853" d="M10 20c2.7 0 4.96-.9 6.61-2.43l-3.22-2.5c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.76-5.59-4.12H1.08v2.59A10 10 0 0010 20z" />
+      <path fill="#FBBC05" d="M4.41 11.91A6.01 6.01 0 014.09 10c0-.66.11-1.31.32-1.91V5.5H1.08A10 10 0 000 10c0 1.61.39 3.14 1.08 4.5l3.33-2.59z" />
+      <path fill="#EA4335" d="M10 3.96c1.47 0 2.78.5 3.82 1.5l2.86-2.86C14.95.99 12.7 0 10 0 6.09 0 2.71 2.24 1.08 5.5l3.33 2.59C5.2 5.72 7.4 3.96 10 3.96z" />
+    </svg>
+  );
+}
+
+export function MailIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+      <rect x="2" y="4.5" width="16" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3 5.5l7 5.5 7-5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function WalletIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+      <path d="M2.5 6.5A2.5 2.5 0 015 4h10a1 1 0 011 1v1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <rect x="2.5" y="6.5" width="15" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="14" cy="11.5" r="1.25" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function ShieldIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden="true">

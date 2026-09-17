@@ -637,3 +637,98 @@ iterating blind.
   `/icon`/`/apple-icon` (verified in the live SSR payload) — the default
   Next.js favicon is gone from production. **This is what Ryu will see if he
   reloads the same URL and checks the browser tab icon.**
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T18:26:11Z
+
+## Cycle: targeted polish pass (native-control tells) after re-reading every screen fresh
+
+**Trigger:** the standing brief again flagged "UI/UX not good enough" as top
+priority. Before doing a fifth full color/material pivot, I re-read every
+single page and shared component in the current codebase from scratch
+(`page.tsx`, `login/page.tsx`, `deposit/page.tsx`, `deposit/confirm/page.tsx`,
+`deposit/approve/page.tsx`, `deposit/status/[id]/page.tsx`, `Brand.tsx`,
+`AppHeader.tsx`, `KolBanner.tsx`, `WalletRoles.tsx`, `icons.tsx`,
+`globals.css`) rather than trusting the prior cycles' own summaries of their
+work.
+
+### Honest assessment
+The four prior cycles' work holds up: a real dark-fintech component system
+(`.card`/`.btn-*`/`.banner-*`/`.pill`/`.input`), a flat single accent color
+with no gradient/glassmorphism cliché, a persistent sticky app header, a
+genuinely animated three-state stepper, a dedicated full-screen success
+state, severity-coded exception banners with concrete next-step copy, custom
+favicon/apple-icon, tabular-nums for numeric alignment, and consistent
+`rounded-xl`/`min-h-[46px]`/`max-w-md` tokens across every screen. I did not
+find a case for a fifth ground-up color/material pivot — there's no new
+concrete complaint to react to, and re-theming again without one risks
+thrashing rather than improving. Instead I looked specifically for the kind
+of small, concrete "didn't bother" tells a sharp reviewer notices even in an
+otherwise well-built system — leftover unstyled native browser chrome and
+bare/iconless controls — since those are real, fixable, and easy to miss
+precisely because the surrounding system is polished.
+
+### What I found and fixed (concrete, not vibes)
+1. **Unstyled native number-input spinner arrows** on the deposit amount
+   field (`app/deposit/page.tsx`) — Chrome/Safari render default up/down
+   spin buttons on `type="number"` inputs unless explicitly suppressed; left
+   alone, this is raw OS/browser-default UI sitting inside an otherwise
+   fully custom-styled input, one of the more obvious "didn't finish it"
+   signals in a fintech-style form. Fixed with
+   `[-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none
+   [&::-webkit-outer-spin-button]:appearance-none`, added `inputMode="decimal"`
+   for a better mobile numeric keyboard, and added a right-aligned "USDC"
+   suffix badge inside the input (the pattern real fintech amount fields use,
+   e.g. Stripe/Coinbase) instead of a bare unlabeled number field — `pr-16`
+   padding added so the suffix never overlaps typed digits.
+2. **Bare, iconless mock-login buttons** (`app/login/page.tsx`) — "Continue
+   with Email (mock)" / "Continue with Google (mock)" were plain text-only
+   secondary buttons, which reads as a placeholder rather than a considered
+   recreation of a real OAuth picker. Added three new inline SVG icons
+   (`GoogleIcon` — actual 4-color Google "G" mark, `MailIcon`, `WalletIcon`)
+   to `icons.tsx` and wired them into the Google/Email/wallet-connect
+   buttons on the login page, moved the "mock" qualifier to a small
+   `ml-auto` badge instead of cluttering the button label, and added the
+   wallet icon to the "connected wallet" and raw-connector buttons too for
+   consistency across all three sign-in options.
+3. Re-verified the exact-amount/unlimited approval radio cards, stepper,
+   and WalletRoles rows for any other native-control leakage — checkboxes
+   and radios use `accent-blue-500`/`accent-amber-500`, which is a real,
+   legitimate modern cross-browser theming approach many production fintech
+   apps use (not a tell on its own), so left those as-is rather than
+   over-engineering custom toggle components for marginal benefit.
+
+### Verification
+- `npm run build` passes clean — identical pre-existing optional-peer-dep
+  warnings only (WalletConnect/pino/tempo/async-storage), no new errors, no
+  new warnings introduced by this change.
+- Ran `npm run dev` on port 3011, curled `/login` and `/deposit` — both HTTP
+  200. Grepped the login page's rendered HTML for "Continue with Google" —
+  present. The deposit page's amount-input/USDC-suffix markup is inside a
+  client-side `isConnected` gate (same established pattern as every other
+  wallet-gated element in this app across all prior cycles), so it does not
+  appear in the unauthenticated SSR payload — expected, not a regression.
+- Read through the actual Tailwind arbitrary-variant syntax
+  (`[&::-webkit-inner-spin-button]:appearance-none`) against Tailwind's
+  documented arbitrary-variant support for pseudo-elements before using it,
+  since no browser is available here to visually confirm it takes effect.
+
+### Honest gap check — where this stands after 5 cycles of design work
+The design system itself (color, type, layout, animation, severity coding,
+mobile-safe sizing, persistent shell, dedicated success screen) has been
+substantial and consistent for two cycles now, and this cycle's fresh
+full-codebase re-read found no structural or consistency defect — only the
+two native-control/icon gaps above, which were real but narrow. If the next
+wake still carries the same undifferentiated "not good enough" feedback with
+no more specific pointer, further cycles should stop re-touching color/
+component polish (which has now been iterated on five times) and instead
+either (a) try one genuinely different structural idea not yet attempted —
+e.g. an illustrated/custom empty state or a distinct display typeface via
+`next/font/google` for the hero headline only, since the current Geist
+sans-everywhere approach is safe but not distinctive — or (b) flag plainly
+in this log that without a screenshot or a specific pointer to what's wrong,
+continued blind iteration has a shrinking chance of finding the actual gap,
+and the highest-value next step is a human looking at the live URL and
+naming one concrete thing.
+
+### Deploy

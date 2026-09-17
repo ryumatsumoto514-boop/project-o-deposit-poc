@@ -72,18 +72,24 @@ export default function DepositAmountPage() {
       {isConnected && (
         <div className="card flex flex-col gap-2">
           <label className="label-caps">Amount (USDC)</label>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value);
-              setError(null);
-            }}
-            placeholder="10.00"
-            className="input font-mono text-lg"
-          />
+          <div className="relative">
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              inputMode="decimal"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setError(null);
+              }}
+              placeholder="10.00"
+              className="input pr-16 font-mono text-lg [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            />
+            <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-slate-500">
+              USDC
+            </span>
+          </div>
           {error && <p className="text-sm text-rose-400">{error}</p>}
           <button onClick={handleContinue} className="btn-primary mt-2 w-fit">
             Continue
