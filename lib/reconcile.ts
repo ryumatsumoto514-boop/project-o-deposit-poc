@@ -1,5 +1,6 @@
 import { publicClient } from "./chain";
 import { isHyperliquidCredited } from "./hyperliquidMock";
+import { attemptPull } from "./pull";
 import { depositStore } from "./store";
 import type { DepositRecord } from "./types";
 
@@ -11,8 +12,20 @@ const AMBIGUOUS_THRESHOLD_MS = 60 * 1000; // one side settled, other lagging thi
 // agree. Called by POST /api/deposits/[id]/reconcile (polled by the client
 // status tracker, or a cron in a real deployment).
 export async function reconcileDeposit(id: string): Promise<DepositRecord | undefined> {
-  const deposit = depositStore.get(id);
+  let deposit = depositStore.get(id);
   if (!deposit || deposit.status === "CREDITED") return deposit;
+
+  // Self-heal: if the deposit-moving transferFrom() hasn't gone out yet —
+  // including a prior attempt that failed because the relayer was out of
+  // gas — retry it on every poll instead of leaving it stuck until someone
+  // manually retries. Safe to call repeatedly (see lib/pull.ts).
+  if (!deposit.txHash && deposit.approveTxHash) {
+    const outcome = await attemptPull(deposit);
+    deposit = outcome.deposit ?? deposit;
+    if (!deposit.txHash) {
+      return deposit; // still not pulled — nothing else to reconcile this tick
+    }
+  }
 
   const now = Date.now();
   let onchainConfirmed = deposit.reconciliation.onchainConfirmed;
@@ -64,6 +77,9 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
 
   return depositStore.update(id, {
     status,
+    // Clear any stale exception copy once we're genuinely progressing again
+    // — onchainConfirmed only gets here once the receipt is real.
+    failureReason: onchainConfirmed ? null : deposit.failureReason,
     reconciliation: {
       onchainConfirmed,
       onchainConfirmedAt,
