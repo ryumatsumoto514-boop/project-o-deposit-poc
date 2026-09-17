@@ -297,3 +297,20 @@ excellent, for a future cycle or the user's own pass:
   the JSX/Tailwind classes plus HTTP/HTML sanity checks, per the brief's
   own instruction. A human eyeballing it at 375px width before final
   submission is still the one thing I can't fully substitute for.
+
+### Deploy confirmation
+- Commit `8828473` pushed to `origin main` — confirmed on GitHub
+  (`d9aa988..8828473 main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` succeeded
+  (`deployment.readyState: "READY"`, `target: "production"`).
+- Re-fetched **https://projecto-blond.vercel.app** live afterward and
+  confirmed the new design is actually served there (not just committed):
+  `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve` all
+  return HTTP 200, and the landing page HTML contains the new
+  `page-shell`/`card`/`btn-primary` component classes. The KOL banner and
+  its shield icon correctly do NOT appear in the raw SSR HTML even with
+  `?ref=kol_alex` — that's expected/unchanged behavior, not a regression:
+  `kolRef` is client-side flow-context state set by a `useEffect` after
+  hydration, not something Next.js SSRs on the first pass.
+- **Bottom line: this cycle's UI/UX changes are live on the URL the user
+  looked at**, not just sitting in the repo.
