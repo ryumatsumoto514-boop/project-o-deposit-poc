@@ -1,0 +1,171 @@
+# Exchange O — Deposit Reconciliation Engine (PoC)
+
+A proof of concept for a hiring assignment. Simulates the deposit leg of
+"Exchange O," a KOL-driven DEX where users deposit USDC on Arbitrum and
+trade it as collateral on Hyperliquid. The feature under test: a **Deposit
+Reconciliation Engine** — a real backend state machine that tracks a
+deposit from signature to tradable collateral, instead of a spinner that
+says "pending" until a receipt shows up.
+
+See `SPEC.md` for the full assignment brief.
+
+## Live deployment
+
+Not yet deployed — this is still in local development. Will be deployed to
+Vercel and this section updated with the URL before final submission.
+
+## What's real vs. mocked (read this first)
+
+| Piece | Status |
+|---|---|
+| Wallet connection (MetaMask via wagmi/viem) | **Real** |
+| Arbitrum Sepolia network (chain id 421614) | **Real** testnet |
+| USDC contract (`0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d`) | **Real**, Circle's official testnet USDC — verified live on-chain (name/symbol/decimals read via RPC) before use |
+| `approve()` transaction, exact amount (or unlimited, opt-in) | **Real** signed transaction from the user's own wallet |
+| `transferFrom()` pulling the approved USDC to the deposit address | **Real** transaction, signed by a testnet-only relayer wallet (see below) |
+| On-chain confirmation check (`CONFIRMED_ONCHAIN`) | **Real** — the engine independently reads the transaction receipt via RPC, it does not trust the client |
+| Login (email / Google) | **Mocked** — no real Privy/OAuth. Clicking either button just sets a fake identity string. There is no real authentication in this PoC. |
+| Hyperliquid balance / "collateral credited" check | **Mocked** — we do not have Hyperliquid testnet access. A timer (15–30s after on-chain confirmation) simulates the balance becoming available. This is labeled in the UI on every status screen. |
+| "Trading account" / destination account shown to the user | **Mocked** — deterministically derived from the wallet address, cosmetic only, not a real Hyperliquid account |
+| Data store | **Mocked/PoC-scope** — an in-memory `Map`, backed by a local JSON file (`.data/deposits.json`) so it survives dev-server reloads. Not a real database. Wiped on redeploy. |
+
+**The one thing that must be real and is:** the approve() + transferFrom()
+pair moving actual testnet USDC from the user's wallet to a designated
+deposit address on Arbitrum Sepolia. Everything about "is it now tradable
+on Hyperliquid" downstream of that is explicitly mocked, because Hyperliquid
+testnet access isn't available to us — see SPEC.md.
+
+## The relayer wallet (why it exists)
+
+The spec's preferred pattern is `approve(exact amount)` + `transferFrom()`,
+where `transferFrom` "simulates the deposit contract call." Since we don't
+have a deployed deposit contract, a small testnet-only EOA (an ordinary
+wallet, not a smart contract) plays that role: the user approves it as a
+spender, then it calls `transferFrom(user, itself, amount)` to pull the
+funds — a real on-chain state change, using the real allowance the user
+just granted.
+
+This wallet:
+- Holds **no real value**, ever. Its private key lives in `.env.local`
+  (gitignored) and is never committed.
+- Needs a trivial amount of Arbitrum Sepolia ETH to pay gas for the
+  `transferFrom` calls it submits. It is currently **unfunded** — see
+  "Running the real on-chain flow" below.
+
+## Setup
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Generate a relayer keypair and fill in `.env.local`:
+
+```bash
+node -e "const{generatePrivateKey,privateKeyToAccount}=require('viem/accounts');const k=generatePrivateKey();console.log('ARBITRUM_RELAYER_PRIVATE_KEY='+k);console.log('NEXT_PUBLIC_DEPOSIT_ADDRESS='+privateKeyToAccount(k).address)"
+```
+
+Paste the two output lines into `.env.local`. Then send a small amount of
+Arbitrum Sepolia ETH (e.g. 0.01 ETH — gas only) to the printed address, via
+any Arbitrum Sepolia faucet or from your own wallet.
+
+```bash
+npm run dev
+```
+
+Open http://localhost:3000.
+
+## Running the real on-chain flow
+
+1. Fund the relayer address (see above) with a small amount of Arbitrum
+   Sepolia ETH.
+2. Get a MetaMask (or other injected-wallet) account with:
+   - A small amount of Arbitrum Sepolia ETH (gas for the `approve()` tx).
+   - Some testnet USDC on Arbitrum Sepolia (get it from
+     [Circle's faucet](https://faucet.circle.com), select Arbitrum Sepolia).
+3. Add Arbitrum Sepolia to MetaMask if it isn't already there (chain id
+   `421614`).
+4. Open the app, click through: landing → sign in (mock) → connect wallet →
+   enter an amount → confirm the destination address → choose an approval
+   scope → Approve & deposit.
+5. Approve the transaction in your wallet. The app will then submit the
+   `transferFrom()` via the relayer automatically and take you to the
+   status tracker, which polls the reconciliation engine every few seconds.
+6. Once confirmed on-chain, wait ~15–30s for the (mocked) Hyperliquid check
+   to agree — the deposit reaches `CREDITED`.
+
+**Testnet transaction:** _pending a real run — will be filled in with a
+tx hash + Arbiscan Sepolia link once step 6 above has been performed with
+a funded wallet._
+
+## Architecture
+
+- `/app` — Next.js App Router pages: landing (KOL link capture) → mock
+  login → deposit amount → address confirmation → approval → status
+  tracker, plus the API routes under `/app/api/deposits`.
+- `/lib` — the actual reconciliation engine:
+  - `types.ts` — `DepositRecord`, `DepositStatus` state enum.
+  - `stateMachine.ts` — allowed state transitions.
+  - `store.ts` — the PoC-scope deposit store.
+  - `chain.ts` — Arbitrum Sepolia config, USDC contract/ABI.
+  - `relayer.ts` — server-only; submits the real `transferFrom()`.
+  - `reconcile.ts` — the reconciliation loop: independently checks the
+    real on-chain receipt *and* the mock Hyperliquid balance, and only
+    marks `CREDITED` when both agree. Flags `AMBIGUOUS` instead of
+    silently retrying forever if they disagree past a threshold.
+  - `hyperliquidMock.ts` — the mocked Hyperliquid-side check.
+  - `idempotency.ts` — duplicate in-flight deposit detection.
+  - `failures.ts` — plain-language failure copy (assumes zero crypto
+    background).
+
+### State machine
+
+```
+SIGNED → CONFIRMED_ONCHAIN → BRIDGING → CREDITED
+              │                  │
+              └──────────────────┴──→ AMBIGUOUS (flagged, not auto-retried)
+Any step can also fall into STALLED_NO_GAS or STALLED_TIMEOUT.
+```
+
+`CREDITED` is the only true "done" state, and is only reached when the
+engine has independently verified both the real on-chain receipt and the
+mocked Hyperliquid balance agree.
+
+## Known limitations (PoC scope)
+
+- **No real database.** An in-memory store backed by a local JSON file.
+  Restarting on a different machine (e.g. a Vercel redeploy) loses all
+  deposit records. Fine for a demo, not for production.
+- **No real Hyperliquid integration.** The credited check is a timer, not
+  a real balance read. Clearly labeled everywhere it appears.
+- **No real authentication.** Login is a mocked identity string, not a
+  real session or Privy integration.
+- **Single relayer wallet, single-threaded.** No queueing, retry, or nonce
+  management beyond what viem does by default. Would need real
+  infrastructure (a proper relayer service, monitoring, alerting) before
+  this pattern could be trusted with real user funds.
+- **No rate limiting or auth on the API routes.** Anyone who can reach the
+  deployed app can call the deposit APIs directly.
+- **Demo deposit cap** of 1000 USDC in the UI, arbitrary, just to keep test
+  amounts sane.
+
+## Primary metric + guardrails
+
+**Primary metric:** percentage of deposits that reach `CREDITED` without
+the user re-depositing (i.e., without hitting the idempotency block) or
+contacting support. This directly targets the brief's "duplicate deposit"
+and "user panic" failure modes.
+
+**Guardrails:**
+- **Time-to-CREDITED (p50/p90).** If typical deposits start taking
+  meaningfully longer, that's a leading indicator of a real bridging
+  problem, not just UI perception — the engine should be flagging
+  `AMBIGUOUS`/`STALLED_TIMEOUT` cases, and those rates should be watched
+  directly.
+- **AMBIGUOUS rate.** This state exists specifically so we never silently
+  retry forever; if it starts trending up, on-chain and Hyperliquid-side
+  reconciliation is genuinely disagreeing more often and needs
+  investigation, not a longer timeout.
+- **Duplicate-deposit block rate.** Should stay low in steady state; a
+  spike means the status UI isn't reassuring users fast enough that their
+  first deposit is progressing.

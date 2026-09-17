@@ -1,0 +1,66 @@
+import { publicClient } from "./chain";
+import { isHyperliquidCredited } from "./hyperliquidMock";
+import { depositStore } from "./store";
+import type { DepositRecord } from "./types";
+
+const TIMEOUT_MS = 5 * 60 * 1000; // 5 min without progress => STALLED_TIMEOUT
+const AMBIGUOUS_THRESHOLD_MS = 60 * 1000; // one side settled, other lagging this long => AMBIGUOUS
+
+// Independently checks (a) real source-chain tx status via RPC and (b) the
+// mocked Hyperliquid-side balance, and only advances to CREDITED when both
+// agree. Called by POST /api/deposits/[id]/reconcile (polled by the client
+// status tracker, or a cron in a real deployment).
+export async function reconcileDeposit(id: string): Promise<DepositRecord | undefined> {
+  const deposit = depositStore.get(id);
+  if (!deposit || deposit.status === "CREDITED") return deposit;
+
+  const now = Date.now();
+  let onchainConfirmed = deposit.reconciliation.onchainConfirmed;
+
+  if (deposit.txHash && !onchainConfirmed) {
+    try {
+      const receipt = await publicClient.getTransactionReceipt({
+        hash: deposit.txHash,
+      });
+      onchainConfirmed = receipt.status === "success";
+    } catch {
+      // Not mined yet — leave as unconfirmed, timeout logic below handles staleness.
+    }
+  }
+
+  const hyperliquidCredited = onchainConfirmed
+    ? isHyperliquidCredited(deposit.updatedAt)
+    : false;
+
+  let status: DepositRecord["status"] = deposit.status;
+  let ambiguousSince = deposit.reconciliation.ambiguousSince;
+
+  if (onchainConfirmed && hyperliquidCredited) {
+    status = "CREDITED";
+    ambiguousSince = null;
+  } else if (onchainConfirmed && !hyperliquidCredited) {
+    status = status === "SIGNED" ? "CONFIRMED_ONCHAIN" : "BRIDGING";
+    const sinceConfirmed = now - new Date(deposit.updatedAt).getTime();
+    if (sinceConfirmed > AMBIGUOUS_THRESHOLD_MS && !ambiguousSince) {
+      // one side (chain) settled, other side (Hyperliquid) still lagging
+      // past the expected window — flag, don't silently keep polling forever.
+      status = "AMBIGUOUS";
+      ambiguousSince = new Date().toISOString();
+    }
+  } else {
+    const sinceCreated = now - new Date(deposit.createdAt).getTime();
+    if (sinceCreated > TIMEOUT_MS) {
+      status = "STALLED_TIMEOUT";
+    }
+  }
+
+  return depositStore.update(id, {
+    status,
+    reconciliation: {
+      onchainConfirmed,
+      hyperliquidCredited,
+      lastCheckedAt: new Date().toISOString(),
+      ambiguousSince,
+    },
+  });
+}
