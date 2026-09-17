@@ -74,15 +74,30 @@ const SLOW_POLL_STATUSES: DepositStatus[] = [
   "STALLED_NO_GAS",
 ];
 
-function Stepper({ status }: { status: DepositStatus }) {
+const EXCEPTION_STEP_STYLE: Record<Severity, { ring: string; text: string }> = {
+  warning: { ring: "pulse-ring bg-amber-500 text-white", text: "text-amber-300" },
+  error: { ring: "pulse-ring bg-rose-500 text-white", text: "text-rose-300" },
+};
+
+function Stepper({ deposit }: { deposit: DepositRecord }) {
+  const { status, reconciliation } = deposit;
   const isException = !HAPPY_PATH.includes(status);
-  const currentIndex = isException ? -1 : HAPPY_PATH.indexOf(status);
+  // An exception doesn't erase progress already made — STALLED_NO_GAS/
+  // STALLED_TIMEOUT only ever occur before on-chain confirmation, but
+  // AMBIGUOUS can only occur *after* it, so the stepper needs to reflect
+  // whichever is actually true rather than always freezing at step 0.
+  const currentIndex = isException
+    ? HAPPY_PATH.indexOf(reconciliation.onchainConfirmed ? "BRIDGING" : "SIGNED")
+    : HAPPY_PATH.indexOf(status);
+  const severity: Severity | undefined = isException ? STATE_COPY[status].severity ?? "error" : undefined;
 
   return (
     <div className="card flex flex-col gap-0 py-3">
       {HAPPY_PATH.map((s, i) => {
-        const done = !isException && i < currentIndex;
-        const active = !isException && i === currentIndex;
+        const done = i < currentIndex;
+        const active = i === currentIndex;
+        const stuck = active && isException;
+        const exceptionStyle = stuck ? EXCEPTION_STEP_STYLE[severity!] : null;
         return (
           <div key={s} className="flex gap-3">
             <div className="flex flex-col items-center">
@@ -90,6 +105,8 @@ function Stepper({ status }: { status: DepositStatus }) {
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300 ${
                   done
                     ? "bg-emerald-500 text-white shadow-[0_0_0_3px_rgba(16,185,129,0.15)]"
+                    : stuck
+                    ? exceptionStyle!.ring
                     : active
                     ? "pulse-ring bg-blue-500 text-white"
                     : "border border-white/15 bg-white/[0.03] text-slate-600"
@@ -97,6 +114,8 @@ function Stepper({ status }: { status: DepositStatus }) {
               >
                 {done ? (
                   <CheckIcon className="h-4 w-4" />
+                ) : stuck ? (
+                  <AlertIcon className="h-3.5 w-3.5" />
                 ) : active ? (
                   <SpinnerIcon className="h-3.5 w-3.5" />
                 ) : (
@@ -114,13 +133,15 @@ function Stepper({ status }: { status: DepositStatus }) {
             <div className="pb-6 pt-0.5">
               <p
                 className={`text-sm font-medium transition-colors duration-300 ${
-                  active ? "text-blue-300" : done ? "text-emerald-300" : "text-slate-600"
+                  stuck ? exceptionStyle!.text : active ? "text-blue-300" : done ? "text-emerald-300" : "text-slate-600"
                 }`}
               >
-                {STATE_COPY[s].label}
+                {stuck ? STATE_COPY[status].label : STATE_COPY[s].label}
               </p>
-              {active && (
-                <p className="mt-1 text-xs text-slate-500">{STATE_COPY[s].description}</p>
+              {(active || stuck) && (
+                <p className="mt-1 text-xs text-slate-500">
+                  {stuck ? STATE_COPY[status].description : STATE_COPY[s].description}
+                </p>
               )}
             </div>
           </div>
@@ -200,7 +221,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (deposit.status === "CREDITED") {
     return (
-      <main className="page-shell min-h-[calc(100dvh-56px)] justify-center">
+      <main className="page-shell">
         <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
             <CheckIcon className="h-8 w-8 text-white" />
@@ -214,7 +235,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
         <WalletRoles fundsFrom={deposit.userWallet} tradableIn={deposit.destinationAccount} />
 
-        <Stepper status={deposit.status} />
+        <Stepper deposit={deposit} />
 
         <div className="banner-purple">
           <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance
@@ -287,7 +308,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
         );
       })()}
 
-      <Stepper status={deposit.status} />
+      <Stepper deposit={deposit} />
 
       <div className="banner-purple">
         <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance

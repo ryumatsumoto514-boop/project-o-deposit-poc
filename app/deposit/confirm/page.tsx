@@ -12,15 +12,15 @@ import { DEPOSIT_ADDRESS } from "@/lib/chain";
 
 export default function DepositConfirmPage() {
   const router = useRouter();
-  const { mockIdentity, draftAmount, setAddressConfirmed } = useFlow();
+  const { mockIdentity, draftAmount, setAddressConfirmed, hydrated } = useFlow();
   const { address } = useAccount();
   const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
-    if (!mockIdentity || !draftAmount || !address) router.replace("/deposit");
-  }, [mockIdentity, draftAmount, address, router]);
+    if (hydrated && (!mockIdentity || !draftAmount || !address)) router.replace("/deposit");
+  }, [hydrated, mockIdentity, draftAmount, address, router]);
 
-  if (!mockIdentity || !draftAmount || !address) return null;
+  if (!hydrated || !mockIdentity || !draftAmount || !address) return null;
 
   return (
     <main className="page-shell">

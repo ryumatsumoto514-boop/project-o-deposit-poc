@@ -29,7 +29,7 @@ type Step =
 
 export default function DepositApprovePage() {
   const router = useRouter();
-  const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode } =
+  const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode, hydrated } =
     useFlow();
   const { address, chainId } = useAccount();
   const { data: ethBalance } = useBalance({ address, chainId: CHAIN.id });
@@ -41,14 +41,15 @@ export default function DepositApprovePage() {
   const [orphanedDepositId, setOrphanedDepositId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!hydrated) return;
     if (!mockIdentity || !draftAmount || !address) {
       router.replace("/deposit");
     } else if (!addressConfirmed) {
       router.replace("/deposit/confirm");
     }
-  }, [mockIdentity, draftAmount, address, addressConfirmed, router]);
+  }, [hydrated, mockIdentity, draftAmount, address, addressConfirmed, router]);
 
-  if (!mockIdentity || !draftAmount || !address || !addressConfirmed) return null;
+  if (!hydrated || !mockIdentity || !draftAmount || !address || !addressConfirmed) return null;
 
   const lowGas = ethBalance !== undefined && ethBalance.value < MIN_GAS_WEI;
   const wrongNetwork = chainId !== undefined && chainId !== CHAIN.id;

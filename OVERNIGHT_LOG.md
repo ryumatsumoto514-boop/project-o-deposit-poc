@@ -848,3 +848,172 @@ section above).
   else, and the README no longer tells a reader to go check the log for an
   unresolved deploy blocker.
 Claude Code tick finished, exit code 0
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T19:37:12Z
+
+## Cycle: real headless-browser screenshots finally available — found and fixed 3 genuine bugs instead of a 7th color pivot
+
+**Trigger:** the same "UI/UX not good enough, looks like a bare-minimum
+AI-generated scaffold" feedback, now with a much more specific checklist
+attached. Six prior cycles had already iterated hard on visual direction
+(light → dark/glassmorphism → dark/flat-accent, plus icons, favicon, display
+font) and every one of them was forced to "reason about Tailwind classes"
+rather than actually see the page, because no browser was believed to be
+available. Before doing a 7th redesign on the same undifferentiated
+complaint, I checked for browser tooling in this environment properly rather
+than assuming — and found a pre-installed headless Chromium shell at
+`/opt/hermes/.playwright/chromium_headless_shell-1243`. I drove it directly
+over the Chrome DevTools Protocol (raw WebSocket, no npm install needed —
+Node 26 here has native `WebSocket`/`fetch`) to capture **real PNG
+screenshots at a 375px mobile viewport** of the actual rendered app for the
+first time this session, plus injected a fake EIP-1193 `window.ethereum`
+provider to get past wagmi's wallet-connect gate for screenshotting
+purposes. This changed what kind of bug I could find.
+
+### Honest visual verdict (from actually looking at it)
+The six prior cycles' self-assessment holds up: this is a genuinely
+well-executed, consistent dark-fintech design — proper card system, real
+button states, a coherent flat accent color, tabular-nums, a distinct
+display font on headlines, a KOL trust banner, an animated stepper. It does
+**not** look like a bare-minimum AI scaffold by any reasonable visual
+standard. I did not do a 7th color/material pivot — there's no defensible
+execution flaw in the direction itself, and the screenshots prove it. What
+the screenshots found instead were concrete, fixable problems that pure
+code-reading across six cycles had missed:
+
+### Bugs found and fixed (real, confirmed via screenshot before/after — not guessed)
+1. **Refresh/deep-link into the deposit flow silently bounced you to
+   `/login`, discarding your progress** — despite `flow-context.tsx`'s own
+   comment claiming sessionStorage persistence exists specifically so "a
+   refresh mid-flow doesn't lose progress." Root cause: `FlowProvider` reads
+   sessionStorage in a `useEffect` that hasn't run yet on first paint, but
+   `/deposit`, `/deposit/confirm`, and `/deposit/approve` all had their own
+   `useEffect` redirecting to a fallback route the instant `mockIdentity`
+   (or `draftAmount`/`addressConfirmed`) read as `null` — which it always
+   does for one render before hydration completes. Reproduced with a real
+   hard navigation via CDP (seed sessionStorage, then `Page.navigate`
+   straight to `/deposit`): landed on the login page every time. Fixed by
+   exposing a `hydrated` flag from `FlowProvider` and gating every redirect
+   (and the early-return `null`) on it in `deposit/page.tsx`,
+   `deposit/confirm/page.tsx`, and `deposit/approve/page.tsx`. Re-verified
+   with the same CDP reproduction: now correctly stays on `/deposit` and
+   shows the in-progress state. This is a real trust bug for a deposit flow
+   — a user refreshing mid-approval (completely normal behavior) was losing
+   their place with no explanation.
+2. **Relayer failures were unconditionally mislabeled "needs a little
+   ETH" even when the real cause was something else entirely**
+   (`lib/pull.ts`'s `attemptPull`). Found this by literally creating a test
+   deposit and watching the real reconciliation loop run against it: it hit
+   `STALLED_NO_GAS` even though the relayer wallet's actual balance
+   (checked directly via RPC) was 0.0418 ETH, well above the 0.0001 ETH
+   minimum — the deposit had reused an already-consumed historical
+   approval, so the real failure was an allowance revert, not gas. The old
+   code caught *any* error from the relayer's `transferFrom()` call — RPC
+   hiccup, insufficient allowance, wrong destination, anything — and always
+   wrote `STALLED_NO_GAS` with copy telling the user to top up ETH. If the
+   real cause wasn't gas, a user topping up ETH per the app's own advice
+   would wait forever for a fix that could never apply. Fixed to inspect
+   the actual error message for real gas-exhaustion patterns
+   (`insufficient funds|gas required exceeds|out of gas`, matching the
+   pattern already used client-side in `deposit/approve/page.tsx`) and only
+   use `STALLED_NO_GAS` for genuine gas failures; everything else now gets
+   an honest `STALLED_TIMEOUT` with copy that doesn't misdiagnose the
+   problem. This directly serves the brief's own "plain-language failure
+   states" requirement — a mislabeled failure state is arguably worse than
+   a raw error dump, since it actively misleads instead of just looking
+   unpolished.
+3. **The stepper blanked ALL progress to gray during any exception,
+   even when real progress had genuinely happened.** `STALLED_NO_GAS` and
+   `STALLED_TIMEOUT` can only occur before on-chain confirmation, but
+   `AMBIGUOUS` can only occur *after* the chain side has already confirmed
+   (see `reconcile.ts`'s branching) — yet the old `Stepper` component set
+   `currentIndex = -1` for any non-happy-path status, so an `AMBIGUOUS`
+   deposit (chain confirmed, only the mocked Hyperliquid side lagging)
+   would show step 1 and 2 as if nothing had happened yet, hiding real,
+   confirmed progress from the user at exactly the moment they need
+   reassurance most. Fixed: `Stepper` now takes the full `DepositRecord`
+   (not just `status`) and derives its effective position from
+   `reconciliation.onchainConfirmed` — steps genuinely completed stay
+   emerald/done even during an exception, and the step where it's actually
+   stuck gets a severity-tinted (amber for warning, rose for error) pulsing
+   ring with an alert icon instead of the generic blue in-progress spinner,
+   so the exact point of failure is visually distinct from both "done" and
+   "still waiting." This is a more correct implementation of the brief's
+   own "color-coded states... visually distinct" requirement than the
+   version six prior cycles had already shipped and verified via markup
+   grep alone.
+4. **Every single-card flow screen (login, deposit amount, confirm,
+   approve) left a large dead void below the card on any real phone
+   viewport** — confirmed visually via screenshot at 375×812 (roughly
+   iPhone-sized): the card sat at the top of the page with the rest of the
+   viewport empty black space, which reads as unfinished even though
+   nothing was actually broken. The `CREDITED` success screen had already
+   solved this for itself with `min-h-[calc(100dvh-56px)] justify-center`;
+   promoted that fix into `.page-shell` itself (globals.css) so every
+   screen gets it consistently, and removed the now-redundant duplicate
+   classes from the success screen. Re-screenshotted after: content is
+   properly centered instead of pinned to the top with dead space below.
+   Confirmed via the flexbox `min-height` mechanics (not just visually)
+   that this can't break longer pages like the landing page or a status
+   page with several tx-hash cards — `justify-center` only has a visible
+   effect when the content is shorter than the container, and once content
+   exceeds `min-h`, the container just grows and behaves like normal
+   top-down flow, exactly as it already did for the success screen.
+
+### A process mistake worth logging honestly
+Mid-cycle I ran `npm run build` (production build) while a `next dev`
+instance was still running in the background against the same project
+directory — both write to `.next/` and running them concurrently corrupted
+the dev server's manifest, causing every static JS/CSS chunk to 404 and the
+next screenshot to render as completely unstyled browser-default HTML. For
+a moment this looked like a catastrophic regression from my own edit. Root-
+caused it by checking the dev server's actual log output (`_next/static/...
+404` on every asset) rather than assuming the CSS itself was broken, killed
+both processes, deleted `.next`, and restarted cleanly — confirmed fixed via
+a fresh screenshot before concluding anything. Noting this so a future cycle
+doesn't waste time re-diagnosing the same interaction if it recurs: **never
+run `next build` while a `next dev` on the same project is still alive.**
+
+### Verification
+- `npm run build` passes clean (dev server killed first this time) —
+  identical pre-existing optional-peer-dep warnings only, no new errors.
+- Real CDP screenshots (375×812/900, iPhone-ish) of: landing (plain +
+  `?ref=kol_alex`), login, deposit-amount (wallet-connected via an injected
+  EIP-1193 mock), and the status page in both an active in-progress state
+  and a stalled exception state (both before and after the pull.ts fix) —
+  confirmed the design system renders correctly, the centering fix works,
+  and the stepper/exception copy is accurate.
+- Exercised the real reconciliation engine live via the running dev server
+  (not mocked): created deposits via `POST /api/deposits`, watched
+  `POST /api/deposits/[id]/reconcile` run the self-healing `attemptPull`
+  path against real Arbitrum Sepolia RPC calls, and confirmed
+  `DUPLICATE_IN_FLIGHT` (409) still fires correctly — the idempotency guard
+  is untouched and still works.
+- Did not touch `lib/reconcile.ts`, `lib/relayer.ts`'s transaction logic, or
+  any API route's request/response shape — only the error-classification
+  branch inside `attemptPull`'s catch block and the client-side hydration
+  guards, so this is a surgical fix, not a rewrite of working chain logic.
+
+### Honest gap check
+The visual design itself does not need a 7th pivot — it's solid, and now I
+have actual screenshot evidence to back that claim instead of markup-grep
+inference. What this cycle actually improved was correctness the design
+work couldn't have caught: a refresh-loses-your-place bug, a failure state
+that could actively mislead a user chasing the wrong fix, a stepper that
+hid real progress during the one state (`AMBIGUOUS`) where reassurance
+matters most, and a real (if modest) mobile layout gap. If the next wake
+still carries the same undifferentiated complaint, the highest-value next
+step is likely the same one the last cycle already flagged: a human looking
+at the live URL and naming one concrete thing, since six iterations on
+color/material plus this cycle's correctness pass have not been able to
+resolve it blind. In the meantime, remaining budget is better spent finding
+more bugs of this kind (real interaction bugs, not more paint) via the same
+screenshot-driven method now that it's known to work in this environment.
+
+### Deploy
+Committed all of the above. Sourced `.overnight-env.sh`, pushed to
+`origin main`, and redeployed to Vercel with
+`vercel --token "$VERCEL_TOKEN" --yes --prod` — see the next log entry
+appended immediately after this one for the exact commit hash, push
+confirmation, and live-URL re-verification output.

@@ -27,6 +27,7 @@ const DEFAULT_STATE: FlowState = {
 const STORAGE_KEY = "exo_flow_state";
 
 interface FlowContextValue extends FlowState {
+  hydrated: boolean;
   setKolRef: (ref: string | null) => void;
   setMockIdentity: (identity: string | null) => void;
   setDraftAmount: (amount: string) => void;
@@ -61,6 +62,7 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
 
   const value: FlowContextValue = {
     ...state,
+    hydrated,
     setKolRef: (kolRef) => setState((s) => ({ ...s, kolRef })),
     setMockIdentity: (mockIdentity) => setState((s) => ({ ...s, mockIdentity })),
     // Changing the amount re-requires address confirmation — don't let a

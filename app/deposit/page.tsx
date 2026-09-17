@@ -12,17 +12,17 @@ const MAX_DEMO_AMOUNT = 1000;
 
 export default function DepositAmountPage() {
   const router = useRouter();
-  const { mockIdentity, draftAmount, setDraftAmount } = useFlow();
+  const { mockIdentity, draftAmount, setDraftAmount, hydrated } = useFlow();
   const { address, isConnected } = useAccount();
   const { connectors, connect } = useConnect();
   const [amount, setAmount] = useState(draftAmount || "");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!mockIdentity) router.replace("/login");
-  }, [mockIdentity, router]);
+    if (hydrated && !mockIdentity) router.replace("/login");
+  }, [hydrated, mockIdentity, router]);
 
-  if (!mockIdentity) return null;
+  if (!hydrated || !mockIdentity) return null;
 
   const tradableIn = address ? deriveMockTradingAccount(address) : null;
 

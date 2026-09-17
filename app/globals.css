@@ -28,7 +28,7 @@
 
 @layer components {
   .page-shell {
-    @apply mx-auto flex w-full max-w-md flex-col gap-5 px-5 py-8 sm:py-10;
+    @apply mx-auto flex w-full max-w-md min-h-[calc(100dvh-56px)] flex-col justify-center gap-5 px-5 py-8 sm:py-10;
   }
 
   /* Cards */

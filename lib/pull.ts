@@ -47,12 +47,26 @@ export async function attemptPull(deposit: DepositRecord): Promise<PullOutcome> 
       failureReason: null,
     });
     return { ok: true, deposit: updated };
-  } catch {
-    const updated = depositStore.update(deposit.id, {
-      status: "STALLED_NO_GAS",
-      failureReason:
-        "Our deposit relayer couldn't submit the transfer right now. This is an infrastructure issue on our side, not your wallet — we'll keep retrying automatically.",
-    });
+  } catch (err) {
+    // Don't blame "needs ETH" for every relayer-side failure — that's only
+    // true for actual gas exhaustion. An insufficient-allowance revert, a
+    // bad RPC response, etc. are a different problem with a different fix,
+    // and telling a user to top up ETH for a problem that isn't ETH would
+    // leave them stuck forever on bad advice. Only the real gas case gets
+    // the gas-specific state; everything else gets an honest generic one.
+    const message = err instanceof Error ? err.message : String(err);
+    const isGasIssue = /insufficient funds|gas required exceeds|out of gas/i.test(message);
+    const updated = depositStore.update(deposit.id, isGasIssue
+      ? {
+          status: "STALLED_NO_GAS",
+          failureReason:
+            "Our deposit relayer couldn't submit the transfer right now. This is an infrastructure issue on our side, not your wallet — we'll keep retrying automatically.",
+        }
+      : {
+          status: "STALLED_TIMEOUT",
+          failureReason:
+            "Our deposit relayer hit an unexpected error trying to submit the transfer. Your funds are not at risk — we'll keep retrying automatically.",
+        });
     return { ok: false, reason: "RELAYER_FAILED", deposit: updated };
   }
 }
