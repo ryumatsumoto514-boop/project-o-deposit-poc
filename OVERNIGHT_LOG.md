@@ -625,3 +625,15 @@ product/site whose look he wants and match that specifically instead of
 iterating blind.
 
 ### Deploy
+- Commit `1b280b9` pushed to `origin main` (`dd3f961..1b280b9 main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-fetched **https://projecto-blond.vercel.app** live afterward: `/`,
+  `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex` all HTTP 200. `/icon` and `/apple-icon` both return HTTP
+  200 with `content-type: image/png` (confirmed via `curl -D -` against the
+  live URL, not just localhost). The page's `<head>` now contains
+  `<meta name="theme-color" content="#0a0b0d">` and links to
+  `/icon`/`/apple-icon` (verified in the live SSR payload) — the default
+  Next.js favicon is gone from production. **This is what Ryu will see if he
+  reloads the same URL and checks the browser tab icon.**
