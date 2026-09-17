@@ -531,3 +531,13 @@ land for Ryu, the next lever to pull is probably custom illustration/brand
 personality (a distinctive wordmark treatment, a non-default display font
 via `next/font/google`) rather than more color/material tuning — color and
 material have now been iterated on twice.
+
+### Deploy confirmation
+- Commit `f8be75d` pushed to `origin main` (`f714c60..f8be75d main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-fetched **https://projecto-blond.vercel.app** live afterward: HTTP 200
+  on `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex`. Landing-page HTML contains `app-header`, `h1-hero`,
+  `bg-blue-500`; grepping the same HTML for `indigo`/`violet` returns zero
+  matches. **This is the design Ryu will see if he reloads the same URL.**
