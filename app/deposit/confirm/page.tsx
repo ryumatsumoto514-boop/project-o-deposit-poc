@@ -36,17 +36,15 @@ export default function DepositConfirmPage() {
       />
 
       <div className="card flex flex-col gap-2">
-        <p className="text-sm text-neutral-600">
-          You&apos;re about to send <strong>{draftAmount} USDC</strong> on
+        <p className="body-text">
+          You&apos;re about to send <strong className="text-slate-200">{draftAmount} USDC</strong> on
           Arbitrum Sepolia to this address:
         </p>
-        <p className="break-all rounded-lg bg-neutral-100 p-3 font-mono text-sm">
-          {DEPOSIT_ADDRESS}
-        </p>
+        <p className="mono-box">{DEPOSIT_ADDRESS}</p>
       </div>
 
       <div className="banner-amber flex items-start gap-2.5">
-        <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+        <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
         <span>
           Double check this matches what you expect — scammers sometimes use
           addresses that look almost identical to a real one. We show the
@@ -55,12 +53,12 @@ export default function DepositConfirmPage() {
         </span>
       </div>
 
-      <label className="card flex items-start gap-2.5 text-sm text-neutral-700">
+      <label className="card flex items-start gap-2.5 text-sm text-slate-300">
         <input
           type="checkbox"
           checked={confirmed}
           onChange={(e) => setConfirmed(e.target.checked)}
-          className="mt-0.5 h-4 w-4 accent-blue-600"
+          className="mt-0.5 h-4 w-4 accent-indigo-500"
         />
         I&apos;ve checked the full address above and it matches what I
         expect.

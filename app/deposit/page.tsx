@@ -55,7 +55,7 @@ export default function DepositAmountPage() {
 
       {!isConnected && (
         <div className="card flex flex-col gap-3">
-          <p className="text-sm text-neutral-600">
+          <p className="body-text">
             Connect the wallet you&apos;ll fund this deposit from. This must
             be a real wallet with testnet ETH and USDC on Arbitrum Sepolia.
           </p>
@@ -73,9 +73,7 @@ export default function DepositAmountPage() {
 
       {isConnected && (
         <div className="card flex flex-col gap-2">
-          <label className="text-sm font-medium text-neutral-700">
-            Amount (USDC)
-          </label>
+          <label className="label-caps">Amount (USDC)</label>
           <input
             type="number"
             min="0"
@@ -86,9 +84,9 @@ export default function DepositAmountPage() {
               setError(null);
             }}
             placeholder="10.00"
-            className="input"
+            className="input font-mono text-lg"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-rose-400">{error}</p>}
           <button onClick={handleContinue} className="btn-primary mt-2 w-fit">
             Continue
           </button>

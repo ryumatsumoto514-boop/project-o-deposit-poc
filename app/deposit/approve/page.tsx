@@ -172,7 +172,7 @@ export default function DepositApprovePage() {
         <KolBanner />
         <h1 className="h1">Deposit already in progress</h1>
         <div className="banner-amber flex items-start gap-2.5">
-          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
           <span>
             You already have a deposit in progress for this amount, opened at{" "}
             {new Date(blockedDeposit.createdAt).toLocaleString()}. Do not
@@ -201,14 +201,14 @@ export default function DepositApprovePage() {
         tradableIn={deriveMockTradingAccount(address)}
       />
 
-      <div className="card text-sm">
-        Depositing <strong>{draftAmount} USDC</strong> on Arbitrum Sepolia.
+      <div className="card text-sm text-slate-300">
+        Depositing <strong className="text-slate-100">{draftAmount} USDC</strong> on Arbitrum Sepolia.
       </div>
 
       {wrongNetwork && (
         <div className="banner-amber flex flex-col gap-2.5">
           <p className="flex items-start gap-2.5">
-            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
             <span>
               <strong>Your wallet is connected to a different network.</strong>{" "}
               This deposit only works on Arbitrum Sepolia — switch networks
@@ -227,7 +227,7 @@ export default function DepositApprovePage() {
 
       {lowGas && (
         <div className="banner-amber flex items-start gap-2.5">
-          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
           <span>
             <strong>{FAILURE_COPY.NO_GAS.title}.</strong> Current balance:{" "}
             {ethBalance ? formatEther(ethBalance.value) : "0"} ETH.{" "}
@@ -237,31 +237,29 @@ export default function DepositApprovePage() {
       )}
 
       <fieldset className="card flex flex-col gap-3">
-        <legend className="px-1 text-sm font-medium text-neutral-900">
-          Approval scope
-        </legend>
-        <label className="flex items-start gap-2.5 text-sm">
+        <legend className="label-caps px-1">Approval scope</legend>
+        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-indigo-400/40 has-[:checked]:bg-indigo-500/[0.06]">
           <input
             type="radio"
             checked={approvalMode === "exact"}
             onChange={() => setApprovalMode("exact")}
-            className="mt-1 h-4 w-4 accent-blue-600"
+            className="mt-1 h-4 w-4 accent-indigo-500"
           />
           <span>
-            <strong>Approve this amount only</strong> (recommended) — the app
+            <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app
             can only ever move exactly {draftAmount} USDC, once.
           </span>
         </label>
-        <label className="flex items-start gap-2.5 text-sm">
+        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-amber-400/40 has-[:checked]:bg-amber-500/[0.06]">
           <input
             type="radio"
             checked={approvalMode === "unlimited"}
             onChange={() => setApprovalMode("unlimited")}
-            className="mt-1 h-4 w-4 accent-blue-600"
+            className="mt-1 h-4 w-4 accent-amber-500"
           />
           <span>
-            <strong>Approve for future deposits too</strong> —{" "}
-            <span className="text-red-700">
+            <strong className="text-slate-100">Approve for future deposits too</strong> —{" "}
+            <span className="text-amber-300">
               higher risk: this lets the app spend more in the future without
               asking again.
             </span>
@@ -271,7 +269,7 @@ export default function DepositApprovePage() {
 
       {errorMessage && (
         <div className="banner-red flex items-start gap-2.5">
-          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />
           <span>
             <strong>{errorMessage.title}.</strong> {errorMessage.detail}
             {orphanedDepositId && (
@@ -280,7 +278,7 @@ export default function DepositApprovePage() {
                 A deposit record was already created before this failed —{" "}
                 <a
                   href={`/deposit/status/${orphanedDepositId}`}
-                  className="underline"
+                  className="text-rose-200 underline hover:text-rose-100"
                 >
                   check its status
                 </a>

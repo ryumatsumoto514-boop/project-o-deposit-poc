@@ -314,3 +314,96 @@ excellent, for a future cycle or the user's own pass:
   hydration, not something Next.js SSRs on the first pass.
 - **Bottom line: this cycle's UI/UX changes are live on the URL the user
   looked at**, not just sitting in the repo.
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-17T16:36:11Z
+
+## Cycle: dark fintech redesign (responding to Ryu's direct feedback on the live site)
+
+**Trigger:** Ryu looked at https://projecto-blond.vercel.app and said the UI
+still reads as a bare-minimum AI-generated scaffold, not a polished product,
+and wants it substantially better by morning. Read the prior cycle's own
+honest self-assessment in this log (it flagged the light theme as
+"functional and consistent, but not visually rich") — that gap is exactly
+what Ryu flagged, so this cycle replaces the whole visual direction rather
+than tweaking it further.
+
+### Decision: switched from light theme to a dark fintech theme
+Committed to a specific direction instead of iterating on the old one:
+near-black background (`#05060a`) with three soft radial-gradient glows
+(indigo top-left, violet top-right, faint emerald bottom) fixed behind the
+content; an indigo→violet gradient as the single accent used for every
+primary action and active state; emerald for success, amber for warning,
+rose for error — kept strictly distinct so severity is readable at a glance,
+not just by copy. This is a deliberate stylistic pivot away from the prior
+cycle's light theme, made because the person who actually has to be happy
+with it said the previous direction wasn't good enough — better to commit to
+a bolder, more distinctive direction now than polish a direction that's
+already been rejected.
+
+### What changed, concretely
+- **`app/globals.css` rewritten**: new dark color tokens, `.card` now a
+  glassy `bg-white/[0.035]` panel with a subtle inset highlight + drop
+  shadow instead of a flat white box; `.btn-primary` is a real
+  indigo→violet gradient button with an inset highlight and colored glow
+  shadow (not a flat fill); added `.h1-hero` / `.eyebrow` / `.body-text` /
+  `.mono-box` typography primitives for a clearer hierarchy than the single
+  `.h1` class supported before; banners rebuilt as low-opacity tinted panels
+  (`amber/10`, `rose/10`, `emerald/10`, `violet/10`) instead of solid pastel
+  fills, which reads as more considered/less "default Tailwind alert box";
+  added `fade-up` and `success-pop` keyframe animations for entrance motion.
+- **Every screen's inline utility classes migrated** off the old light-theme
+  neutral/blue/green/red palette to the new dark tokens — verified with a
+  repo-wide grep afterward (`neutral-`, `bg-neutral`, `border-neutral`,
+  `text-blue-6*`, `text-red-6*`, `text-green-6*`) that returned zero matches
+  across `app/`, so nothing was missed screen-by-screen.
+- **Landing page rebuilt** from a single generic card into an actual hero:
+  eyebrow label, larger `.h1-hero` headline, a 3-item feature list in its
+  own card (live status tracking / exact-amount approval / plain-language
+  failures) instead of one paragraph, entrance animation.
+- **Brand mark**: logo badge is now a gradient (indigo→violet) chip with a
+  proper glow shadow instead of a flat blue square.
+- **Deposit status stepper**: connector lines and step circles now animate
+  color with `transition-colors duration-300` instead of snapping instantly;
+  the active step uses the gradient + pulse-ring treatment, done steps are
+  emerald with a soft glow ring, not-yet-reached steps are a muted outline —
+  three visually distinct states as the brief asked for, not just three
+  differently-labeled ones.
+- **New dedicated success screen for `CREDITED`**: previously this state
+  just showed a green banner above the stepper; now it's a full distinct
+  screen with a large animated (`success-pop`) gradient check-mark badge,
+  a headline, and a "Start another deposit" CTA — this was the one gap the
+  prior cycle explicitly flagged as merely-acceptable ("a hiring reviewer
+  might expect a more celebratory/distinct final screen") and it's now
+  fixed.
+- **Approval-scope radio cards**: the exact-vs-unlimited choice is now two
+  bordered option cards that highlight (`has-[:checked]:border-indigo-400/40`
+  / `has-[:checked]:border-amber-400/40`) when selected, instead of two bare
+  radio rows — makes the higher-risk "unlimited" choice visually distinct
+  before the user even picks it, reinforcing the exact-amount-by-default
+  safety design rather than just describing it in text.
+- KOL banner and mocked-badge kept their existing shield-icon/trust-element
+  treatment from the prior cycle (that part already worked) but recolored
+  for the dark background.
+
+### Verification (no browser available — reasoned through markup + HTTP)
+- `npm run build` passes clean — identical pre-existing optional-peer-dep
+  warnings only (WalletConnect/pino/async-storage), nothing new introduced.
+- Ran `npm run dev`, curled `/`, `/login`, `/deposit`, `/deposit/confirm`,
+  `/deposit/approve`, `/?ref=kol_alex` — all HTTP 200.
+- Grepped the rendered landing-page HTML for the new class names
+  (`h1-hero`, `btn-primary`, `page-shell`) to confirm the new markup is what
+  actually serves, not just what's in source.
+- Grepped rendered HTML for leftover `text-neutral`/`bg-neutral` — zero
+  matches, confirming the dark-theme migration is complete on the pages
+  that SSR content (login/deposit/confirm/approve are client components
+  gated on flow state and correctly render their redirect/empty shell
+  server-side, same as the prior cycle found — not a regression).
+- Mobile reasoning (no real 375px browser available): `page-shell` keeps
+  `max-w-md px-5`; every button retained `min-h-[46px]`; the login page's
+  truncated-address button keeps the `min-w-0` fix from the prior cycle;
+  the new landing-page feature list and success screen use the same
+  `max-w-md` container and `flex-col` stacking so nothing introduces a
+  fixed-width element that could overflow a 375px viewport.
+
+### Deploy

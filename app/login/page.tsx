@@ -30,8 +30,8 @@ export default function LoginPage() {
 
       {mockIdentity ? (
         <div className="card flex flex-col gap-3">
-          <p className="text-sm text-neutral-700">
-            Signing in as <strong>{mockIdentity}</strong>
+          <p className="text-sm text-slate-300">
+            Signing in as <strong className="text-slate-100">{mockIdentity}</strong>
           </p>
           <button
             onClick={() => router.push("/deposit")}
@@ -54,10 +54,10 @@ export default function LoginPage() {
           >
             Continue with Google (mock)
           </button>
-          <div className="flex items-center gap-3 text-xs text-neutral-400">
-            <div className="h-px flex-1 bg-neutral-200" />
+          <div className="flex items-center gap-3 text-xs text-slate-600">
+            <div className="h-px flex-1 bg-white/10" />
             or
-            <div className="h-px flex-1 bg-neutral-200" />
+            <div className="h-px flex-1 bg-white/10" />
           </div>
           {isConnected && address ? (
             <button onClick={() => continueTo(address)} className="btn-secondary min-w-0">

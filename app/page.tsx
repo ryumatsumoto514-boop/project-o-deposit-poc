@@ -19,6 +19,12 @@ function CaptureKolRef() {
   return null;
 }
 
+const FEATURES = [
+  { title: "Live status, not a spinner", detail: "Signed → confirmed → bridging → credited, tracked in real time." },
+  { title: "Exact-amount approval", detail: "Approve only what you're depositing — never an unlimited allowance by default." },
+  { title: "Plain-language failures", detail: "No raw error dumps — every exception tells you what happened and what to do next." },
+];
+
 export default function Home() {
   return (
     <main className="page-shell min-h-screen justify-center">
@@ -27,18 +33,35 @@ export default function Home() {
       </Suspense>
       <Brand />
       <KolBanner />
-      <div className="card flex flex-col gap-3">
-        <h1 className="h1">Deposit with full visibility</h1>
-        <p className="text-sm leading-relaxed text-neutral-600">
+
+      <div className="fade-up flex flex-col gap-4">
+        <span className="eyebrow">Deposit reconciliation engine</span>
+        <h1 className="h1-hero text-balance">
+          Deposit with full visibility, every step of the way.
+        </h1>
+        <p className="body-text">
           Deposit USDC on Arbitrum and trade on Hyperliquid. This proof of
-          concept is focused on making every step of depositing transparent
-          and honest — including the parts that are mocked.
+          concept makes every step of depositing transparent and honest —
+          including the parts that are mocked.
         </p>
-        <Link href="/login" className="btn-primary mt-1 w-fit">
-          Get started
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/login" className="btn-primary w-fit">
+            Get started
+          </Link>
+          <span className="text-xs text-slate-500">No real funds involved</span>
+        </div>
       </div>
-      <p className="text-center text-xs text-neutral-400">
+
+      <div className="card-flush fade-up flex flex-col divide-y divide-white/[0.06]" style={{ animationDelay: "80ms" }}>
+        {FEATURES.map((f) => (
+          <div key={f.title} className="flex flex-col gap-1 p-4">
+            <p className="text-sm font-medium text-slate-100">{f.title}</p>
+            <p className="text-[13px] leading-relaxed text-slate-500">{f.detail}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-center text-xs text-slate-600">
         Arbitrum Sepolia testnet · not real funds
       </p>
     </main>

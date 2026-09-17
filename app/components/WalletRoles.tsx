@@ -4,9 +4,9 @@
 
 function Row({ label, value }: { label: string; value: string | null }) {
   return (
-    <div className="flex flex-col gap-0.5 border-b border-neutral-100 py-2.5 last:border-b-0">
+    <div className="flex flex-col gap-0.5 border-b border-white/[0.06] py-2.5 last:border-b-0">
       <span className="label-caps">{label}</span>
-      <span className="break-all font-mono text-sm text-neutral-900">
+      <span className="break-all font-mono text-[13px] text-slate-200">
         {value ?? "—"}
       </span>
     </div>
@@ -23,7 +23,7 @@ export function WalletRoles({
   tradableIn?: string | null;
 }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-neutral-50/70 px-3.5">
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-3.5">
       {signingInAs !== undefined && <Row label="Signing in as" value={signingInAs} />}
       {fundsFrom !== undefined && <Row label="Funds coming from" value={fundsFrom} />}
       {tradableIn !== undefined && <Row label="Will be tradable in" value={tradableIn} />}

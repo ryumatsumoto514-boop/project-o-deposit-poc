@@ -64,8 +64,8 @@ const STATE_COPY: Record<
 };
 
 const SEVERITY_STYLE: Record<Severity, { banner: string; icon: string; divider: string }> = {
-  warning: { banner: "banner-amber", icon: "text-amber-600", divider: "border-amber-300/60" },
-  error: { banner: "banner-red", icon: "text-red-600", divider: "border-red-300/60" },
+  warning: { banner: "banner-amber", icon: "text-amber-300", divider: "border-amber-400/20" },
+  error: { banner: "banner-red", icon: "text-rose-300", divider: "border-rose-400/20" },
 };
 
 const ACTIVE_STATUSES: DepositStatus[] = ["SIGNED", "CONFIRMED_ONCHAIN", "BRIDGING"];
@@ -88,12 +88,12 @@ function Stepper({ status }: { status: DepositStatus }) {
           <div key={s} className="flex gap-3">
             <div className="flex flex-col items-center">
               <div
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs transition-colors ${
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-300 ${
                   done
-                    ? "bg-green-600 text-white"
+                    ? "bg-emerald-500 text-white shadow-[0_0_0_3px_rgba(16,185,129,0.15)]"
                     : active
-                    ? "pulse-ring bg-blue-600 text-white"
-                    : "border border-neutral-300 bg-white text-neutral-400"
+                    ? "pulse-ring bg-gradient-to-br from-indigo-400 to-violet-600 text-white"
+                    : "border border-white/15 bg-white/[0.03] text-slate-600"
                 }`}
               >
                 {done ? (
@@ -106,20 +106,22 @@ function Stepper({ status }: { status: DepositStatus }) {
               </div>
               {i < HAPPY_PATH.length - 1 && (
                 <div
-                  className={`h-8 w-px ${done ? "bg-green-500" : "bg-neutral-200"}`}
+                  className={`h-8 w-px transition-colors duration-300 ${
+                    done ? "bg-emerald-500/60" : "bg-white/10"
+                  }`}
                 />
               )}
             </div>
             <div className="pb-6 pt-0.5">
               <p
-                className={`text-sm font-medium ${
-                  active ? "text-blue-700" : done ? "text-green-700" : "text-neutral-400"
+                className={`text-sm font-medium transition-colors duration-300 ${
+                  active ? "text-indigo-300" : done ? "text-emerald-300" : "text-slate-600"
                 }`}
               >
                 {STATE_COPY[s].label}
               </p>
               {active && (
-                <p className="mt-1 text-xs text-neutral-500">{STATE_COPY[s].description}</p>
+                <p className="mt-1 text-xs text-slate-500">{STATE_COPY[s].description}</p>
               )}
             </div>
           </div>
@@ -175,12 +177,12 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       <main className="page-shell">
         <Brand />
         <h1 className="h1">Deposit not found</h1>
-        <p className="text-sm text-neutral-600">
-          No deposit with id <code>{params.id}</code> exists. It may have
+        <p className="body-text">
+          No deposit with id <code className="text-slate-300">{params.id}</code> exists. It may have
           been cleared (this PoC uses a local file store — see README).
         </p>
-        <Link href="/deposit" className="text-sm text-blue-600 underline">
-          Start a new deposit
+        <Link href="/deposit" className="text-sm">
+          Start a new deposit →
         </Link>
       </main>
     );
@@ -190,7 +192,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     return (
       <main className="page-shell">
         <Brand />
-        <p className="flex items-center gap-2 text-sm text-neutral-500">
+        <p className="flex items-center gap-2 text-sm text-slate-500">
           <SpinnerIcon className="h-4 w-4" /> Loading deposit status…
         </p>
       </main>
@@ -198,6 +200,59 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   }
 
   const isException = !HAPPY_PATH.includes(deposit.status);
+
+  if (deposit.status === "CREDITED") {
+    return (
+      <main className="page-shell min-h-screen justify-center">
+        <Brand />
+        <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
+            <CheckIcon className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="h1">Credited — tradable now</h1>
+          <p className="body-text max-w-xs">
+            <strong className="text-emerald-300">{deposit.amount} USDC</strong> is confirmed
+            on-chain and credited to your trading account.
+          </p>
+        </div>
+
+        <WalletRoles fundsFrom={deposit.userWallet} tradableIn={deposit.destinationAccount} />
+
+        <Stepper status={deposit.status} />
+
+        <div className="banner-purple">
+          <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance
+          check above is simulated (no real Hyperliquid testnet access). The
+          Arbitrum Sepolia transactions below are real.
+        </div>
+
+        {deposit.approveTxHash && (
+          <div className="card flex flex-col gap-1">
+            <span className="label-caps">Approval transaction (step 1 of 2)</span>
+            <span className="break-all font-mono text-xs text-slate-400">{deposit.approveTxHash}</span>
+            <a href={ARBISCAN_SEPOLIA_TX_URL(deposit.approveTxHash)} target="_blank" rel="noreferrer" className="w-fit text-sm">
+              View on Arbiscan Sepolia ↗
+            </a>
+          </div>
+        )}
+        {deposit.txHash && (
+          <div className="card flex flex-col gap-1">
+            <span className="label-caps">Deposit transfer transaction (step 2 of 2)</span>
+            <span className="break-all font-mono text-xs text-slate-400">{deposit.txHash}</span>
+            {deposit.explorerUrl && (
+              <a href={deposit.explorerUrl} target="_blank" rel="noreferrer" className="w-fit text-sm">
+                View on Arbiscan Sepolia ↗
+              </a>
+            )}
+          </div>
+        )}
+
+        <Link href="/deposit" className="btn-secondary w-fit">
+          Start another deposit
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main className="page-shell">
@@ -210,8 +265,8 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
         tradableIn={deposit.destinationAccount}
       />
 
-      <div className="card text-sm">
-        <strong>{deposit.amount} USDC</strong> · opened{" "}
+      <div className="card text-sm text-slate-300">
+        <strong className="text-slate-100">{deposit.amount} USDC</strong> · opened{" "}
         {new Date(deposit.createdAt).toLocaleString()}
       </div>
 
@@ -237,16 +292,6 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
         );
       })()}
 
-      {deposit.status === "CREDITED" && (
-        <div className="banner-green flex items-start gap-2.5">
-          <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
-          <span>
-            <strong>Credited — tradable now.</strong>{" "}
-            {STATE_COPY.CREDITED.description}
-          </span>
-        </div>
-      )}
-
       <Stepper status={deposit.status} />
 
       <div className="banner-purple">
@@ -258,14 +303,14 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       {deposit.approveTxHash && (
         <div className="card flex flex-col gap-1">
           <span className="label-caps">Approval transaction (step 1 of 2)</span>
-          <span className="break-all font-mono text-xs">{deposit.approveTxHash}</span>
+          <span className="break-all font-mono text-xs text-slate-400">{deposit.approveTxHash}</span>
           <a
             href={ARBISCAN_SEPOLIA_TX_URL(deposit.approveTxHash)}
             target="_blank"
             rel="noreferrer"
-            className="w-fit text-sm text-blue-600 underline"
+            className="w-fit text-sm"
           >
-            View on Arbiscan Sepolia
+            View on Arbiscan Sepolia ↗
           </a>
         </div>
       )}
@@ -273,22 +318,22 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       {deposit.txHash && (
         <div className="card flex flex-col gap-1">
           <span className="label-caps">Deposit transfer transaction (step 2 of 2)</span>
-          <span className="break-all font-mono text-xs">{deposit.txHash}</span>
+          <span className="break-all font-mono text-xs text-slate-400">{deposit.txHash}</span>
           {deposit.explorerUrl && (
             <a
               href={deposit.explorerUrl}
               target="_blank"
               rel="noreferrer"
-              className="w-fit text-sm text-blue-600 underline"
+              className="w-fit text-sm"
             >
-              View on Arbiscan Sepolia
+              View on Arbiscan Sepolia ↗
             </a>
           )}
         </div>
       )}
 
       {ACTIVE_STATUSES.includes(deposit.status) && (
-        <p className="flex items-center gap-1.5 text-xs text-neutral-400">
+        <p className="flex items-center gap-1.5 text-xs text-slate-500">
           <SpinnerIcon className="h-3 w-3" /> Checking every few seconds…
         </p>
       )}
