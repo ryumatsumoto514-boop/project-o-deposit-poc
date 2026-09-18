@@ -3277,3 +3277,26 @@ Assertions confirmed the shipped connected-wallet span has role=group,
 its full Funding wallet aria-label and matching title. This verifies the
 deployed client code plus the local connected-account render, not a manual
 screen-reader or wallet-extension session. No transactions submitted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T20:02:52Z
+
+## Codex review tick: 2026-09-18T20:02:52Z
+
+### [Codex review] 2026-09-18 — Clear stale live gas prices after failed refreshes
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent log entries; searched the full
+log for stale/gas-price fixes. curl fetched live /login and /deposit HTML.
+Read globals.css, tailwind.config.ts, API handlers and AppHeader.tsx; fetched
+the live login page's shared /_next/static/chunks/app/layout-8bbcebb2d381e4d3.js.
+The shipped gas polling catch was empty: after a successful read, network or
+JSON failures left the last price displayed indefinitely under a Live tooltip.
+This differs from the previously fixed build-time caching of /api/gas.
+
+Changed only AppHeader.tsx: reject unsuccessful HTTP responses and clear the
+price on failed refresh, using the existing GAS — fallback. A subsequent
+successful poll restores the price; the unmount cancellation guard remains.
+No lib core changes. A Node VM check of the actual TypeScript hook verified
+success -> failure -> recovery for network, HTTP and malformed-JSON errors,
+and that cleanup prevents later updates. npm run build passed with existing
+dependency warnings. Production deployment and live checks follow below.

@@ -19,10 +19,12 @@ function useGasPriceGwei() {
     async function poll() {
       try {
         const res = await fetch("/api/gas");
+        if (!res.ok) throw new Error("Gas price request failed");
         const body = await res.json();
         if (!cancelled) setGwei(typeof body.gwei === "number" ? body.gwei : null);
       } catch {
-        // keep last known value rather than flashing a dash on one bad poll
+        // A failed refresh cannot substantiate the header's live-price claim.
+        if (!cancelled) setGwei(null);
       }
     }
     poll();
