@@ -2550,3 +2550,12 @@ Build and production verification results follow below.
 npm run build passed (existing optional wallet dependency/dynamic-import
 warnings). Also fetched the CSS linked from live /login and confirmed the
 actual slate RGB values used in the contrast calculation.
+
+Fix commit 469e31f pushed to origin/main after rebasing over a concurrent
+remote documentation deletion. Initial production deployment
+7H27Ra8T7tbBg6WXYp9pBTha2eAB completed successfully. Post-deploy
+curl -fsS https://projecto-blond.vercel.app/login plus HTMLParser assertions
+confirmed both footer lines use text-slate-400, neither retains the old
+low-contrast classes, and the simulation disclosure remains present.
+A second deployment includes the concurrent documentation deletion as well.
+This is raw HTML/CSS verification and computed contrast, not a browser audit.
