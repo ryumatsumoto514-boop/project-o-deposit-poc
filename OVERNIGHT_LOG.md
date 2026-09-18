@@ -2376,3 +2376,22 @@ destinationAccount also returns 400; valid string addresses still return 201.
 No on-chain transactions were executed. Duplicate checking was verified locally,
 not claimed as a live multi-instance persistence test.
 Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T07:47:31Z
+
+## Codex review tick: 2026-09-18T07:47:31Z
+
+### [Codex review] 2026-09-18 — Low-contrast simulated-login labels
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log, and searched the full log
+for prior contrast fixes. Fetched raw HTML with curl from the live / and
+/login routes; inspected app/login/page.tsx, app/globals.css, and
+tailwind.config.ts, then fetched the stylesheet linked by live /login.
+Both Google and Email buttons rendered their meaningful "mock" disclosure
+in text-slate-600 (rgb(71 85 105)) at 12px on the dark translucent button.
+Changed only these two labels to text-slate-400 (rgb(148 163 184)).
+A luminance calculation using a conservative brightest background (base
+#0a0c10 + maximum 10% cyan glow + 5% white texture + 6% white hover fill)
+yields 1.58:1 before and 4.66:1 after. This makes the simulated-auth boundary
+legible; no reconciliation logic or visual-system redesign was involved.
+Build/deployment and live verification results follow below.
