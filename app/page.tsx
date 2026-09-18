@@ -73,7 +73,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <StatusTag dot="emerald">Zero unlimited allowances</StatusTag>
+            <StatusTag dot="emerald">Exact-amount approval by default</StatusTag>
             <StatusTag>Real-time exception handling</StatusTag>
           </div>
 

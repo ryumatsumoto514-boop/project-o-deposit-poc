@@ -1877,3 +1877,39 @@ Amber pivot still stands as the next reasonable target.
 Claude Code tick finished, exit code 0
 
 ## Cron tick: 2026-09-18T03:13:27Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-18T03:39:36Z
+Codex session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-09-18T03:40:44Z
+Codex session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-09-18T03:41:01Z
+Codex session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-09-18T03:41:14Z
+Codex session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-09-18T03:41:52Z
+Codex session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-09-18T03:42:26Z
+Codex review tick finished, exit code 0
+
+## Codex review tick: 2026-09-18T03:43:38Z
+
+### [Codex review] 2026-09-18 — Landing page overstated approval protection
+
+Fetched raw production HTML with `curl -sS https://projecto-blond.vercel.app`
+and `/deposit`, then read `app/page.tsx`, `app/deposit/approve/page.tsx`,
+`app/flow-context.tsx`, SPEC.md, and the recent log. The landing page claimed
+“Zero unlimited allowances,” but the approval screen offers “Approve for future
+deposits too” and actually passes `maxUint256` to approve when selected. This
+is a misleading absolute safety claim, distinct from the previously fixed
+API amount validation and disclosed serverless duplicate-blocking limitation.
+Changed only the landing badge to “Exact-amount approval by default,” matching
+the flow context's initial `approvalMode: "exact"`. No engine changes.
+
+Validation/deployment results will be appended after completion. Pre-existing
+automation script edits and its stdout log are outside this review's change.
