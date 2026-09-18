@@ -2559,6 +2559,19 @@ confirmed both footer lines use text-slate-400, neither retains the old
 low-contrast classes, and the simulation disclosure remains present.
 A second deployment includes the concurrent documentation deletion as well.
 This is raw HTML/CSS verification and computed contrast, not a browser audit.
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T09:32:33Z
+
+## Codex review tick: 2026-09-18T09:32:33Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T10:07:33Z
+
+## Codex review tick: 2026-09-18T10:07:33Z
+Claude Code tick finished, exit code 1
 
 Final production deployment BsouV9HejVJKiyXULMSRgDRtPEJt also completed
 successfully. Repeated curl of /login after completion; both footer
@@ -2590,3 +2603,55 @@ assertions against that live URL passed: true, [1], {"value":1}, and 1
 all return 400 INVALID_REQUEST; "-1" and "1001" remain 400; decimal string
 "12.345678" returns 201. These requests create no on-chain transfers.
 Build and live API validation completed; no browser interaction claimed.
+Codex review tick finished, exit code 0
+
+
+## Cron tick: 2026-09-18T10:42:34Z
+## Codex review tick: 2026-09-18T10:42:34Z
+
+## Autonomous QA cycle: 2026-09-18T10:43Z — PATCH /api/deposits/[id] accepted non-string failureReason
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs). Found
+a prior cycle's fix already staged uncommitted in the working tree
+(`app/api/deposits/[id]/route.ts`) that had not been built, verified,
+committed, or deployed — picked it up and finished it, plus a leftover
+untracked `scripts/shot-mobile-sweep.mjs` mobile screenshot helper (built on
+the existing `screenshot.mjs` CDP pipeline, syntax-checked clean, no app
+behavior implications) that was safe to bring in alongside it.
+
+### What was found
+Confirmed live against https://projecto-blond.vercel.app before touching
+anything: created a real deposit via `POST /api/deposits`, then
+`PATCH /api/deposits/<id>` with `{"status":"STALLED_NO_GAS",
+"failureReason":["a","b"]}` returned `200` and stored the literal array
+`["a","b"]` as `failureReason` on the record (verified via a follow-up GET).
+Same bug shape as the previously-fixed array-coercion issues in
+`POST /api/deposits` (`userWallet`/`destinationAccount` regex coercing
+arrays to strings): the PATCH handler checked `body.status` against the
+allowed enum but never validated the type of `failureReason` before writing
+it into the store, so any JSON value could poison a field the UI expects to
+render as plain text in the exception screens.
+
+### Fix
+Added an explicit type guard in `app/api/deposits/[id]/route.ts`: if
+`failureReason` is present and not `null`/`undefined`, it must be a
+`string`, else `400 INVALID_REQUEST` with a plain-language message. Pure
+request-boundary validation; no changes to `lib/*.ts` reconciliation state
+machine or idempotency logic.
+
+### Verification
+- `npm run build` passes clean.
+- Fresh `npm run start` production server on port 3711, real POST + PATCH
+  sequence against one deposit id:
+  - `failureReason: ["a","b"]` -> `400 INVALID_REQUEST` (was `200`,
+    silently stored the array, confirmed live pre-fix above).
+  - `failureReason: {"x":1}` -> `400 INVALID_REQUEST`.
+  - `failureReason: "gas too low"` (valid string) -> `200`, stored
+    correctly.
+  - `failureReason: null` -> `200`, stored as `null` (explicit clear still
+    works).
+  - `failureReason` omitted -> `200`, unchanged (backward compatible).
+- Deleted local test data (`.data/deposits.json`, gitignored) before and
+  after testing.
+
+### Deploy confirmation
