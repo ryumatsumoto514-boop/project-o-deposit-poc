@@ -2114,3 +2114,15 @@ pending, and a role=alert message explaining that connection did not complete
 and offering retry or explicitly simulated sign-in. No engine changes.
 Used an isolated checkout to preserve existing unrelated automation files.
 npm run build passed. Production deployment and live verification follow.
+
+Verification completed: commit 974ba0d pushed to origin main; Vercel production
+deployment 6iDdu3JeX61tvBVbfCHvpi1twcwG succeeded. Post-deploy curl -fsS fetched
+https://projecto-blond.vercel.app/login and its referenced
+/_next/static/chunks/app/login/page-d472042095ef20b5.js; assertions verified
+the pending and error UI shipped. A headless Chromium CDP test injected an
+EIP-1193 wallet that rejects eth_requestAccounts with code 4001. On the old
+live version it reproduced no pending indicator and no error alert; on both
+the new local production build and live URL it verified a disabled aria-busy
+button followed by the expected role=alert text. This simulates wallet
+rejection, not a manual extension session. Build passed with existing
+optional-dependency warnings. Unrelated workspace automation edits preserved.
