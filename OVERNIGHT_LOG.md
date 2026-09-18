@@ -2853,3 +2853,93 @@ unused method on the store carries no risk once nothing routes to it.
 Commit pending below — see next log line for the pushed hash and live
 post-deploy verification.
 Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T13:37:47Z
+
+## Codex review tick: 2026-09-18T13:37:47Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T14:12:47Z
+
+## Codex review tick: 2026-09-18T14:12:47Z
+
+### [Codex review] 2026-09-18 — Independently reproduced decimal-format duplicate bypass; concurrent fix detected
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log tail, and searched earlier
+log entries for amount normalization fixes. Fetched live /login with curl
+and parsed its raw HTML metadata/buttons; read app/globals.css,
+tailwind.config.ts, login, FlowChrome, and the deposit API handlers.
+Following the pre-flight duplicate check into lib/store.ts revealed literal
+`d.amount === amount` comparison. The amount screen preserves typed formatting.
+
+Confirmed against https://projecto-blond.vercel.app/api/deposits with two
+JSON POSTs via Python urllib: same wallet
+0x00000000000000000000000000000000c0de7342 and destination
+0x00000000000000000000000000000000c0de7343, amounts "0.734219" and
+"00.734219". BOTH returned HTTP 201, proving numerically identical deposits
+bypassed protection. These probes created records only; no pull or on-chain
+transaction was requested.
+
+While preparing a decimal-string normalization patch, apply_patch failed
+because another process had JUST edited the same comparison to
+`Number(d.amount) === Number(amount)`, with a comment describing this bug.
+Re-read git status and the source to confirm that concurrent uncommitted edit.
+My patch made no code changes. Preserved the concurrent implementation and
+stopped to avoid overwriting, committing, or deploying another process's
+unfinished work. This is an independently verified finding, but not a unique
+fix delivered by this review. No build, deployment, or post-fix live verification
+is claimed here; the live evidence above is pre-fix. Only this log entry was
+written by this review. The concurrent fix's owner still needs to finish its
+build/deploy/live verification.
+
+## Autonomous QA cycle: 2026-09-18T14:1xZ — duplicate-deposit blocking used string equality on amount, letting "1.50" bypass a block on "1.5"
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs). Most
+API-boundary validation gaps on `POST /api/deposits` (type coercion, missing
+fields, decimal format, demo cap) had already been found and fixed across many
+prior cycles, so I looked one layer deeper — at the idempotency/duplicate-
+blocking logic itself (`lib/idempotency.ts` -> `lib/store.ts`), which is core
+reconciliation-engine business logic and had not been re-examined since Cycle
+1's original "call it twice, expect 409" check.
+
+### What was found
+`lib/store.ts`'s `findInFlightByWalletAndAmount` compared amounts with strict
+string equality (`d.amount === amount`), not numeric equality. Confirmed live
+against https://projecto-blond.vercel.app before touching anything: POSTed a
+deposit for wallet `0x...c0de`, amount `"1.5"` -> `201`. A resend of the exact
+same string `"1.5"` correctly got blocked with `409 DUPLICATE_IN_FLIGHT`. But
+a resend of `"1.50"` — the identical amount, just formatted with a trailing
+zero — returned a fresh `201`, creating a second in-flight `SIGNED` record for
+the same wallet or the same money. This is exactly the failure mode the
+reconciliation engine's duplicate-blocking exists to prevent (SPEC.md and this
+log's Cycle 1 both call this out as a hard requirement), and it was silently
+not covered by six-decimal amount strings, which can express the same value
+many ways (`"1.5"`, `"1.50"`, `"1.500000"`).
+
+### Fix
+`lib/store.ts` line ~77: changed `d.amount === amount` to
+`Number(d.amount) === Number(amount)`. Amounts reaching this comparison have
+already passed `POST /api/deposits`'s decimal-format guard (positive, <=6
+fractional digits, <=1000), so `Number()` parsing is safe here — no
+floating-point precision risk at this value range/precision. This is a narrow
+idempotency-matching fix, not a change to the state machine, transition
+table, or any other `lib/*.ts` logic.
+
+### Verification
+- `npm run build` passes clean.
+- Fresh `npm run start` production server on port 3922, real POST sequence
+  for one wallet:
+  - `amount: "1.5"` -> `201`.
+  - `amount: "1.50"` (same value, different string) -> `409
+    DUPLICATE_IN_FLIGHT` (was `201` pre-fix, confirmed live against
+    production above).
+  - `amount: "1.500000"` (same value again) -> `409 DUPLICATE_IN_FLIGHT`.
+  - `amount: "2.5"` (genuinely different amount, same wallet) -> `201`,
+    confirming the fix didn't over-block unrelated amounts.
+- Deleted local test data (`.data/deposits.json`, gitignored) before and
+  after testing.
+
+### Deploy confirmation
+Codex review tick finished, exit code 0

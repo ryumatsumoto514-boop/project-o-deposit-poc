@@ -74,7 +74,9 @@ export const depositStore = {
     return Array.from(deposits.values()).find(
       (d) =>
         d.userWallet?.toLowerCase() === userWallet.toLowerCase() &&
-        d.amount === amount &&
+        // Compare numerically, not as strings — "1.5" and "1.50" are the
+        // same deposit amount and must not slip past duplicate blocking.
+        Number(d.amount) === Number(amount) &&
         d.status !== "CREDITED"
     );
   },
