@@ -2395,3 +2395,12 @@ A luminance calculation using a conservative brightest background (base
 yields 1.58:1 before and 4.66:1 after. This makes the simulated-auth boundary
 legible; no reconciliation logic or visual-system redesign was involved.
 Build/deployment and live verification results follow below.
+
+Verification: npm run build passed (existing optional-dependency warnings).
+Commit 6f23286 pushed to origin main, deployed with
+vercel --token "$VERCEL_TOKEN" --yes --prod. Production deployment
+2cEVGZfBKCu2MMxXLEJbhGJYvzkJ reached READY and aliased to the live URL.
+Post-deploy curl -fsS https://projecto-blond.vercel.app/login succeeded;
+parsed the returned HTML and asserted that exactly two "mock" spans exist
+and both now use text-slate-400. Verification was raw HTML/CSS and computed
+contrast, not a browser screenshot or a claim of a full accessibility audit.
