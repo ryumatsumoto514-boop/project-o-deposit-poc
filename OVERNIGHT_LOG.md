@@ -3264,5 +3264,16 @@ Changed the header indicator to a named group with aria-label and title
 same. No lib changes. A React server-render check of the actual component
 with a mocked connected account asserted the group role, complete accessible
 label and tooltip. npm run build passed, including type/lint checks; the
-compiled layout includes the final group label. Existing dependency import
+first compiled layout lacked the group role added while that build was running,
+so a second build was required for the final edit. Existing dependency import
 warnings remain. Deployment and live verification follow below.
+
+Live verification: final npm run build passed. Fix commit 08f0e3f was
+pushed to origin/main and the requested Vercel production deployment
+completed successfully (projecto-j5g0v90jx). Post-deploy curl -fsSL
+fetched https://projecto-blond.vercel.app/deposit and its referenced
+/_next/static/chunks/app/layout-8bbcebb2d381e4d3.js.
+Assertions confirmed the shipped connected-wallet span has role=group,
+its full Funding wallet aria-label and matching title. This verifies the
+deployed client code plus the local connected-account render, not a manual
+screen-reader or wallet-extension session. No transactions submitted.
