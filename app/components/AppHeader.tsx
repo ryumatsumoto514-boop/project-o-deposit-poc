@@ -43,7 +43,7 @@ export function AppHeader() {
   return (
     <header className="app-header">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-5">
-        <Link href="/" className="min-w-0 shrink">
+        <Link href="/" aria-label="Exchange O home" className="min-w-0 shrink">
           <Brand compact={isConnected && !!address} />
         </Link>
         <div className="flex shrink-0 items-center gap-1.5">

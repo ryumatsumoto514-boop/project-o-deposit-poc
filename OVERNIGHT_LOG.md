@@ -1975,3 +1975,19 @@ htmlFor and matching input id, aria-invalid, aria-describedby, the error id,
 and role=alert. This verifies shipped attributes, not a manual screen-reader
 session. The same source change and log entry were copied into the main
 workspace while preserving unrelated edits.
+
+### [Codex review] 2026-09-18 — Name the home link when the wallet is connected
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log, app/globals.css,
+app/components/AppHeader.tsx and app/components/Brand.tsx. Fetched production
+/login and /deposit with curl -fsS, then inspected /login's referenced layout
+chunk (layout-9a784f22113aeec5.js). The home link has no explicit accessible
+name; connecting a wallet sets Brand's compact flag, hiding its only text
+with display:none while the remaining SVG is aria-hidden. Screen-reader
+users therefore encounter an unnamed navigation link after connecting.
+This is distinct from the prior deposit input labeling fix.
+
+Added aria-label="Exchange O home" to the header link so both connected and
+disconnected states have a stable name. One attribute; no engine changes.
+Used an isolated checkout to preserve unrelated unfinished workspace edits.
+Build and live verification results follow.
