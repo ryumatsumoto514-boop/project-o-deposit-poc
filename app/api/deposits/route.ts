@@ -18,6 +18,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (body === null || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "Request body must be a JSON object." },
+      { status: 400 }
+    );
+  }
+
   if (!body.userWallet || !body.amount) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "userWallet and amount are required." },

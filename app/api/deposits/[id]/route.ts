@@ -38,6 +38,13 @@ export async function PATCH(
       { status: 400 }
     );
   }
+  if (body === null || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "Request body must be a JSON object." },
+      { status: 400 }
+    );
+  }
+
   if (!body.status || !ALLOWED_CLIENT_STATUSES.includes(body.status)) {
     return NextResponse.json({ error: "INVALID_STATUS" }, { status: 400 });
   }

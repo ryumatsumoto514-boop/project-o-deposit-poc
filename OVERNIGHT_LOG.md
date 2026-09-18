@@ -2218,3 +2218,22 @@ commit.
   (previously `500`); a valid POST still returns `201`; all six core routes
   (`/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
   `/?ref=kol_alex`) still `200`. **This is live, not just committed.**
+
+### [Codex review] 2026-09-18 — Valid JSON null still crashed deposit routes
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log (including the malformed-JSON
+fix), and both deposit request handlers. Fresh live reproduction:
+curl -i -X POST https://projecto-blond.vercel.app/api/deposits
+-H 'Content-Type: application/json' --data 'null' returned HTTP 500 with
+an empty body. JSON null parses successfully, so the existing syntax-error
+catch did not prevent property access on null. PATCH had the same assumption.
+
+Added a non-null, non-array object check before property access in
+app/api/deposits/route.ts and app/api/deposits/[id]/route.ts. Invalid top-level
+JSON shapes now return 400 INVALID_REQUEST with a plain-language message.
+No lib reconciliation changes. Used an isolated checkout to preserve unrelated
+automation files. npm run build passed (existing optional dependency warnings).
+A local production server on port 3419 accepted a valid deposit (201); POST
+and PATCH each rejected null, [], true, 42, and a JSON string with 400, and
+retained the existing malformed-JSON 400 behavior (12 negative checks passed).
+Live deployment verification will be appended after deployment completes.
