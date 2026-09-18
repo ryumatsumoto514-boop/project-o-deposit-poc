@@ -2582,3 +2582,11 @@ unrelated uncommitted PATCH-route and tooling edits. Verification follows.
 
 npm run build passed (existing optional wallet dependencies and dynamic-import
 warnings). Production deployment and live request assertions follow below.
+
+Fix commit a750de8 pushed to origin/main after retaining a concurrent log
+update. Vercel production deployment Coj7WG91SozSE9iZRgiQU8XtYFib reached
+READY and aliased https://projecto-blond.vercel.app. Post-deploy curl POST
+assertions against that live URL passed: true, [1], {"value":1}, and 1
+all return 400 INVALID_REQUEST; "-1" and "1001" remain 400; decimal string
+"12.345678" returns 201. These requests create no on-chain transfers.
+Build and live API validation completed; no browser interaction claimed.
