@@ -83,9 +83,12 @@ export default function DepositAmountPage() {
 
       {isConnected && (
         <div className="card flex flex-col gap-2">
-          <label className="label-caps">Amount (USDC)</label>
+          <label htmlFor="deposit-amount" className="label-caps">Amount (USDC)</label>
           <div className="relative">
             <input
+              id="deposit-amount"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "deposit-amount-error" : undefined}
               type="number"
               min="0"
               step="0.01"
@@ -102,7 +105,7 @@ export default function DepositAmountPage() {
               USDC
             </span>
           </div>
-          {error && <p className="text-sm text-rose-400">{error}</p>}
+          {error && <p id="deposit-amount-error" role="alert" className="text-sm text-rose-400">{error}</p>}
           <button onClick={handleContinue} className="btn-primary mt-2 w-fit">
             Continue
           </button>

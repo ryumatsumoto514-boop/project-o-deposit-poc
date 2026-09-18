@@ -1950,3 +1950,18 @@ curl -fsS fetched /, /login and /deposit and each referenced stylesheet;
 assertions confirmed the reduced-motion media query, animation/transition
 overrides and button transform override in the live CSS. This verifies
 deployed rules, not a manual browser/OS preference test.
+
+### [Codex review] 2026-09-18 — Give the deposit amount field an accessible label and error
+
+Read the brief, SPEC.md, recent log entries and app/deposit/page.tsx.
+Fetched live /login with curl -fsS and /deposit plus its referenced JavaScript
+with Python urllib. The production deposit chunk page-b0ef84f657d26a28.js
+confirmed the visible "Amount (USDC)" label had no htmlFor and its input
+had no id or accessible name; validation errors were plain unassociated text.
+The form is client gated, so raw HTML alone cannot reveal these controls.
+
+Connected the label and input using deposit-amount, exposed aria-invalid,
+associated visible errors via aria-describedby, and gave the error role=alert.
+This is one form-accessibility fix; no engine or API behavior changed.
+Used an isolated checkout to exclude existing unrelated workspace edits.
+Build and production verification results follow.
