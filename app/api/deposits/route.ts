@@ -38,6 +38,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (
+    body.approveTxHash != null &&
+    (typeof body.approveTxHash !== "string" || !/^0x[a-fA-F0-9]{64}$/.test(body.approveTxHash))
+  ) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "approveTxHash must be a 0x-prefixed 32-byte transaction hash." },
+      { status: 400 }
+    );
+  }
+
   const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
   if (typeof body.userWallet !== "string" || !ADDRESS_RE.test(body.userWallet)) {
     return NextResponse.json(

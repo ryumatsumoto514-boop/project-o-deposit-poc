@@ -3206,3 +3206,29 @@ its referenced /_next/static/chunks/app/page-6bfdc811465cfae4.js.
 Asserted the shipped KOL lookup contains Object.prototype.hasOwnProperty.call.
 This confirms the deployed client fix; the React render regression was
 checked locally, not in a live browser session. No transactions submitted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T18:52:51Z
+
+## Codex review tick: 2026-09-18T18:52:51Z
+Claude Code tick finished, exit code 1
+
+### [Codex review] 2026-09-18 — Reject malformed approval hashes before they crash the tracker
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent log entries; searched the log for
+approval-hash validation coverage. curl fetched live /login HTML. Reading
+app/api/deposits/route.ts and app/deposit/status/[id]/page.tsx exposed an
+unchecked approveTxHash rendered directly as a React child (lines 268/342).
+Live curl POST /api/deposits with approveTxHash:{"invalid":"hash"} returned
+201 and stored that object (record e9c5bfe9-70b0-4f92-9971-4249ed742aff).
+This can crash the status view instead of displaying a transaction hash.
+No pull/reconcile call or on-chain transaction was submitted.
+
+Changed only the creation API to require any non-null approval hash to be a
+0x-prefixed 64-digit hexadecimal string. Omitted/null remain supported.
+No lib core changes; existing records are not migrated. Build and live
+verification results follow below.
+
+Verification: npm run build passed, including type/lint checks. A local
+React server-render check reproduced the object-as-child exception for the
+stored malformed value. Production deployment and curl checks follow.
