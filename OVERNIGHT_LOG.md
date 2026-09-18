@@ -2953,3 +2953,28 @@ exact case would have returned `201` pre-fix). All six core routes (`/`,
 `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
 `/?ref=kol_alex`) still `200`. **This is live, not just committed.** These
 requests created store records only; no on-chain transfers were requested.
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-18T14:47:47Z
+
+## Codex review tick: 2026-09-18T14:47:47Z
+
+### [Codex review] 2026-09-18 — Announce approval failures to screen readers
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, recent log entries and searched the full log
+for accessibility/announcement fixes. Fetched /login, /deposit/confirm and
+/deposit/approve from https://projecto-blond.vercel.app with curl; read
+app/globals.css, tailwind.config.ts and the flow components. Found one missed
+accessibility issue in app/deposit/approve/page.tsx: dynamically inserted
+approval failure details (including the recovery link for an already-created
+deposit) were a plain div with no alert/live-region semantics. Keyboard focus
+stays at the submit control, so assistive technology may miss the error.
+Confirmed the pre-fix live approval JS chunk page-dcddcc4d09688a6c.js also
+renders this banner without a role. Earlier amount-field and login fixes do
+not cover this separate error path.
+
+Added role="alert" to that one error container. No lib engine changes.
+`npm run build` completed successfully including type/lint checks; dependency
+warnings remain for optional wallet SDK modules and ox's dynamic import.
+Deployment and live bundle verification follow below; this is not a claim of
+a manual screen-reader audit.

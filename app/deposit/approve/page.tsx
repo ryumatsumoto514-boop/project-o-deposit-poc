@@ -271,7 +271,7 @@ export default function DepositApprovePage() {
       </fieldset>
 
       {errorMessage && (
-        <div className="banner-red flex items-start gap-2.5">
+        <div role="alert" className="banner-red flex items-start gap-2.5">
           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />
           <span>
             <strong>{errorMessage.title}.</strong> {errorMessage.detail}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { depositStore } from "@/lib/store";
+import { canTransition } from "@/lib/stateMachine";
 import type { DepositStatus } from "@/lib/types";
 
 export async function GET(
@@ -47,6 +48,15 @@ export async function PATCH(
 
   if (!body.status || !ALLOWED_CLIENT_STATUSES.includes(body.status)) {
     return NextResponse.json({ error: "INVALID_STATUS" }, { status: 400 });
+  }
+  if (!canTransition(deposit.status, body.status)) {
+    return NextResponse.json(
+      {
+        error: "INVALID_TRANSITION",
+        message: `Cannot move a deposit from ${deposit.status} to ${body.status}.`,
+      },
+      { status: 409 }
+    );
   }
   if (
     body.failureReason !== undefined &&
