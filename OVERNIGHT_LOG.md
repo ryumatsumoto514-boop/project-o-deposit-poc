@@ -3197,3 +3197,12 @@ and kol_jane as strings, preserving the known KOL Alex display name.
 Build/deployment and live verification results follow below.
 
 Build verification: npm run build passed, including type/lint checks.
+Claude Code tick finished, exit code 1
+
+Live verification: fix commit 886e57f pushed to origin/main. Requested
+Vercel production deployment succeeded (projecto-g24c07c73). Post-deploy
+curl -fsSL fetched https://projecto-blond.vercel.app/?ref=__proto__ and
+its referenced /_next/static/chunks/app/page-6bfdc811465cfae4.js.
+Asserted the shipped KOL lookup contains Object.prototype.hasOwnProperty.call.
+This confirms the deployed client fix; the React render regression was
+checked locally, not in a live browser session. No transactions submitted.
