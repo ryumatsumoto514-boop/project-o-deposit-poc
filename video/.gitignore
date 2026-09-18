@@ -1,0 +1,3 @@
+# Local render artifacts and raw agent stdout logs — not project content.
+.shots/
+*build.log
