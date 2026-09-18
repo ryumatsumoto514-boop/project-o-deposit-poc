@@ -13,7 +13,7 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0a0b0d",
+          background: "#0a0c10",
         }}
       >
         <div
@@ -23,15 +23,25 @@ export default function AppleIcon() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#3b82f6",
+            background: "#0d1015",
             borderRadius: 30,
-            color: "white",
-            fontSize: 74,
-            fontWeight: 700,
-            fontFamily: "system-ui, sans-serif",
+            border: "1px solid rgba(255,255,255,0.15)",
           }}
         >
-          O
+          <svg width="96" height="96" viewBox="0 0 32 32">
+            <circle
+              cx="16"
+              cy="16"
+              r="9.5"
+              fill="none"
+              stroke="#00F0FF"
+              strokeWidth="2.6"
+              strokeDasharray="10 4.2"
+              strokeLinecap="round"
+              transform="rotate(-90 16 16)"
+            />
+            <circle cx="16" cy="16" r="2.6" fill="#00F0FF" />
+          </svg>
         </div>
       </div>
     ),

@@ -240,12 +240,12 @@ export default function DepositApprovePage() {
 
       <fieldset className="card flex flex-col gap-3">
         <legend className="label-caps px-1">Approval scope</legend>
-        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-blue-400/40 has-[:checked]:bg-blue-500/[0.06]">
+        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-accent-400/40 has-[:checked]:bg-accent-500/[0.06]">
           <input
             type="radio"
             checked={approvalMode === "exact"}
             onChange={() => setApprovalMode("exact")}
-            className="mt-1 h-4 w-4 accent-blue-500"
+            className="mt-1 h-4 w-4 accent-[#00F0FF]"
           />
           <span>
             <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app

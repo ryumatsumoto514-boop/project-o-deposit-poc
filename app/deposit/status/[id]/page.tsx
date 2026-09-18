@@ -109,7 +109,7 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
                     : stuck
                     ? exceptionStyle!.ring
                     : active
-                    ? "pulse-ring bg-blue-500 text-white"
+                    ? "pulse-ring bg-accent-500 text-[#03181c]"
                     : "border border-white/15 bg-white/[0.03] text-slate-600"
                 }`}
               >
@@ -134,7 +134,7 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
             <div className="pb-6 pt-0.5">
               <p
                 className={`text-sm font-medium transition-colors duration-300 ${
-                  stuck ? exceptionStyle!.text : active ? "text-blue-300" : done ? "text-emerald-300" : "text-slate-600"
+                  stuck ? exceptionStyle!.text : active ? "text-accent-300" : done ? "text-emerald-300" : "text-slate-600"
                 }`}
               >
                 {stuck ? STATE_COPY[status].label : STATE_COPY[s].label}
@@ -252,7 +252,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
         <Stepper deposit={deposit} />
 
-        <div className="banner-purple">
+        <div className="banner-accent">
           <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance
           check above is simulated (no real Hyperliquid testnet access). The
           Arbitrum Sepolia transactions below are real.
@@ -325,7 +325,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
       <Stepper deposit={deposit} />
 
-      <div className="banner-purple">
+      <div className="banner-accent">
         <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance
         check above is simulated (no real Hyperliquid testnet access). The
         Arbitrum Sepolia transaction below is real.

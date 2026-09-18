@@ -25,6 +25,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# crash dumps from OOM-killed processes
+/core
+
 # local env files
 .env*.local
 

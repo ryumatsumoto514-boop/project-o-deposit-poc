@@ -22,7 +22,7 @@ export function StepProgress({ step }: { step: 1 | 2 | 3 | 4 }) {
           <div
             key={label}
             className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-              i < step ? "bg-blue-500" : "bg-white/10"
+              i < step ? "bg-accent-500" : "bg-white/10"
             }`}
           />
         ))}

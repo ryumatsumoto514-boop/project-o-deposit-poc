@@ -68,17 +68,17 @@ const INJECT_WALLET = (wallet, chainIdHex) => `
 })();
 `;
 
-async function shot(page, { url, out, wallet, chainIdHex, seedFlow, click, waitMs }) {
+async function shot(page, { url, out, wallet, chainIdHex, seedFlow, click, waitMs, width, height, mobile }) {
   const { targetId, webSocketDebuggerUrl } = page;
   const ws = await connect(webSocketDebuggerUrl);
   await send(ws, "Page.enable");
   await send(ws, "Runtime.enable");
   await send(ws, "Network.enable");
   await send(ws, "Emulation.setDeviceMetricsOverride", {
-    width: 375,
-    height: 812,
-    deviceScaleFactor: 2,
-    mobile: true,
+    width: width ?? 375,
+    height: height ?? 812,
+    deviceScaleFactor: mobile === false ? 1 : 2,
+    mobile: mobile ?? true,
   });
 
   if (wallet) {

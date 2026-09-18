@@ -24,7 +24,7 @@ export function KolBanner() {
 
 export function MockedBadge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="banner-purple w-full">
+    <div className="banner-accent w-full">
       <strong>Mocked for this PoC:</strong> {children}
     </div>
   );

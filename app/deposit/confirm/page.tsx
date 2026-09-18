@@ -58,7 +58,7 @@ export default function DepositConfirmPage() {
           type="checkbox"
           checked={confirmed}
           onChange={(e) => setConfirmed(e.target.checked)}
-          className="mt-0.5 h-4 w-4 accent-blue-500"
+          className="mt-0.5 h-4 w-4 accent-[#00F0FF]"
         />
         I&apos;ve checked the full address above and it matches what I
         expect.
