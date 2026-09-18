@@ -24,6 +24,19 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Exchange O — Deposit (PoC)",
   description: "Deposit Reconciliation Engine PoC — Arbitrum Sepolia testnet",
+  openGraph: {
+    type: "website",
+    siteName: "Exchange O",
+    title: "Exchange O — Testnet deposit demo",
+    description:
+      "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Exchange O — Testnet deposit demo",
+    description:
+      "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
+  },
 };
 
 export const viewport: Viewport = {

@@ -2504,3 +2504,22 @@ Then curl -fsS https://projecto-blond.vercel.app/login returned successfully;
 parsed its HTML and asserted the complete new disclosure is present and the
 old "Every step above" claim is absent. Both assertions passed. This was
 raw live HTML verification, not a browser interaction or on-chain transaction.
+
+### [Codex review] 2026-09-18 — Shared-link previews lacked testnet disclosure
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log, and searched the full log
+for social-preview/metadata work. Fetched raw live HTML with curl -fsS from
+https://projecto-blond.vercel.app/ and /login and parsed meta/link elements
+with Python HTMLParser. Both had a normal description but no og:* or twitter:*
+tags. For the KOL-link entry flow, social previews should explicitly disclose
+the demo boundary rather than depend on a platform extracting page copy.
+Added Open Graph website and Twitter summary metadata in app/layout.tsx:
+title says "Testnet deposit demo"; description identifies Arbitrum Sepolia,
+simulated Email/Google sign-in, bridging and Hyperliquid crediting, and no
+real funds. These are inherited by subroutes. No invented preview image or
+route-inaccurate canonical URL. No reconciliation changes.
+Used an isolated worktree because another review had an uncommitted API edit.
+Build and live deployment verification follow below.
+
+npm run build passed (existing optional wallet dependency and dynamic-import
+warnings). Production deployment and live HTML assertions pending below.
