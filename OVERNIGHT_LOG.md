@@ -3160,3 +3160,12 @@ Concurrent-work note: the required git add -A also includes a pre-existing
 app/components/KolBanner.tsx display-name edit and scripts/shot-approve-full.mjs.
 These were not authored by this review. The banner edit was present during
 the successful build; the screenshot helper was not run by this review.
+
+Live verification: commit 74d76c5 pushed to origin/main; requested Vercel
+production deploy succeeded (projecto-86vnm8578, aliased to
+https://projecto-blond.vercel.app). Post-deploy curl POSTs to live
+/api/deposits verified sourceChainId 1, omitted, and string "421614" each
+return 400 INVALID_REQUEST with the testnet requirement. Numeric 421614
+returns 201 and stores the correct source chain (record
+4f436818-bf31-4427-a43f-f36daf01d701). Assertions checked status codes and
+response bodies. No approval hashes or on-chain operations were submitted.
