@@ -95,6 +95,7 @@ export default function DepositApprovePage() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          mockIdentity,
           userWallet: address,
           destinationAccount: deriveMockTradingAccount(address),
           amount: draftAmount,

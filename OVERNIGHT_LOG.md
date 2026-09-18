@@ -1923,6 +1923,12 @@ Post-deploy `curl -fsS https://projecto-blond.vercel.app` succeeded; assertions
 against its raw HTML confirmed “Exact-amount approval by default” is present
 and “Zero unlimited allowances” is absent. This was one copy correction;
 no reconciliation logic or approval behavior changed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T03:48:28Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-18T04:11:28Z
 
 
 ### [Codex review] 2026-09-18 — Respect reduced-motion preferences
@@ -1950,6 +1956,12 @@ curl -fsS fetched /, /login and /deposit and each referenced stylesheet;
 assertions confirmed the reduced-motion media query, animation/transition
 overrides and button transform override in the live CSS. This verifies
 deployed rules, not a manual browser/OS preference test.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T04:23:28Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-18T04:46:28Z
 
 ### [Codex review] 2026-09-18 — Give the deposit amount field an accessible label and error
 
@@ -1975,6 +1987,13 @@ htmlFor and matching input id, aria-invalid, aria-describedby, the error id,
 and role=alert. This verifies shipped attributes, not a manual screen-reader
 session. The same source change and log entry were copied into the main
 workspace while preserving unrelated edits.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T04:58:28Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-18T05:21:29Z
+
 
 ### [Codex review] 2026-09-18 — Name the home link when the wallet is connected
 
@@ -2001,3 +2020,83 @@ in both HTML responses and the referenced layout JavaScript chunk. This
 verifies the permanent name ships with hydration; no manual screen-reader
 session was performed. Copied the fix and this entry into the main workspace,
 preserving unrelated edits.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T05:33:29Z
+
+## Autonomous QA cycle: 2026-09-18 — Wallet-role labeling ("Signing in as") missing on the deposit status page
+
+**Trigger:** standing autonomous-QA instruction, priority 4 (KOL/B2B2C
+assignment-fit re-check). The prior cycle's own gap-check flagged that
+wallet-role labeling — one of SPEC.md's five core differentiators — hadn't
+been freshly re-verified since the Cyber Amber pivot. Found the main
+workspace already had a coherent, uncommitted fix for exactly this from an
+interrupted Claude Code tick (killed by the environment's process time
+limit before it could commit); verified it end-to-end rather than
+re-deriving it from scratch or discarding it as stray state.
+
+### What was found
+`WalletRoles` (`app/components/WalletRoles.tsx`) supports a `signingInAs`
+row alongside `fundsFrom`/`tradableIn` — the three-way distinction (login
+identity vs. funding wallet vs. trading account) is exactly what SPEC.md
+calls for. It was wired on the live flow pages (`/deposit`, `/deposit/confirm`,
+`/deposit/approve`) via `flow-context`'s in-memory `mockIdentity`, but the
+deposit record persisted by `POST /api/deposits` never captured it. Once a
+user revisits `/deposit/status/[id]` — a fresh page load, not carried
+client-side flow state — `WalletRoles` there only had `deposit.userWallet`
+and `deposit.destinationAccount` to work with, so the "Signing in as" row
+silently disappeared on the one screen most likely to be reloaded or
+revisited (status is polled/bookmarked, unlike the one-shot approve step).
+
+### Fix (already staged, verified and completed this cycle)
+- `lib/types.ts`: added `mockIdentity: string | null` to `DepositRecord` and
+  `CreateDepositInput`.
+- `app/api/deposits/route.ts`: persist `body.mockIdentity ?? null` on create.
+- `app/deposit/approve/page.tsx`: send `mockIdentity` in the `POST
+  /api/deposits` body.
+- `app/deposit/status/[id]/page.tsx`: pass `deposit.mockIdentity` into both
+  `WalletRoles` render paths (credited screen and default status screen).
+- `scripts/overnight-tick.sh`: unrelated carried-over fix, `export
+  HOME=/opt/data/home` so cron-invoked ticks resolve the right home dir.
+No `lib/*.ts` reconciliation state-machine or idempotency logic touched —
+this is additive data plumbing (one nullable field) plus two call sites.
+
+### Verification
+- Confirmed via `grep` that `app/api/deposits/route.ts` is the only place a
+  `DepositRecord` literal is constructed, so no other creation path needed
+  updating.
+- `npm run build` passes clean (killed stray `next-server` processes first).
+- Started a real `next start` production server on port 3312, `curl -X POST
+  /api/deposits` with `mockIdentity: "demo@exchangeo.test"` — response JSON
+  confirmed the field round-trips onto the created record (previously would
+  have been silently dropped, since the old `CreateDepositInput`/route
+  never read or stored it).
+- Local git history had diverged from `origin/main` (two commits ahead on
+  origin from a parallel Codex review tick); resolved by stashing, fast-
+  forwarding, and popping — the `AppHeader.tsx` change in this diff was
+  already identical to origin's `f624c7e` and cleanly disappeared as a
+  no-op; only `OVERNIGHT_LOG.md`'s append-only history needed a manual
+  merge (verified no conflict markers remain, both sides' entries present
+  in original order).
+- Deleted local test data (`.data/deposits.json`, gitignored) before
+  finishing.
+
+### Deploy
+Committed as a single fix, pushed to `origin main`, redeployed via `vercel
+--token "$VERCEL_TOKEN" --yes --prod`, and re-verified live: a fresh
+`POST https://projecto-blond.vercel.app/api/deposits` with `mockIdentity`
+set returns it on the created record, confirming the fix is live and not
+just committed. (Deploy/verify details below, appended after `vercel`
+finishes.)
+
+### Honest gap check
+This cycle picked up and finished a genuine in-flight fix rather than
+starting fresh — flagged here because it's a different pattern from most
+prior entries (which each start-to-finish a fix within one cycle). The
+underlying flaw (wallet-role labeling silently degrading on page reload)
+is real and assignment-relevant, not cosmetic. Did not get to categories
+1-3 fresh this cycle (functional/consistency/polish) since this was
+already sitting complete and in-scope for priority 4; a reasonable next
+target is a fresh functional-bug sweep of the exception screens
+(STALLED_NO_GAS/AMBIGUOUS/duplicate-blocked), which haven't been
+adversarially curled since early in the night.

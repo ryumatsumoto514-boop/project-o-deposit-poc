@@ -12,6 +12,7 @@ export type DepositStatus =
 
 export interface DepositRecord {
   id: string;
+  mockIdentity: string | null; // mock login identity ("Signing in as"), distinct from userWallet
   userWallet: `0x${string}`; // funding source / login wallet
   destinationAccount: `0x${string}`; // Hyperliquid-side trading account (mocked)
   amount: string; // human-readable decimal string, e.g. "10.0"
@@ -37,6 +38,7 @@ export interface DepositRecord {
 }
 
 export interface CreateDepositInput {
+  mockIdentity: string | null;
   userWallet: `0x${string}`;
   destinationAccount: `0x${string}`;
   amount: string;

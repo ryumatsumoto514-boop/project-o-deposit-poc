@@ -248,7 +248,11 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           </p>
         </div>
 
-        <WalletRoles fundsFrom={deposit.userWallet} tradableIn={deposit.destinationAccount} />
+        <WalletRoles
+          signingInAs={deposit.mockIdentity}
+          fundsFrom={deposit.userWallet}
+          tradableIn={deposit.destinationAccount}
+        />
 
         <Stepper deposit={deposit} />
 
@@ -292,6 +296,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       <h1 className="h1">Deposit status</h1>
 
       <WalletRoles
+        signingInAs={deposit.mockIdentity}
         fundsFrom={deposit.userWallet}
         tradableIn={deposit.destinationAccount}
       />

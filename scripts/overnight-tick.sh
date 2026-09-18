@@ -6,6 +6,7 @@
 # NOTE: no `set -e` — a Claude Code turn-limit or non-fatal error must not
 # prevent this script from at least logging what happened. Each command
 # below checks its own exit status explicitly instead.
+export HOME=/opt/data/home
 cd /opt/data/projecto
 source .overnight-env.sh 2>/dev/null || true
 

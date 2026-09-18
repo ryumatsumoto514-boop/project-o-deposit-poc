@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
   const now = new Date().toISOString();
   const record: DepositRecord = {
     id: crypto.randomUUID(),
+    mockIdentity: body.mockIdentity ?? null,
     userWallet: body.userWallet,
     destinationAccount: body.destinationAccount,
     amount: body.amount,
