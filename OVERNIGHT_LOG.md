@@ -3169,3 +3169,31 @@ return 400 INVALID_REQUEST with the testnet requirement. Numeric 421614
 returns 201 and stores the correct source chain (record
 4f436818-bf31-4427-a43f-f36daf01d701). Assertions checked status codes and
 response bodies. No approval hashes or on-chain operations were submitted.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T18:17:51Z
+
+## Codex review tick: 2026-09-18T18:17:51Z
+
+### [Codex review] 2026-09-18 — Prevent inherited referral names from crashing the banner
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log; searched the full log
+for prototype/KNOWN_KOLS fixes. Read the API routes, globals.css,
+tailwind.config.ts, flow context and KolBanner. curl fetched live
+/deposit/confirm and /?ref=__proto__; followed the landing HTML script to
+/_next/static/chunks/app/page-7754da2fa8eb8fbf.js. Its banner lookup used
+r[e] directly, so the referral __proto__ resolves to Object.prototype,
+which React cannot render as a child. Other inherited names can suppress
+the intended disclosure name. This is inherited-property lookup, not
+prototype mutation. Referral values enter the flow from the URL.
+
+Changed app/components/KolBanner.tsx to use an own-property check before
+returning a known display name. Unknown codes retain the existing text
+fallback. No lib changes. A Node check transpiled the actual formatter:
+the old lookup reproduced React's "Objects are not valid" render error;
+the fixed formatter rendered __proto__, constructor, toString, kol_alex
+and kol_jane as strings, preserving the known KOL Alex display name.
+Build/deployment and live verification results follow below.
+
+Build verification: npm run build passed, including type/lint checks.

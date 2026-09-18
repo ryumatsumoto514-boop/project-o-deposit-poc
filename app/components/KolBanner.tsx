@@ -12,7 +12,7 @@ const KNOWN_KOLS: Record<string, string> = {
 };
 
 function formatKolName(ref: string): string {
-  if (KNOWN_KOLS[ref]) return KNOWN_KOLS[ref];
+  if (Object.prototype.hasOwnProperty.call(KNOWN_KOLS, ref)) return KNOWN_KOLS[ref];
   return ref
     .replace(/^kol[_-]?/i, "")
     .split(/[_-]+/)
