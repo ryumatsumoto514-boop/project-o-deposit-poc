@@ -48,16 +48,6 @@ export async function PATCH(
   if (!body.status || !ALLOWED_CLIENT_STATUSES.includes(body.status)) {
     return NextResponse.json({ error: "INVALID_STATUS" }, { status: 400 });
   }
-  if (
-    body.failureReason !== undefined &&
-    body.failureReason !== null &&
-    typeof body.failureReason !== "string"
-  ) {
-    return NextResponse.json(
-      { error: "INVALID_REQUEST", message: "failureReason must be a string." },
-      { status: 400 }
-    );
-  }
   const updated = depositStore.update(deposit.id, {
     status: body.status,
     failureReason: body.failureReason ?? null,
