@@ -3014,3 +3014,13 @@ Changed only app/deposit/status/[id]/page.tsx: CREDITED marks every step done;
 a completed step cannot also be active. Pending and exception behavior retain
 their existing predicates. No reconciliation-engine changes. Build/deploy
 and live bundle verification results follow below.
+
+Verification: `npm run build` passed. Commit `84e4163` pushed to origin/main;
+`vercel --token "$VERCEL_TOKEN" --yes --prod` completed successfully (deployment
+projecto-jxe8bszq8). After deployment, curl -fsSL fetched the live status HTML
+at https://projecto-blond.vercel.app/deposit/status/codex-review and its new
+chunk /_next/static/chunks/app/deposit/status/%5Bid%5D/page-ab28a8eaecf82a41.js.
+Asserted shipped predicates `let s=t<l||"CREDITED"===a,r=t===l&&!s`: credited
+nodes enter the green-check branch and cannot enter the spinner branch.
+This verifies the live shipped code, not a manual browser animation audit;
+no deposit or on-chain transaction was created for this check.
