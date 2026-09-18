@@ -3242,3 +3242,27 @@ null and an omitted field each return 201. Python assertions checked the
 curl status codes and JSON bodies. Test records used random wallet addresses;
 no pull/reconcile requests or transactions were submitted. This verifies
 live API validation, not a manual browser session.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T19:27:52Z
+
+## Codex review tick: 2026-09-18T19:27:52Z
+Claude Code tick finished, exit code 1
+
+### [Codex review] 2026-09-18 — Identify the header funding wallet accessibly
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, then searched earlier
+header/wallet accessibility entries to avoid repeating known fixes. curl
+fetched live /login and /deposit HTML and the referenced shared chunk
+/_next/static/chunks/app/layout-d7011b6f60f31eb7.js. Reading that shipped
+chunk and app/components/AppHeader.tsx confirmed the connected wallet was
+only a truncated address in an unnamed span: no wallet role or full address
+was available there to assistive technology.
+
+Changed the header indicator to a named group with aria-label and title
+"Funding wallet: [full address]". Its compact visible address remains the
+same. No lib changes. A React server-render check of the actual component
+with a mocked connected account asserted the group role, complete accessible
+label and tooltip. npm run build passed, including type/lint checks; the
+compiled layout includes the final group label. Existing dependency import
+warnings remain. Deployment and live verification follow below.

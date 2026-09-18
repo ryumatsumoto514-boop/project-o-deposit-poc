@@ -59,7 +59,14 @@ export function AppHeader() {
             Sepolia
           </span>
           {isConnected && address && (
-            <span className="pill font-mono text-slate-300">{truncateAddress(address)}</span>
+            <span
+              className="pill font-mono text-slate-300"
+              role="group"
+              aria-label={`Funding wallet: ${address}`}
+              title={`Funding wallet: ${address}`}
+            >
+              {truncateAddress(address)}
+            </span>
           )}
         </div>
       </div>
