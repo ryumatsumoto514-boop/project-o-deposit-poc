@@ -1,6 +1,6 @@
 # Project O — spoken walkthrough
 
-**Target runtime: 2:59, including clicks and pauses.** Read only the spoken paragraphs. Headings, delivery notes, and practice tips are not spoken. Sections match the nine slides in [slides.html](slides.html); advance manually at the timestamps below.
+**Target runtime: 2:59, including pauses.** The deck is the only thing on screen — there is no live click-through anywhere in this recording. Read only the spoken paragraphs. Headings, delivery notes, and practice tips are not spoken. Sections match the nine slides in [slides.html](slides.html); advance manually at the timestamps below.
 
 ## 1. Title [0:00–0:10]
 
@@ -28,11 +28,11 @@ Alongside live status, these five cards show the user-facing protections. Exact-
 
 [DELIVERY NOTE: Point left to right across slide 5's actual cards. The submission numbers live status as Layer 1 and KOL disclosure as Layer 6; this deck covers live status on slide 4 and groups the remaining five protections here. All six documented elements are covered across the two slides. The disclosure wording is illustrative, not legally reviewed.]
 
-## 6. Live demo / screenshot [1:41–2:04]
+## 6. Screenshot walkthrough of the review step [1:41–2:04]
 
-Let me show the review step. Here's the full destination, and these labels separate the wallet roles. I'll confirm the address and continue. Approval defaults to this amount only. The broader option explains its extra risk before I choose it.
+Let me walk through the review step on two captured screens. On the left, the full destination address — not a shortened one — with labels separating the wallet roles. On the right, approval defaults to this exact amount only. The broader option explains its extra risk before you choose it, and the gas warning says in plain language what to do.
 
-[DELIVERY NOTE: Switch to the live app, already on “Confirm destination address,” with a testnet wallet connected and an amount entered. Point to the address and wallet roles. Actually click the confirmation checkbox and “Continue.” Point to “Approve this amount only,” then select “Approve for future deposits too” to show its warning and return to the exact-amount option. Leave “Approve & deposit” untouched; the next slide supplies the recorded transaction evidence. Allow roughly six seconds within this section for clicks and visual pauses. If the page stalls, show a prepared screenshot and replace “I'll confirm the address and continue” with “This screenshot shows the approval step after address confirmation.”]
+[DELIVERY NOTE: Stay on slide 6 for the whole section; nothing is clicked and the live app is never opened. Both screens are already on the slide: point to the full address and the wallet-role labels on the left capture, then to “Approve this amount only” on the right. These are real captures from the deployed app ([confirmation](../submission/screens/04-confirm-address.png), [approval](../submission/screens/05-approve.png)); say “captured” or “these screens,” never “watch me click.” Don't read the full address aloud. Leave about four seconds of silence so the viewer can read both screens.]
 
 ## 7. Real testnet evidence [2:04–2:25]
 
@@ -50,6 +50,6 @@ Login and Hyperliquid credit are mocked. Storage isn't durable, so duplicate blo
 
 ## PRACTICE TIPS
 
-- Rehearse to the timestamps, especially the state names in section 4 and the metrics in section 8. Speak “ninetieth percentile” naturally. Aim to start the demo at 1:41 and finish by 2:59; don't read full hashes or rush the mock disclosures.
-- Before recording, open [the deck](slides.html), [live app](https://projecto-blond.vercel.app), and the linked Arbiscan transfer in separate tabs. Use the deck's arrow keys to advance; clicking anywhere on it also changes slides. Rehearse the connected-wallet path to address confirmation, and have [confirmation](../submission/screens/04-confirm-address.png) and [approval](../submission/screens/05-approve.png) screenshots ready. The documented proofs used scripts and API calls; they don't establish that a human completed the MetaMask popup flow.
-- If Vercel responds slowly, switch immediately to the screenshot and use the replacement sentence in section 6, keeping the same time slot. Don't wait for a fresh deposit to credit during the take. Serverless recycling can lose tracking records, so use the saved evidence for the transaction proof.
+- Rehearse to the timestamps, especially the state names in section 4 and the metrics in section 8. Speak “ninetieth percentile” naturally. Aim to start section 6 at 1:41 and finish by 2:59; don't read full hashes or rush the mock disclosures.
+- Before recording, open [the deck](slides.html) and the linked Arbiscan transfer in separate tabs. Use the deck's arrow keys to advance; clicking anywhere on it also changes slides. The screenshots for section 6 are embedded in slide 6 already — [confirmation](../submission/screens/04-confirm-address.png) and [approval](../submission/screens/05-approve.png) — so nothing needs to be loaded live.
+- The whole take runs off the deck and the saved evidence. The testnet wallet is unfunded, so a live deposit can't be completed on camera, and serverless recycling can lose tracking records anyway. The documented proofs used scripts and API calls; they don't establish that a human completed the MetaMask popup flow, so don't claim one on screen.

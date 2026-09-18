@@ -1,3 +1,4 @@
-# Local render artifacts and raw agent stdout logs — not project content.
+# Local render artifacts, the python-pptx venv, and raw agent stdout logs — not project content.
 .shots/
 *build.log
+.venv-pptx/

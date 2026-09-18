@@ -254,7 +254,7 @@ strong { color: #f1f5f9; font-weight: 600; }
 .layer .l-title { font-size: 16px; font-weight: 600; line-height: 1.25; color: #f1f5f9; }
 .layer .l-sub { font-size: 13px; line-height: 1.45; color: var(--muted); margin-top: -4px; }
 
-/* --- slide 6: demo ------------------------------------------------------ */
+/* --- slide 6: review-step walkthrough ----------------------------------- */
 .url-box {
   font-family: var(--mono);
   font-size: 19px;
@@ -264,15 +264,6 @@ strong { color: #f1f5f9; font-weight: 600; }
   background: rgba(0, 0, 0, 0.35);
   padding: 15px 18px;
   word-break: break-all;
-}
-.qr {
-  width: 132px; height: 132px; flex: none;
-  border: 1px dashed rgba(255, 255, 255, 0.25);
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.02);
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim);
-  padding: 10px;
 }
 
 /* --- slide 7: evidence -------------------------------------------------- */
@@ -528,36 +519,43 @@ strong { color: #f1f5f9; font-weight: 600; }
     </div>
   </section>
 
-  <!-- ============================ 6 · LIVE DEMO ======================== -->
+  <!-- ======================== 6 · REVIEW-STEP WALKTHROUGH ============== -->
   <section class="slide">
     <div class="slide-head">
-      <span class="eyebrow">05 — Demo</span>
-      <h2>Live on Arbitrum Sepolia</h2>
+      <span class="eyebrow">05 — Walkthrough</span>
+      <h2>The review step, screen by screen</h2>
+      <p class="kicker">Captured from the deployed PoC on Arbitrum Sepolia — narrated over stills, not clicked live.</p>
     </div>
     <div class="slide-body split">
-      <div class="left" style="justify-content:center;gap:22px">
+      <div class="left" style="justify-content:center;gap:20px">
         <div>
           <span class="label-caps" style="display:block;margin-bottom:9px">Deployed PoC</span>
-          <div class="url-box">https://projecto-blond.vercel.app</div>
+          <div class="url-box" style="font-size:17px">https://projecto-blond.vercel.app</div>
         </div>
-        <div style="display:flex;gap:20px;align-items:center">
-          <div class="qr">QR<br />placeholder</div>
-          <div class="body-text" style="flex:1">
-            Real Next.js app, real wallet connection, real Arbitrum Sepolia transactions.
-            <strong>No real funds involved.</strong>
-          </div>
+        <div class="body-text">
+          Real Next.js app, real wallet connection, real Arbitrum Sepolia transactions.
+          <strong>No real funds involved.</strong>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-start;gap:9px">
-          <span class="tag"><span class="dot dot-accent"></span>Landing with KOL disclosure</span>
-          <span class="tag"><span class="dot dot-accent"></span>Amount → address → exact-amount approval</span>
-          <span class="tag"><span class="dot dot-accent"></span>Live state transitions, then the 409 block</span>
+          <span class="tag"><span class="dot dot-accent"></span>Step 3 — full address, never truncated</span>
+          <span class="tag"><span class="dot dot-accent"></span>Wallet roles: signing in / funding / tradable</span>
+          <span class="tag"><span class="dot dot-accent"></span>Step 4 — approval defaults to this amount only</span>
+          <span class="tag"><span class="dot dot-amber"></span>Plain-language gas failure, with the fix</span>
         </div>
       </div>
-      <div class="right">
-        <div class="phone" style="width:236px;height:512px">
-          <img src="../submission/screens/01-landing-kol.png" alt="Exchange O landing page with KOL disclosure banner" />
+      <div class="right" style="flex-direction:row;align-items:flex-start;gap:22px">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="phone" style="width:216px;height:460px">
+            <img src="../submission/screens/04-confirm-address.png" alt="Confirm destination address screen showing the full deposit address and wallet-role labels" />
+          </div>
+          <div class="shot-cap">Step 3 · confirm address</div>
         </div>
-        <div class="shot-cap">Entry via ?ref=kol_alex</div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="phone" style="width:216px;height:460px">
+            <img src="../submission/screens/05-approve.png" alt="Approve and deposit screen showing the gas warning and exact-amount approval scope" />
+          </div>
+          <div class="shot-cap">Step 4 · approve + deposit</div>
+        </div>
       </div>
     </div>
   </section>
