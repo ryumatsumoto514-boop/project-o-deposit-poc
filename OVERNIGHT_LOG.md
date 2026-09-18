@@ -3083,3 +3083,19 @@ Changed only the API creation route to derive amountRaw using viem parseUnits
 and the existing USDC_DECIMALS constant after decimal/range validation. Client
 amountRaw can no longer override the displayed amount or bypass its cap.
 No lib core changes. Build and live verification results follow below.
+Claude Code tick finished, exit code 1
+
+Verification: npm run build passed. Local production server and post-deploy
+curl requests to https://projecto-blond.vercel.app/api/deposits each passed:
+amount "1" + amountRaw "999000000" -> stored "1000000";
+amount "0.000001" + omitted amountRaw -> stored "1";
+amount "1000" + amountRaw "invalid" -> stored "1000000000".
+All returned valid deposit records; no approval hashes or transfer requests
+were submitted. Fix commit 9284b5d pushed to origin/main; requested Vercel
+production deployment completed successfully (projecto-6bwp1qqgg).
+Existing records are not migrated; this fixes newly created deposits.
+
+Concurrent-work note: the required git add -A also captured scripts/shot-notfound.mjs
+and scripts/shot-qa-sweep.mjs, created by another process after the initial
+status check. They are screenshot helpers, not authored or executed by this
+review. Further concurrent files were left untouched.
