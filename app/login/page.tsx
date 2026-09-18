@@ -7,7 +7,6 @@ import { KolBanner } from "../components/KolBanner";
 import { MockedBadge } from "../components/KolBanner";
 import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
-import { connectorLabel } from "@/lib/format";
 
 export default function LoginPage() {
   const router = useRouter();

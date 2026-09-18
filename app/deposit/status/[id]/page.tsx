@@ -200,22 +200,27 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-400/30">
             <AlertIcon className="h-7 w-7 text-amber-300" />
           </div>
-          <h1 className="h1">We lost track of this deposit</h1>
+          <h1 className="h1">Deposit record unavailable</h1>
           <p className="body-text max-w-xs">
-            This demo runs on a free hosting tier without a persistent database, so its
-            server-side memory can reset between visits. If you had funds on-chain, they were
-            never at risk — only this app&apos;s local record of tracking them was lost.
+            This demo cannot find a record for this link. A missing record does not tell
+            us whether a transfer succeeded or failed. Check your funding wallet&apos;s
+            transaction history before sending again.
           </p>
         </div>
 
         <div className="banner-amber">
-          <strong>Why this happens:</strong> deposit records live in server memory for this
-          PoC (see README &ldquo;Known limitations&rdquo;) rather than a real database, so a
-          server restart between your last visit and now can drop the record.
+          <strong>Do not resend yet.</strong> This link may be incorrect, or this demo&apos;s
+          temporary storage may have reset. Duplicate-deposit protection also depends on
+          those records and cannot reliably block a repeat after they are lost. Verify
+          your transaction on{" "}
+          <a href="https://sepolia.arbiscan.io" target="_blank" rel="noopener noreferrer">
+            Arbiscan Sepolia
+          </a>{" "}
+          using the transaction hash from your wallet.
         </div>
 
         <Link href="/deposit" className="btn-primary w-fit">
-          Start a new deposit
+          Back to deposit setup
         </Link>
         <FlowFooter />
       </main>

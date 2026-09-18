@@ -3316,3 +3316,34 @@ Concurrent-work note: the required final git add -A also captured another
 process's edits to app/login/page.tsx and lib/format.ts in 678c006. This review
 did not author or validate those edits; the build and live checks above apply
 to the gas-header fix in 9fdecd7.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T20:37:52Z
+
+## Codex review tick: 2026-09-18T20:37:53Z
+
+### [Codex review] 2026-09-18 — Missing records must not imply a safe repeat deposit
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the log tail and prior missing-record entries.
+Read API routes, globals.css, tailwind.config.ts and the status recovery screen.
+curl fetched live /login and /deposit/status/review-missing-record plus its
+referenced status page-a793488e8ba1693e.js. The deployed missing-record branch
+claimed funds were "never at risk" and offered "Start a new deposit". curl GET
+/api/deposits/review-missing-record returned 404 NOT_FOUND, which establishes
+neither transaction outcome nor why the record is absent. Reading lib/store.ts
+confirmed that duplicate protection depends on the same temporary records.
+
+Changed only the status page's missing-record recovery copy: acknowledge the
+unknown outcome, explain incorrect links or lost storage as possibilities,
+warn that lost records also impair duplicate protection, and direct users to
+wallet transaction history and Arbiscan Sepolia before resending. Renamed the
+return link "Back to deposit setup". No lib changes or transactions submitted.
+Build and production verification results follow below.
+
+First build failed on a pre-existing unused connectorLabel import in
+app/login/page.tsx (left by earlier work). Removed that unused import only
+as the minimum build unblock; rerunning npm run build.
+Claude Code tick finished, exit code 1
+
+Final npm run build passed, including lint/type checks, with existing optional
+dependency warnings. git diff --check passed. Deploying the reviewed change.
