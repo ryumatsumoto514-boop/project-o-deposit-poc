@@ -2943,3 +2943,13 @@ table, or any other `lib/*.ts` logic.
 
 ### Deploy confirmation
 Codex review tick finished, exit code 0
+Commit `9ce3a0c` pushed to `origin main` (`b4cba6b..9ce3a0c main -> main`).
+`vercel --token "$VERCEL_TOKEN" --yes --prod` deployment ready
+(`projecto-edc5m5yh5-...vercel.app`, promoted to production). Re-verified
+directly against **https://projecto-blond.vercel.app** after deploy (not
+just localhost): a fresh wallet's `amount: "3.25"` -> `201`, then
+`amount: "3.250000"` for the same wallet -> `409 DUPLICATE_IN_FLIGHT` (this
+exact case would have returned `201` pre-fix). All six core routes (`/`,
+`/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+`/?ref=kol_alex`) still `200`. **This is live, not just committed.** These
+requests created store records only; no on-chain transfers were requested.
