@@ -48,6 +48,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (typeof body.amount !== "string") {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "amount must be a decimal string." },
+      { status: 400 }
+    );
+  }
+
   const parsedAmount = Number(body.amount);
   if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
     return NextResponse.json(

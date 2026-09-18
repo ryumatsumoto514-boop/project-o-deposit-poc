@@ -2563,3 +2563,22 @@ This is raw HTML/CSS verification and computed contrast, not a browser audit.
 Final production deployment BsouV9HejVJKiyXULMSRgDRtPEJt also completed
 successfully. Repeated curl of /login after completion; both footer
 text-slate-400 classes and the simulation disclosure passed assertions.
+
+### [Codex review] 2026-09-18 — Boolean deposit amounts bypassed validation
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, recent log and searched prior amount/type
+fixes; fetched live /login HTML and read deposit API handlers. A live curl
+POST to https://projecto-blond.vercel.app/api/deposits with
+{"userWallet":"0x000000000000000000000000000000000000c0de","amount":true}
+returned HTTP 201 and stored "amount":true (id
+77a8d032-ef30-406e-93be-2b9609fa88aa). Number(true) passes the positive-number
+check, but the original boolean is persisted, contrary to lib/types.ts's
+string contract and lib/store.ts's strict amount comparison. No transfer
+was requested. Added a string type guard in app/api/deposits/route.ts before
+numeric conversion; arrays, booleans, objects and numeric JSON values are
+rejected with 400. Existing positive-value and ceiling checks remain.
+No reconciliation core changes. Used an isolated worktree to preserve
+unrelated uncommitted PATCH-route and tooling edits. Verification follows.
+
+npm run build passed (existing optional wallet dependencies and dynamic-import
+warnings). Production deployment and live request assertions follow below.
