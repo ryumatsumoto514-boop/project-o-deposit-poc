@@ -2523,3 +2523,12 @@ Build and live deployment verification follow below.
 
 npm run build passed (existing optional wallet dependency and dynamic-import
 warnings). Production deployment and live HTML assertions pending below.
+
+Live verification: commit 6b7c745 pushed to origin main; deployed using
+vercel --token "$VERCEL_TOKEN" --yes --prod. Deployment
+6iyLK1m7zTWEV7pAGN7EsEVqAGka reached READY and production alias updated.
+Post-deploy curl -fsS against /, /login, and /?ref=kol_alex on
+https://projecto-blond.vercel.app passed HTMLParser assertions for both
+og:title/twitter:title, both simulation disclosure descriptions, and
+Twitter summary card. This verifies live raw metadata, not the appearance
+or cache refresh of a particular social platform's preview.
