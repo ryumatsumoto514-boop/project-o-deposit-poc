@@ -3024,3 +3024,26 @@ Asserted shipped predicates `let s=t<l||"CREDITED"===a,r=t===l&&!s`: credited
 nodes enter the green-check branch and cannot enter the spinner branch.
 This verifies the live shipped code, not a manual browser animation audit;
 no deposit or on-chain transaction was created for this check.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T15:57:48Z
+
+## Codex review tick: 2026-09-18T15:57:48Z
+
+### [Codex review] 2026-09-18 — Restore keyboard navigation between approval scopes
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log; searched the full log
+for radio/group/approval-scope fixes. Read globals.css, tailwind.config.ts,
+login, confirm, layout and approval components. curl fetched live /login,
+/deposit/approve and a nonexistent route (correctly 404). Following the
+approval HTML's script reference, inspected live chunk
+page-16a4e9ea40288066.js: both approval inputs had type:"radio" but no name.
+React's controlled state makes mouse selection exclusive, but these remain
+separate native radio groups, so arrow keys cannot switch the approval scope.
+The fieldset/legend does not itself provide native radio grouping.
+
+Added name="approval-scope" to both radios in app/deposit/approve/page.tsx.
+This restores the native group semantics and keyboard behavior while retaining
+the exact-amount default and existing state handlers. No lib changes.
+Build/deploy and live verification results follow below.

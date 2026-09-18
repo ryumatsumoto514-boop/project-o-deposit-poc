@@ -244,6 +244,7 @@ export default function DepositApprovePage() {
         <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-accent-400/40 has-[:checked]:bg-accent-500/[0.06]">
           <input
             type="radio"
+            name="approval-scope"
             checked={approvalMode === "exact"}
             onChange={() => setApprovalMode("exact")}
             className="mt-1 h-4 w-4 accent-[#00F0FF]"
@@ -256,6 +257,7 @@ export default function DepositApprovePage() {
         <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-amber-400/40 has-[:checked]:bg-amber-500/[0.06]">
           <input
             type="radio"
+            name="approval-scope"
             checked={approvalMode === "unlimited"}
             onChange={() => setApprovalMode("unlimited")}
             className="mt-1 h-4 w-4 accent-amber-500"
