@@ -2655,3 +2655,19 @@ machine or idempotency logic.
   after testing.
 
 ### Deploy confirmation
+
+### [Codex review] 2026-09-18 — Live gas indicator served a build-time snapshot
+
+Read the brief, SPEC.md, recent log and searched prior gas/cache fixes. Fetched
+/login and /deposit raw HTML with curl; read globals.css, tailwind.config.ts,
+AppHeader.tsx and app/api/gas/route.ts. curl -sS -i against the live /api/gas
+returned x-vercel-cache: PRERENDER and {"gwei":0.210804}. The header polls
+every 20 seconds and calls this live RPC data, but the GET handler was
+statically prerendered by Next.js 14. Added force-dynamic to that route so
+each poll can read RPC and a build-time failure cannot freeze GAS — forever.
+Confirmed the caching behavior against the official Next.js 14 route-handler
+documentation. No lib core changes. Isolated worktree preserves concurrent
+shared-checkout changes. Build/deploy/live verification follows.
+
+npm run build passed (existing optional-dependency/dynamic-import warnings).
+Build output explicitly marks /api/gas as dynamic (ƒ), not static (○).

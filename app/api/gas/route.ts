@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { publicClient } from "@/lib/chain";
 
+// Poll live RPC on each request instead of freezing telemetry at build time.
+export const dynamic = "force-dynamic";
+
 // Read-only display endpoint for the nav's gas indicator — a genuine live
 // RPC read (publicClient.getGasPrice()), not a fabricated number. Kept out
 // of lib/ since it's UI-only telemetry, not reconciliation-engine logic.
