@@ -84,7 +84,7 @@ export default function LoginPage() {
             ))
           )}
           {error && !isConnected && (
-            <p role="alert" className="text-sm text-red-400">
+            <p role="alert" className="text-sm text-rose-300">
               Wallet connection did not complete. Open your wallet and try again,
               or continue with a simulated email or Google sign-in.
             </p>

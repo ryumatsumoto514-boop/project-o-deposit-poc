@@ -3047,3 +3047,11 @@ Added name="approval-scope" to both radios in app/deposit/approve/page.tsx.
 This restores the native group semantics and keyboard behavior while retaining
 the exact-amount default and existing state handlers. No lib changes.
 Build/deploy and live verification results follow below.
+
+Verification: npm run build passed (including type/lint checks). Commit
+fe7514d pushed to origin/main; production deployment projecto-pv1l6ze04
+completed successfully. curl -fsSL fetched the live /deposit/approve HTML
+and its referenced chunk /_next/static/chunks/app/deposit/approve/page-4a819a52d74edfcf.js;
+asserted both radios ship type:"radio",name:"approval-scope". This verifies
+the live native grouping markup in the client bundle, not a manual browser
+or assistive-technology session. No transactions were submitted.
