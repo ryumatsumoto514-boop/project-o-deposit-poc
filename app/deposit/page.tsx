@@ -37,6 +37,11 @@ export default function DepositAmountPage() {
   const tradableIn = address ? deriveMockTradingAccount(address) : null;
 
   function handleContinue() {
+    // Match the creation API before the user spends gas on an approval.
+    if (!/^\d+(?:\.\d{1,6})?$/.test(amount)) {
+      setError("Enter a decimal amount with at most 6 decimal places (for example, 10.50).");
+      return;
+    }
     const parsed = Number(amount);
     if (!amount || Number.isNaN(parsed) || parsed <= 0) {
       setError("Enter an amount greater than 0.");
@@ -97,7 +102,7 @@ export default function DepositAmountPage() {
               aria-describedby={error ? "deposit-amount-error" : undefined}
               type="number"
               min="0"
-              step="0.01"
+              step="0.000001"
               inputMode="decimal"
               value={amount}
               onChange={(e) => {

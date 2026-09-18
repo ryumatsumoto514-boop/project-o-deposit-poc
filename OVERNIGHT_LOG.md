@@ -3370,3 +3370,38 @@ Build and production verification follow below.
 
 Verification: npm run build passed, including lint/type checks; existing
 dependency warnings remain. git diff --check passed.
+Claude Code tick finished, exit code 1
+
+Deployment: fix commit 9e2e091 pushed to origin/main. Requested production
+deployment via vercel --token "$VERCEL_TOKEN" --yes --prod created
+dpl_7sHArBsDG87oKvddBAxzs1tiyVJB. Vercel inspect reports Initializing after
+more than two minutes. Initial post-request curl still serves old copy;
+live verification is pending deployment readiness, not yet claimed passed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T21:47:55Z
+
+## Codex review tick: 2026-09-18T21:47:55Z
+
+### [Codex review] 2026-09-18 — Validate USDC precision before wallet approval
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log and earlier decimal validation
+entries. curl fetched live /login and /deposit, then fetched the deposit page's
+referenced page-62f3aab9b437af17.js. The shipped amount handler only checked
+Number(amount) and the cap. Reading app/deposit/approve/page.tsx showed that
+parseUnits and the real approve transaction run BEFORE POST /api/deposits.
+Thus an amount such as 1.1234567 could pass the amount screen, be rounded for
+approval, and then fail the API's already-fixed six-decimal validation after
+spending testnet gas. The prior API fix did not cover this UI entry point.
+
+Changed app/deposit/page.tsx to reject non-decimal or overprecision amounts
+before advancing, with a corrective inline message; changed input step to
+0.000001 to match USDC precision. No lib changes. A Node VM check executed the
+actual handleContinue body: seven invalid values (including 0.0000001,
+1.1234567 and 1e2) neither saved nor navigated; four valid values including
+0.000001 and 1000 continued unchanged. Initial test harness needed a function
+wrapper for return statements; corrected harness passed. No transactions sent.
+Build and live deployment verification follow below.
+
+npm run build passed, including lint/type checks, with existing dependency
+warnings. git diff --check passed.
