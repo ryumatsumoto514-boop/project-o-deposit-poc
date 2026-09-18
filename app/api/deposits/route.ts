@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { depositStore } from "@/lib/store";
 import { findConflictingInFlightDeposit } from "@/lib/idempotency";
+import { MAX_DEMO_AMOUNT } from "@/lib/constants";
 import type { CreateDepositInput, DepositRecord } from "@/lib/types";
 
 export async function GET() {
@@ -51,6 +52,12 @@ export async function POST(req: NextRequest) {
   if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "amount must be a positive number." },
+      { status: 400 }
+    );
+  }
+  if (parsedAmount > MAX_DEMO_AMOUNT) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: `This demo caps deposits at ${MAX_DEMO_AMOUNT} USDC.` },
       { status: 400 }
     );
   }

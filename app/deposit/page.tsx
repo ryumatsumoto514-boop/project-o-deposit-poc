@@ -8,8 +8,7 @@ import { KolBanner } from "../components/KolBanner";
 import { WalletRoles } from "../components/WalletRoles";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
-
-const MAX_DEMO_AMOUNT = 1000;
+import { MAX_DEMO_AMOUNT } from "@/lib/constants";
 
 export default function DepositAmountPage() {
   const router = useRouter();

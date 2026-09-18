@@ -2404,3 +2404,61 @@ Post-deploy curl -fsS https://projecto-blond.vercel.app/login succeeded;
 parsed the returned HTML and asserted that exactly two "mock" spans exist
 and both now use text-slate-400. Verification was raw HTML/CSS and computed
 contrast, not a browser screenshot or a claim of a full accessibility audit.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T08:22:32Z
+
+## Codex review tick: 2026-09-18T08:22:32Z
+Codex review tick finished, exit code 1
+
+## Autonomous QA cycle: 2026-09-18T08:2x Z — POST /api/deposits ignored the UI's own $1000 demo cap
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs). Found
+a prior cycle's fix already staged uncommitted in the working tree
+(`app/deposit/page.tsx`, `app/api/deposits/route.ts`, new `lib/constants.ts`)
+that had not been built, verified, committed, or deployed — picked this up
+and finished it rather than starting a new search, per the brief's own
+"continue from wherever the last cycle left off" instruction.
+
+### What was found
+`app/deposit/page.tsx` defines `MAX_DEMO_AMOUNT = 1000` and blocks the amount
+form client-side above it, but `app/api/deposits` (`POST`) never enforced the
+same ceiling server-side — only checked that the amount was a positive
+number. Confirmed live before applying any fix:
+`curl -X POST https://projecto-blond.vercel.app/api/deposits -d
+'{"userWallet":"0x1e9d508D55eCE8D36Ec3Aa94299EC943c4f4Eb37","amount":"5000"}'`
+returned a real `201`, creating a `SIGNED` deposit record for 5x the app's
+advertised demo cap. Same bug shape as several prior cycles' API-validation
+fixes (malformed JSON, non-object bodies, non-address wallets): the UI
+enforces a rule the API layer trusts the client to have already applied.
+
+### Fix (already drafted by the prior cycle, verified and completed by this one)
+Extracted the constant into `lib/constants.ts` (`MAX_DEMO_AMOUNT = 1000`),
+imported it in both the client form and `app/api/deposits/route.ts`, and
+added a server-side check returning `400 INVALID_REQUEST` with a plain-language
+message when `parsedAmount > MAX_DEMO_AMOUNT`. Pure request-validation at the
+API boundary; no changes to `lib/*.ts` reconciliation state-machine,
+idempotency, or relayer logic.
+
+### Verification
+- `npm run build` passes clean (no new warnings).
+- Fresh `npm run start` production server on port 3601:
+  - `amount: "5000"` -> `400 INVALID_REQUEST` ("This demo caps deposits at
+    1000 USDC.") — previously `201`.
+  - `amount: "1000"` (exact boundary) -> `201`, unchanged — confirms the
+    check is `>`, not `>=`, and doesn't reject the cap value itself.
+  - `amount: "12.5"` (normal case) -> `201`, unchanged.
+- Deleted local test data (`.data/deposits.json`, gitignored) before
+  finishing.
+- Did not touch the parallel Codex-review track's automation files.
+
+### Honest gap check
+Small, fully-completed fix within the hard time budget — picked up and
+finished a real, already-diagnosed bug rather than leaving it stranded
+uncommitted. Did not get a fresh look at categories 2-4 (consistency,
+polish, KOL/assignment-fit) this cycle. A reasonable next target: check
+whether `PATCH /api/deposits/[id]` or any other route that accepts an
+amount has the same missing-ceiling gap.
+
+### Deploy confirmation
