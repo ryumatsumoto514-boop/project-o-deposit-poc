@@ -3099,3 +3099,23 @@ Concurrent-work note: the required git add -A also captured scripts/shot-notfoun
 and scripts/shot-qa-sweep.mjs, created by another process after the initial
 status check. They are screenshot helpers, not authored or executed by this
 review. Further concurrent files were left untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T17:07:50Z
+
+## Codex review tick: 2026-09-18T17:07:50Z
+
+### [Codex review] 2026-09-18 — Surface funding-wallet connection failures
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log; searched the full log for
+connection-error fixes. Read login and deposit pages, confirmation, layout,
+globals.css and tailwind.config.ts. curl fetched live /login, /deposit/confirm,
+and /deposit. Followed /deposit's script reference to live chunk
+page-e3d475731d4e2a01.js: funding-wallet buttons ignored useConnect's pending
+and error states. Rejecting a connection after simulated email/Google login
+therefore leaves the deposit screen without feedback. The previous login-only
+connection fix does not cover this independent funding-wallet entry point.
+
+Changed app/deposit/page.tsx to disable connection buttons while pending,
+expose aria-busy and Connecting text, and render a role=alert retry message
+when connection fails. No lib changes. Build and live verification follow.

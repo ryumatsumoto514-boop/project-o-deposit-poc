@@ -14,7 +14,7 @@ export default function DepositAmountPage() {
   const router = useRouter();
   const { mockIdentity, draftAmount, setDraftAmount, hydrated } = useFlow();
   const { address, isConnected } = useAccount();
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, isPending, error: connectionError } = useConnect();
   const [amount, setAmount] = useState(draftAmount || "");
   const [error, setError] = useState<string | null>(null);
 
@@ -72,11 +72,18 @@ export default function DepositAmountPage() {
             <button
               key={connector.uid}
               onClick={() => connect({ connector })}
+              disabled={isPending}
+              aria-busy={isPending}
               className="btn-primary w-fit"
             >
-              Connect {connector.name}
+              {isPending ? "Connecting…" : `Connect ${connector.name}`}
             </button>
           ))}
+          {connectionError && (
+            <p role="alert" className="text-sm text-rose-300">
+              Wallet connection did not complete. Open your wallet and try again.
+            </p>
+          )}
         </div>
       )}
 
