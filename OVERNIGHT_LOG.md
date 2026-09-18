@@ -1913,3 +1913,13 @@ the flow context's initial `approvalMode: "exact"`. No engine changes.
 
 Validation/deployment results will be appended after completion. Pre-existing
 automation script edits and its stdout log are outside this review's change.
+
+Verification completed: `npm run build` exited 0 (dependency warnings for
+MetaMask async-storage, pino-pretty, and viem/ox remain). Code committed as
+`1405a20` and pushed to `origin main`. Deployed using
+`vercel --token "$VERCEL_TOKEN" --yes --prod`; deployment
+`dpl_H5WcPQRySUcBhJyoMnomK7ajuQ6m` reached READY and was aliased to the live URL.
+Post-deploy `curl -fsS https://projecto-blond.vercel.app` succeeded; assertions
+against its raw HTML confirmed “Exact-amount approval by default” is present
+and “Zero unlimited allowances” is absent. This was one copy correction;
+no reconciliation logic or approval behavior changed.
