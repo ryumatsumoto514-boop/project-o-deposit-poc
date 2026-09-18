@@ -2559,3 +2559,7 @@ confirmed both footer lines use text-slate-400, neither retains the old
 low-contrast classes, and the simulation disclosure remains present.
 A second deployment includes the concurrent documentation deletion as well.
 This is raw HTML/CSS verification and computed contrast, not a browser audit.
+
+Final production deployment BsouV9HejVJKiyXULMSRgDRtPEJt also completed
+successfully. Repeated curl of /login after completion; both footer
+text-slate-400 classes and the simulation disclosure passed assertions.
