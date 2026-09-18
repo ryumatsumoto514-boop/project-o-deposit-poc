@@ -1991,3 +1991,13 @@ Added aria-label="Exchange O home" to the header link so both connected and
 disconnected states have a stable name. One attribute; no engine changes.
 Used an isolated checkout to preserve unrelated unfinished workspace edits.
 Build and live verification results follow.
+
+Verification completed: npm run build exited 0 (existing optional dependency
+and ox warnings remain). Commit f624c7e pushed to origin main. Production
+deployment HGwUGLUduWPMd752gPMhdCctpszq completed successfully. Post-deploy
+curl -fsS fetched https://projecto-blond.vercel.app/login and /deposit;
+assertions confirmed aria-label="Exchange O home" on the live header link
+in both HTML responses and the referenced layout JavaScript chunk. This
+verifies the permanent name ships with hydration; no manual screen-reader
+session was performed. Copied the fix and this entry into the main workspace,
+preserving unrelated edits.
