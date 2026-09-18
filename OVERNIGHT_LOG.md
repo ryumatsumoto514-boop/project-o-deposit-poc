@@ -2532,3 +2532,21 @@ https://projecto-blond.vercel.app passed HTMLParser assertions for both
 og:title/twitter:title, both simulation disclosure descriptions, and
 Twitter summary card. This verifies live raw metadata, not the appearance
 or cache refresh of a particular social platform's preview.
+
+### [Codex review] 2026-09-18 — Make shared footer disclosures readable
+
+Read the brief, SPEC.md, recent log, and prior contrast entries. Fetched live
+/login with curl -fsS and parsed its footer with HTMLParser; read
+app/components/FlowChrome.tsx, app/globals.css, and tailwind.config.ts.
+The recently corrected simulation disclosure still used text-slate-700,
+and the no-real-funds line used text-slate-600 at 11/12px. The earlier
+login-button contrast fix did not cover either footer line. Changed both
+to text-slate-400. Against a conservative maximum body background
+(10% cyan glow plus 5% white texture), calculated contrast improves
+from 1.38:1 / 1.89:1 to 5.58:1. No reconciliation changes.
+Used an isolated worktree to preserve unrelated uncommitted API/tooling work.
+Build and production verification results follow below.
+
+npm run build passed (existing optional wallet dependency/dynamic-import
+warnings). Also fetched the CSS linked from live /login and confirmed the
+actual slate RGB values used in the contrast calculation.

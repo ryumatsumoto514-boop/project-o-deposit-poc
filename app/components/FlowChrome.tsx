@@ -34,11 +34,11 @@ export function StepProgress({ step }: { step: 1 | 2 | 3 | 4 }) {
 export function FlowFooter() {
   return (
     <footer className="mt-auto flex flex-col items-center gap-2 pt-10 text-center">
-      <div className="flex items-center gap-1.5 text-[12px] text-slate-600">
+      <div className="flex items-center gap-1.5 text-[12px] text-slate-400">
         <ShieldIcon className="h-3.5 w-3.5 shrink-0" />
         <span>Arbitrum Sepolia testnet &middot; no real funds are used</span>
       </div>
-      <p className="text-[11px] text-slate-700">
+      <p className="text-[11px] text-slate-400">
         Approvals and transfers use Arbitrum Sepolia testnet. Email/Google sign-in,
         bridging, and Hyperliquid crediting are simulated.
       </p>
