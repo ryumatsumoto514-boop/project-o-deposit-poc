@@ -2328,3 +2328,14 @@ of the exception screens, or checking whether `PATCH /api/deposits/[id]`
 has the same address-format gap on any field it accepts.
 
 ### Deploy confirmation
+- Commit `895ac69` pushed to `origin main` (`4b9f065..895ac69 main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` -> deployment ready
+  (aliased to production).
+- Re-verified directly against **https://projecto-blond.vercel.app** after
+  deploy (not just localhost): `userWallet: "not-an-address"` and
+  `destinationAccount: "bogus"` both now return `400 INVALID_REQUEST` live
+  (previously `201`); a valid request with a well-formed address still
+  returns `201`; all six core routes (`/`, `/login`, `/deposit`,
+  `/deposit/confirm`, `/deposit/approve`, `/?ref=kol_alex`) still `200`.
+  **This is live, not just committed.**
+Claude Code tick finished, exit code 0
