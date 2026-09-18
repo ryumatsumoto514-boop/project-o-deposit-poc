@@ -2655,6 +2655,7 @@ machine or idempotency logic.
   after testing.
 
 ### Deploy confirmation
+Claude Code tick finished, exit code 1
 
 ### [Codex review] 2026-09-18 — Live gas indicator served a build-time snapshot
 
@@ -2671,3 +2672,26 @@ shared-checkout changes. Build/deploy/live verification follows.
 
 npm run build passed (existing optional-dependency/dynamic-import warnings).
 Build output explicitly marks /api/gas as dynamic (ƒ), not static (○).
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T11:52:46Z
+
+## Codex review tick: 2026-09-18T11:52:46Z
+
+### [Codex review] 2026-09-18 — Reject non-decimal and sub-unit deposit amounts
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log and searched earlier entries
+for decimal/precision fixes; fetched /login and /deposit with curl and read
+app/api/deposits/route.ts and the approval page. The amount type guard still
+allowed Number() syntax that is not a decimal USDC amount. Live curl POST to
+https://projecto-blond.vercel.app/api/deposits with wallet
+0x000000000000000000000000000000000000c0d3 and amount "0x10" returned 201,
+storing that literal amount (record 9975a876-7a56-4faa-8036-ad104da33159).
+No transfer was requested. Local viem checks confirmed parseUnits rejects
+"0x10" and "1e2", and rounds "0.0000001" to zero at six decimals.
+Added a decimal-format guard with at most six fractional digits in the POST
+handler, before Number conversion. Existing positivity/cap guards remain.
+No lib/*.ts changes. Build and post-deploy curl results follow below.
+
+npm run build passed (existing optional wallet-dependency/dynamic-import
+warnings). Production deployment and live request checks follow.
