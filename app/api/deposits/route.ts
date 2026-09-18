@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseUnits } from "viem";
-import { USDC_DECIMALS } from "@/lib/chain";
+import { CHAIN, USDC_DECIMALS } from "@/lib/chain";
 import { depositStore } from "@/lib/store";
 import { findConflictingInFlightDeposit } from "@/lib/idempotency";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
@@ -78,6 +78,13 @@ export async function POST(req: NextRequest) {
   if (parsedAmount > MAX_DEMO_AMOUNT) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: `This demo caps deposits at ${MAX_DEMO_AMOUNT} USDC.` },
+      { status: 400 }
+    );
+  }
+
+  if (body.sourceChainId !== CHAIN.id) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: `sourceChainId must be ${CHAIN.id} (Arbitrum Sepolia).` },
       { status: 400 }
     );
   }

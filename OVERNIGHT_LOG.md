@@ -3130,3 +3130,33 @@ disabled/aria-busy pending buttons, Connecting text, and the role=alert retry
 message in shipped code. This verifies the deployed client implementation,
 not a manual extension rejection test. No transactions were submitted.
 Unrelated concurrent screenshot helpers were left untracked and untouched.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T17:42:51Z
+
+## Codex review tick: 2026-09-18T17:42:51Z
+
+### [Codex review] 2026-09-18 — Reject deposits claiming an unsupported source chain
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent log entries; searched the full log
+for sourceChainId/chainId fixes. Read the creation/check/PATCH API routes,
+confirmation screen, globals.css, tailwind.config.ts and lib/chain.ts.
+curl fetched live /deposit/confirm HTML. A live curl POST /api/deposits with
+sourceChainId: 1 returned 201 and stored Ethereum mainnet as the source
+(record eef3c883-af46-4dd3-8abe-04ce7896f0d2), even though lib/chain.ts fixes
+the actual RPC client to Arbitrum Sepolia. No approval hash, pull, reconcile
+call or transaction was submitted.
+
+Changed app/api/deposits/route.ts to require sourceChainId === CHAIN.id
+before duplicate detection or storage. Wrong, missing and wrongly typed IDs
+now receive 400 INVALID_REQUEST; the supported numeric 421614 remains valid.
+No reconciliation-engine logic changed. Existing records are not migrated.
+Build, deployment and live verification results follow below.
+
+Build verification: npm run build passed, including type/lint checks;
+existing optional wallet SDK and ox import warnings remain.
+Concurrent-work note: the required git add -A also includes a pre-existing
+app/components/KolBanner.tsx display-name edit and scripts/shot-approve-full.mjs.
+These were not authored by this review. The banner edit was present during
+the successful build; the screenshot helper was not run by this review.
