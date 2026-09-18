@@ -3300,3 +3300,14 @@ No lib core changes. A Node VM check of the actual TypeScript hook verified
 success -> failure -> recovery for network, HTTP and malformed-JSON errors,
 and that cleanup prevents later updates. npm run build passed with existing
 dependency warnings. Production deployment and live checks follow below.
+Claude Code tick finished, exit code 1
+
+Live verification: fix commit 9fdecd7 pushed to origin/main; requested
+Vercel production deploy completed successfully. Post-deploy curl -fsSL
+fetched https://projecto-blond.vercel.app/login and its referenced
+/_next/static/chunks/app/layout-c9d8d03dae45a2b0.js. Assertions verified
+the shipped HTTP-status check and catch handler clearing the gas price.
+The first verification regex assumed an omitted catch parameter; adjusted
+it for the minifier's catch(s) syntax and the check passed. Failure/recovery
+behavior was exercised locally with mocked fetch, not in a live browser.
+No transactions submitted.
