@@ -17,6 +17,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const parsedAmount = Number(body.amount);
+  if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "amount must be a positive number." },
+      { status: 400 }
+    );
+  }
+
   const conflict = findConflictingInFlightDeposit(body.userWallet, body.amount);
   if (conflict) {
     return NextResponse.json(

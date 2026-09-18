@@ -1801,3 +1801,79 @@ next once functional bugs are solid): this was the one functional gap found
 this pass; the KOL banner, wallet-role labeling, and address-confirmation
 differentiators (assignment-fit, priority 4) have not been freshly
 re-checked against SPEC.md this cycle and would be a reasonable next target.
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-18T03:13:27Z
+
+## Cycle: found and fixed a real input-validation gap in POST /api/deposits (negative/zero/non-numeric amounts accepted)
+
+**Trigger:** standing autonomous-QA brief. Confirmed via this log that the
+Cyber Amber brand direction and the 5 core UX layers are settled and out of
+scope. Per the priority order, curled the live API directly at
+https://projecto-blond.vercel.app looking for real breakage (category 1,
+functional bugs) before touching anything visual, since the immediately
+prior cycle's own gap-check flagged that live-API adversarial testing (not
+code-reading) had just found one real gap (the cross-instance duplicate-block
+race) and was worth repeating.
+
+### What I found
+`POST /api/deposits` happily created (`201`) deposit records for
+`amount: "-5"`, `amount: "0"`, and `amount: "abc"` — confirmed live against
+production with real curl calls, not inferred from source. Root cause in
+`app/api/deposits/route.ts`: the only validation was `!body.userWallet ||
+!body.amount`, a truthiness check on the raw string — `"0"`, `"-5"`, and
+`"abc"` are all non-empty, non-falsy strings, so every one of them sailed
+through untouched into a real `DepositRecord` with `status: "SIGNED"`. This
+is a real product bug, not just an edge case: a KOL-referred user's client
+bug, a copy-paste error, or a reviewer poking the API directly (exactly what
+the prior cycle's own gap-check predicted someone would try) could create a
+permanent-looking "in progress" deposit for an amount that can never
+actually settle, cluttering the store and potentially blocking a real
+subsequent deposit via the duplicate-guard logic keying on the same garbage
+amount.
+
+### Fix
+Added a numeric check right after the existing presence check in
+`app/api/deposits/route.ts`: `Number(body.amount)` must be `Number.isFinite`
+and `> 0`, returning a clean `400 INVALID_REQUEST` with an explicit message
+otherwise. This is a request-validation change in the API route layer only
+— did not touch `lib/*.ts` reconciliation-engine state-machine or
+idempotency logic per the standing constraint, and the duplicate-blocking
+guard (`findConflictingInFlictDeposit` / the store's in-flight lookup) is
+unmodified.
+
+### Verification
+- `npm run build` passes clean (killed a stray `next-server` PID first,
+  confirmed zero next processes running before building, per prior cycles'
+  documented gotcha).
+- Fresh `npm run start` production build on port 3311: `amount: "-5"`,
+  `"0"`, and `"abc"` all now return clean `400 INVALID_REQUEST` instead of
+  `201`; a valid `amount: "25.5"` still returns `201`; an immediate
+  duplicate of that same valid request still returns
+  `409 DUPLICATE_IN_FLIGHT` with the original deposit attached — confirmed
+  the idempotency guard is completely intact, not just unchanged in source.
+- Deleted all local test data (`.data/deposits.json`, gitignored) before
+  finishing.
+
+### Deploy
+- Commit pushed to `origin main`.
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` → `readyState: "READY"`,
+  `target: "production"`.
+- Re-verified directly against **https://projecto-blond.vercel.app** after
+  deploy: `amount: "-5"`/`"0"`/`"abc"` all now `400 INVALID_REQUEST` live
+  (previously `201`); a valid amount still creates a deposit (`201`) and an
+  immediate duplicate still correctly `409`s. All six core routes still
+  `200`.
+
+### Honest gap check
+This was a small, surgical, fully-completed fix within the hard time budget
+— a real gap between "any non-empty string" and "a valid amount," found via
+live adversarial curl testing per the standing priority order (functional
+bugs first), not a guess. Did not get to categories 2-4 (consistency,
+polish, KOL/assignment-fit re-check) this cycle; the immediately prior
+cycle's own note that the KOL banner / wallet-role labeling / deposit
+breakdown haven't been freshly re-checked against SPEC.md since the Cyber
+Amber pivot still stands as the next reasonable target.
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-18T03:13:27Z
