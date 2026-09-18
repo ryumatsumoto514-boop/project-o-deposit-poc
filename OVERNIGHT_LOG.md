@@ -1965,3 +1965,13 @@ associated visible errors via aria-describedby, and gave the error role=alert.
 This is one form-accessibility fix; no engine or API behavior changed.
 Used an isolated checkout to exclude existing unrelated workspace edits.
 Build and production verification results follow.
+
+Verification completed: npm run build exited 0 (existing optional-dependency
+and ox warnings remain). Commit ce731d8 pushed to origin main. Production
+deployment reached READY and was aliased to https://projecto-blond.vercel.app.
+Post-deploy curl -fsS fetched /deposit and its referenced page chunk
+/_next/static/chunks/app/deposit/page-a5d363224d2f73c2.js; assertions verified
+htmlFor and matching input id, aria-invalid, aria-describedby, the error id,
+and role=alert. This verifies shipped attributes, not a manual screen-reader
+session. The same source change and log entry were copied into the main
+workspace while preserving unrelated edits.
