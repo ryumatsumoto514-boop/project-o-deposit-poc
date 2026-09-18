@@ -3119,3 +3119,14 @@ connection fix does not cover this independent funding-wallet entry point.
 Changed app/deposit/page.tsx to disable connection buttons while pending,
 expose aria-busy and Connecting text, and render a role=alert retry message
 when connection fails. No lib changes. Build and live verification follow.
+
+Verification: npm run build passed, including type/lint checks (existing
+optional wallet SDK and ox dynamic-import warnings remain). Commit ff6ceb3
+pushed to origin/main; requested Vercel production deploy completed successfully
+(projecto-2ee5hnvw2). Post-deploy curl -fsSL fetched
+https://projecto-blond.vercel.app/deposit and its referenced chunk
+/_next/static/chunks/app/deposit/page-52a65cd874b37ee0.js. Assertions confirmed
+disabled/aria-busy pending buttons, Connecting text, and the role=alert retry
+message in shipped code. This verifies the deployed client implementation,
+not a manual extension rejection test. No transactions were submitted.
+Unrelated concurrent screenshot helpers were left untracked and untouched.
