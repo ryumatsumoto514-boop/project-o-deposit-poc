@@ -2359,3 +2359,16 @@ Added explicit string checks before both address regex checks. This is one
 request-boundary fix; no lib/*.ts changes. Used an isolated worktree to avoid
 including unrelated automation files in git add -A. Build and live verification
 results follow below.
+
+
+Verification: npm run build passed (existing optional-dependency warnings).
+Local production server on port 3517: array userWallet, object userWallet,
+and array destinationAccount each returned 400; valid string addresses returned
+201, and replay returned 409 DUPLICATE_IN_FLIGHT. Commit 3e8ca9f pushed to
+origin main and deployed with vercel --token "$VERCEL_TOKEN" --yes --prod.
+Deployment BYWQN8knpTe4RvfmzS6ZHgfU5Yza is READY and aliased to production.
+Post-deploy curl against https://projecto-blond.vercel.app/api/deposits:
+the exact original array request now returns 400 INVALID_REQUEST; an array
+destinationAccount also returns 400; valid string addresses still return 201.
+No on-chain transactions were executed. Duplicate checking was verified locally,
+not claimed as a live multi-instance persistence test.
