@@ -2100,3 +2100,17 @@ already sitting complete and in-scope for priority 4; a reasonable next
 target is a fresh functional-bug sweep of the exception screens
 (STALLED_NO_GAS/AMBIGUOUS/duplicate-blocked), which haven't been
 adversarially curled since early in the night.
+
+### [Codex review] 2026-09-18 — Surface rejected wallet connections on login
+
+Read the brief, SPEC.md, recent log and app/login/page.tsx. Fetched live /
+and /login with curl -fsS, then /login's page-af0d784a401c217b.js chunk.
+The login screen consumed only connectors/connect from useConnect: rejected
+wallet requests produced no visible explanation or pending state. Prior log
+entries did not cover this path.
+
+Added a disabled, aria-busy connection button with Connecting text while
+pending, and a role=alert message explaining that connection did not complete
+and offering retry or explicitly simulated sign-in. No engine changes.
+Used an isolated checkout to preserve existing unrelated automation files.
+npm run build passed. Production deployment and live verification follow.

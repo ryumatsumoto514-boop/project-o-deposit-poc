@@ -12,7 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { mockIdentity, setMockIdentity } = useFlow();
   const { address, isConnected } = useAccount();
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, isPending, error } = useConnect();
 
   function continueTo(identity: string) {
     setMockIdentity(identity);
@@ -74,12 +74,20 @@ export default function LoginPage() {
               <button
                 key={connector.uid}
                 onClick={() => connect({ connector })}
+                disabled={isPending}
+                aria-busy={isPending}
                 className="btn-secondary"
               >
                 <WalletIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-                Sign in with {connector.name}
+                {isPending ? "Connecting…" : `Sign in with ${connector.name}`}
               </button>
             ))
+          )}
+          {error && !isConnected && (
+            <p role="alert" className="text-sm text-red-400">
+              Wallet connection did not complete. Open your wallet and try again,
+              or continue with a simulated email or Google sign-in.
+            </p>
           )}
         </div>
       )}
