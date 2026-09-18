@@ -2462,3 +2462,12 @@ whether `PATCH /api/deposits/[id]` or any other route that accepts an
 amount has the same missing-ceiling gap.
 
 ### Deploy confirmation
+- Commit `4949743` pushed to `origin main` (`bef8609..4949743 main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` -> deployment `dpl_78iRui42cdhF24Uf4FFoFL4wNW39`, `readyState: "READY"`, `target: "production"`.
+- Re-verified directly against **https://projecto-blond.vercel.app** after
+  deploy (not just localhost): `amount: "5000"` now returns
+  `400 INVALID_REQUEST` ("This demo caps deposits at 1000 USDC.") — previously
+  `201`; `amount: "1000"` (exact boundary) still returns `201`; all six core
+  routes (`/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex`) still `200`. **This is live, not just committed.**
+Claude Code tick finished, exit code 0
