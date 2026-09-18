@@ -2992,3 +2992,25 @@ git add -A, another process changed app/api/deposits/[id]/route.ts to reject
 illegal PATCH transitions using canTransition (409 INVALID_TRANSITION).
 That change was included in b9b2a3b; it was not authored by this review.
 Inspected the diff; production build passed with the guard included.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T15:22:48Z
+
+## Codex review tick: 2026-09-18T15:22:48Z
+
+### [Codex review] 2026-09-18 — Stop the spinner when a deposit is credited
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log and prior stepper entries;
+inspected globals.css, tailwind.config.ts, shared flow components and status
+screen source. Used curl -fsSL against live /login, /deposit/confirm and
+/deposit/status/codex-review. Fetched the status page's referenced JS chunk
+page-5e8f6896330b60fe.js and confirmed its stepper uses `done = i < currentIndex`
+and `active = i === currentIndex` even for CREDITED. Thus the success screen
+still displays a spinning, pulsing final node rather than four completed
+checks, contradicting its "tradable now" headline. Prior log claims of an
+all-green success stepper did not match the actual shipped implementation.
+
+Changed only app/deposit/status/[id]/page.tsx: CREDITED marks every step done;
+a completed step cannot also be active. Pending and exception behavior retain
+their existing predicates. No reconciliation-engine changes. Build/deploy
+and live bundle verification results follow below.

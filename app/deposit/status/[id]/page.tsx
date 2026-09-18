@@ -95,8 +95,8 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
   return (
     <div className="card flex flex-col gap-0 py-3">
       {HAPPY_PATH.map((s, i) => {
-        const done = i < currentIndex;
-        const active = i === currentIndex;
+        const done = i < currentIndex || status === "CREDITED";
+        const active = i === currentIndex && !done;
         const stuck = active && isException;
         const exceptionStyle = stuck ? EXCEPTION_STEP_STYLE[severity!] : null;
         return (
