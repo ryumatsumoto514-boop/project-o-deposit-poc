@@ -4,10 +4,6 @@ import { findConflictingInFlightDeposit } from "@/lib/idempotency";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
 import type { CreateDepositInput, DepositRecord } from "@/lib/types";
 
-export async function GET() {
-  return NextResponse.json({ deposits: depositStore.list() });
-}
-
 export async function POST(req: NextRequest) {
   let body: CreateDepositInput;
   try {
@@ -29,6 +25,13 @@ export async function POST(req: NextRequest) {
   if (!body.userWallet || !body.amount || !body.destinationAccount) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "userWallet, destinationAccount, and amount are required." },
+      { status: 400 }
+    );
+  }
+
+  if (body.mockIdentity != null && typeof body.mockIdentity !== "string") {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "mockIdentity must be a string or null." },
       { status: 400 }
     );
   }

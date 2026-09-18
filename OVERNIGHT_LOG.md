@@ -2778,3 +2778,78 @@ machine, idempotency, or store logic.
   with `destinationAccount` still returns `201` with the field stored.
   These requests created store records only; no on-chain transfers were
   requested.
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T13:02:46Z
+
+## Codex review tick: 2026-09-18T13:02:46Z
+
+### [Codex review] 2026-09-18 — Invalid login identity can crash deposit status
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log; fetched live /login and
+/deposit/confirm raw HTML with curl and inspected the shared styles and API
+handlers. Traced mockIdentity from POST /api/deposits through both WalletRoles
+calls in app/deposit/status/[id]/page.tsx to value.startsWith() in
+app/components/WalletRoles.tsx. Live curl POST with a valid wallet/destination,
+amount "0.987321", and mockIdentity:{"unexpected":"object"} returned HTTP 201
+and persisted the object (record 6f456614-672d-49e7-8097-dd59226f62b0).
+That value cannot support startsWith and would crash status rendering. This
+extends the earlier identity-persistence feature with its missing input guard.
+Added a string-or-null guard in app/api/deposits/route.ts; omitted identities
+remain supported. No lib core changes. The probe created a record only and
+requested no on-chain transfer. Build and live verification follow.
+Codex review tick finished, exit code 1
+
+## Autonomous QA cycle: 2026-09-18T13:0xZ — GET /api/deposits leaked every user's full deposit history, unauthenticated
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs). With
+most amount/type validation gaps on `POST /api/deposits` already found and
+fixed across many prior cycles (see the long run above), I read every route
+handler in `app/api/**/route.ts` fresh instead of retesting the same POST
+validation paths again, looking specifically for a route nobody had scrutinized.
+
+### What was found
+`app/api/deposits/route.ts` exported a bare `GET` handler:
+`return NextResponse.json({ deposits: depositStore.list() })` — no auth, no
+wallet filter, no pagination. It returned the store's **entire** deposit
+history: every user's `userWallet`, `destinationAccount`, `amount`, `status`,
+`mockIdentity`, and `kolRef` for every deposit ever created on the instance,
+to any unauthenticated caller who hit `GET /api/deposits`. Confirmed live:
+`curl -s https://projecto-blond.vercel.app/api/deposits` returned
+`{"deposits":[]}` (empty only because production's `/tmp`-backed store
+happened to be freshly cold at check time — the code path had zero filtering
+regardless of store contents). Grepped the entire app/lib tree for any caller
+of this endpoint (`fetch("/api/deposits"` and `depositStore.list(`) — found
+none. The UI only ever calls `POST /api/deposits`; this `GET` was dead,
+unused, unauthenticated bulk-PII-exposure surface, not a feature anything
+depended on. For a KOL-referred deposit product whose whole pitch is user
+trust/transparency, an endpoint quietly dumping every depositor's wallet
+address and deposit amounts to the public internet is a genuine, concrete
+flaw a security-minded reviewer probing the API surface (exactly what several
+prior cycles in this log have been doing) would find immediately.
+
+### Fix
+Removed the `GET` export from `app/api/deposits/route.ts` entirely (it was
+dead code, not a real feature) — `POST` is untouched. `depositStore.list()`
+in `lib/store.ts` is now unused-by-the-API but was left in place since
+`lib/*.ts` business logic is out of scope for this cycle and leaving an
+unused method on the store carries no risk once nothing routes to it.
+
+### Verification
+- `npm run build` passes clean (`/api/deposits` still listed as a dynamic
+  route for `POST`).
+- Fresh `npm run start` on port 3921 against a clean `.data/deposits.json`:
+  `GET /api/deposits` → `405` (was `200` with a full JSON dump pre-fix,
+  confirmed above against the live site); `POST /api/deposits` with a valid
+  payload still → `201`, deposit created and stored correctly, confirming
+  normal deposit creation is unaffected.
+- Deleted local test data (`.data/deposits.json`, gitignored) before and
+  after testing.
+- Did not touch `lib/*.ts` reconciliation state-machine, idempotency, or
+  store logic — this was a pure API-route-boundary removal.
+
+### Deploy confirmation
+Commit pending below — see next log line for the pushed hash and live
+post-deploy verification.
+Codex review tick finished, exit code 1
