@@ -43,3 +43,5 @@ next-env.d.ts
 # overnight automation (contains live tokens — never commit)
 .overnight-env.sh
 .overnight-claude-stdout.log
+.overnight-codex-stdout.log
+.overnight-claude-stdout.log
