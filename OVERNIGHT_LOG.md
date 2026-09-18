@@ -2705,3 +2705,20 @@ https://projecto-blond.vercel.app/api/deposits verified "0x10", "1e2",
 "0.0000001", "12.3456789", "-1", and "1001" all return HTTP 400
 INVALID_REQUEST; valid "12.345678" returns 201 with that exact amount.
 These checks created records only; no on-chain transfers were requested.
+
+### [Codex review] 2026-09-18 — Shared small labels have insufficient contrast
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, then fetched live /login
+and /deposit HTML with curl -fsS. Followed the login stylesheet URL with curl
+and inspected .label-caps in app/globals.css and its callers. Unlike the
+previously fixed footer and login simulation labels, the shared 11px step,
+wallet-role, approval-scope and transaction labels still used slate-500
+(#64748b): calculated sRGB contrast is 4.11:1 on #0a0c10 and 3.90:1 on
+#10131a, below 4.5:1 for small text. Changed only the shared .label-caps
+color to slate-400 (#94a3b8), giving 7.63:1 and 7.25:1 respectively.
+Explicit caller color/opacity overrides are outside this small fix; this is
+not a claim of a full accessibility audit. No lib core changes. Used an
+isolated worktree to preserve concurrent API/log edits. Build and live
+stylesheet verification results follow.
+
+npm run build passed (existing optional wallet dependency warnings).

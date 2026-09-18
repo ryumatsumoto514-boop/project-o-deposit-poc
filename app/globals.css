@@ -123,7 +123,7 @@
     @apply font-mono font-semibold uppercase tracking-[0.1em];
   }
   .label-caps {
-    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500;
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400;
   }
   .body-text {
     @apply text-[14px] leading-relaxed text-slate-400;
