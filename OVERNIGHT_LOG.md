@@ -2208,3 +2208,13 @@ they belong to the parallel Codex-review automation track running
 alongside this one, not this cycle's scope, and staging/committing only
 the files this cycle actually changed avoids stepping on that track's own
 commit.
+
+### Deploy confirmation
+- Commit `fd5d605` pushed to `origin main` (`feb804a..fd5d605 main -> main`).
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` -> deployment ready.
+- Re-verified directly against **https://projecto-blond.vercel.app** after
+  deploy (not just localhost): malformed-JSON POST and missing-Content-Type
+  POST to `/api/deposits` both now return `400 INVALID_REQUEST` live
+  (previously `500`); a valid POST still returns `201`; all six core routes
+  (`/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+  `/?ref=kol_alex`) still `200`. **This is live, not just committed.**
