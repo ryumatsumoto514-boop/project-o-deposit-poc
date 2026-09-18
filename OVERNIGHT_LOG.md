@@ -1923,3 +1923,21 @@ Post-deploy `curl -fsS https://projecto-blond.vercel.app` succeeded; assertions
 against its raw HTML confirmed “Exact-amount approval by default” is present
 and “Zero unlimited allowances” is absent. This was one copy correction;
 no reconciliation logic or approval behavior changed.
+
+
+### [Codex review] 2026-09-18 — Respect reduced-motion preferences
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log, app/globals.css,
+tailwind.config.ts, and raw HTML fetched with curl -fsS from the live homepage
+and /login. Fetched the production stylesheet referenced by that HTML
+(/_next/static/css/f7892008a0fc38f3.css): it contains infinite led-pulse,
+flow-dot and node-pulse animations but no prefers-reduced-motion query.
+Users requesting reduced motion still received continuous decorative movement.
+This accessibility gap was not covered by earlier log entries.
+
+Added one shared prefers-reduced-motion override in app/globals.css: disable
+animations/transitions, hide decorative traveling dots and pulse halos, and
+suppress the button press scale. Static status text and base LED dots remain.
+No reconciliation or API changes. Used an isolated checkout because the main
+workspace contains unrelated unfinished edits; those are excluded.
+Build and live deployment verification results follow after completion.

@@ -271,3 +271,24 @@
 .node-pulse {
   animation: node-pulse 2.4s ease-in-out infinite;
 }
+
+/* Honor the device accessibility preference across decorative motion and
+   loading indicators. Text status remains visible without animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .flow-dot,
+  .led-dot.led-live::after {
+    display: none;
+  }
+
+  .btn:active {
+    transform: none;
+  }
+}
