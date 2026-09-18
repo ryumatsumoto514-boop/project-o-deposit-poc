@@ -2705,7 +2705,6 @@ https://projecto-blond.vercel.app/api/deposits verified "0x10", "1e2",
 "0.0000001", "12.3456789", "-1", and "1001" all return HTTP 400
 INVALID_REQUEST; valid "12.345678" returns 201 with that exact amount.
 These checks created records only; no on-chain transfers were requested.
-
 ### [Codex review] 2026-09-18 — Shared small labels have insufficient contrast
 
 Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, then fetched live /login
@@ -2722,3 +2721,60 @@ isolated worktree to preserve concurrent API/log edits. Build and live
 stylesheet verification results follow.
 
 npm run build passed (existing optional wallet dependency warnings).
+
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T12:27:46Z
+
+## Codex review tick: 2026-09-18T12:27:46Z
+
+### [Autonomous QA cycle] 2026-09-18 — POST /api/deposits accepted missing destinationAccount
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs). Read
+OVERNIGHT_BRIEF.md and this log in full first. Found the working tree already
+had an uncommitted fix in `app/api/deposits/route.ts` (left there by commit
+aa28249 "chore: keep concurrent destination validation out of review changes",
+which deliberately excluded it from an unrelated review commit so it could be
+finished separately) — picked it up rather than starting a new investigation.
+
+### What was found
+Confirmed live before touching anything: `curl -X POST
+https://projecto-blond.vercel.app/api/deposits` with
+`{"userWallet":"0x...c0de","amount":"1.5"}` (no `destinationAccount`)
+returned `HTTP 201` and created a real record (id
+`c0ac676f-9a7b-4a61-9c86-f21046e54d99`) with no `destinationAccount` field
+at all. `app/deposit/status/[id]/page.tsx` renders `deposit.destinationAccount`
+as `tradableIn` for the address-confirmation UI (one of the 5 core UX
+differentiators), so a record created this way would show a missing/blank
+tradable-account address on the status screen — undermining the exact
+address-confirmation guarantee the assignment calls for. The UI itself
+(`app/deposit/approve/page.tsx:100`) always sends `destinationAccount` via
+`deriveMockTradingAccount(address)`, so requiring it server-side matches
+actual UI behavior and closes an API-boundary gap, not a UI regression.
+
+### Fix
+In `app/api/deposits/route.ts`: added `destinationAccount` to the required-
+fields check (previously only `userWallet` and `amount` were required) and
+removed the `=== undefined` escape hatch that let the address-format
+validation be skipped entirely when the field was absent, so an omitted
+`destinationAccount` now hits the same 400 path as a malformed one. Pure
+request-boundary validation; no changes to `lib/*.ts` reconciliation state
+machine, idempotency, or store logic.
+
+### Verification
+- `npm run build` passed clean.
+- Local `npm run start` on port 3811 against a clean `.data/deposits.json`:
+  missing `destinationAccount` -> `400 INVALID_REQUEST`; valid request with
+  a well-formed `destinationAccount` -> `201` with the field stored
+  correctly; malformed (non-address) `destinationAccount` -> `400`.
+  Test data deleted after (gitignored, not committed regardless).
+- Commit `2070c59` pushed to `origin/main`.
+- `vercel --token "$VERCEL_TOKEN" --yes --prod` deployment
+  `dpl_FLYwdTWWCotWe5KdfLCniZF9WEao` reached `READY` on the production
+  target.
+- Post-deploy live curl against `https://projecto-blond.vercel.app/api/deposits`:
+  the same missing-`destinationAccount` payload now returns `400
+  INVALID_REQUEST` (was `201` pre-fix, confirmed above); a valid payload
+  with `destinationAccount` still returns `201` with the field stored.
+  These requests created store records only; no on-chain transfers were
+  requested.
