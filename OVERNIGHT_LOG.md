@@ -3311,3 +3311,8 @@ The first verification regex assumed an omitted catch parameter; adjusted
 it for the minifier's catch(s) syntax and the check passed. Failure/recovery
 behavior was exercised locally with mocked fetch, not in a live browser.
 No transactions submitted.
+
+Concurrent-work note: the required final git add -A also captured another
+process's edits to app/login/page.tsx and lib/format.ts in 678c006. This review
+did not author or validate those edits; the build and live checks above apply
+to the gas-header fix in 9fdecd7.
