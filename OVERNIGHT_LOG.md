@@ -3405,3 +3405,30 @@ Build and live deployment verification follow below.
 
 npm run build passed, including lint/type checks, with existing dependency
 warnings. git diff --check passed.
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T22:23:02Z
+
+## Codex review tick: 2026-09-18T22:23:02Z
+
+### [Codex review] 2026-09-18 — Restore invalid approval scope as exact
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log; searched earlier
+approval/persistence fixes. curl fetched live /login and /deposit/approve,
+then its referenced shared app/layout JavaScript. The shipped FlowProvider
+spread JSON.parse(sessionStorage) directly into state. Reading
+app/deposit/approve/page.tsx:91 established that any approvalMode other than
+"exact" requests maxUint256, even though an invalid mode selects neither
+radio button. This is a persisted-state validation bug, distinct from the
+previous hydration timing fixes.
+
+Changed only app/flow-context.tsx to restore unlimited permission only for
+the explicit string "unlimited"; all other saved values restore "exact".
+A Node VM executed the actual restoration block for eight values (exact,
+unlimited, typo, null, number, object, false and omitted); all assertions
+passed. No lib changes or transactions submitted. Build and live verification
+results follow below.
+
+npm run build passed, including lint/type checks, with existing dependency
+warnings. git diff --check passed. Deploying the reviewed fix.

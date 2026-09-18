@@ -44,7 +44,16 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (raw) setState({ ...DEFAULT_STATE, ...JSON.parse(raw) });
+      if (raw) {
+        const saved = JSON.parse(raw);
+        setState({
+          ...DEFAULT_STATE,
+          ...saved,
+          // Stored data is untyped. Only an explicit unlimited selection
+          // may restore broader spending permission; otherwise use exact.
+          approvalMode: saved?.approvalMode === "unlimited" ? "unlimited" : "exact",
+        });
+      }
     } catch {
       // ignore — sessionStorage unavailable, fall back to defaults
     }
