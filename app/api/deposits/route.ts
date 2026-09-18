@@ -32,6 +32,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
+  if (!ADDRESS_RE.test(body.userWallet)) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "userWallet must be a valid 0x-prefixed Ethereum address." },
+      { status: 400 }
+    );
+  }
+  if (body.destinationAccount !== undefined && !ADDRESS_RE.test(body.destinationAccount)) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "destinationAccount must be a valid 0x-prefixed Ethereum address." },
+      { status: 400 }
+    );
+  }
+
   const parsedAmount = Number(body.amount);
   if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
     return NextResponse.json(

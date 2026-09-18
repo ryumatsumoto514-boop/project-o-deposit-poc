@@ -2248,3 +2248,83 @@ returned 404 on the separate request (the documented per-instance store
 limitation); all six PATCH cases passed against the local production server.
 Do not interpret this as live PATCH coverage. Existing automation files and
 uncommitted log lines were preserved; no reconciliation-engine changes.
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-18T06:31:30Z
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T06:43:30Z
+
+## Autonomous QA cycle: 2026-09-18T06:44Z — POST /api/deposits accepted a non-address string as userWallet/destinationAccount
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs). Cyber
+Amber direction and the 5 core UX layers are confirmed settled per Ryu and
+this log — did not touch anything visual. Read the last ~700 lines of this
+log first: prior cycles had already hardened `POST /api/deposits` against
+non-numeric/negative amounts, malformed JSON, and non-object JSON bodies, but
+none had adversarially tested the `userWallet`/`destinationAccount` fields
+themselves, only presence (`!body.userWallet`).
+
+### What I found
+Curled the live API directly:
+`curl -X POST https://projecto-blond.vercel.app/api/deposits -d
+'{"userWallet":"not-an-address","amount":"12.5"}'` returned a real `201`,
+creating a permanent-looking `SIGNED` deposit record for a wallet address
+that isn't one. Root cause in `app/api/deposits/route.ts`: the only check on
+`userWallet` was truthiness (`!body.userWallet`), never a format check — any
+non-empty string sailed through. `destinationAccount` (typed as required
+`0x${string}` in `lib/types.ts`) wasn't checked at all. This matters
+concretely for this specific app: `lib/relayer.ts` passes `userWallet`
+straight into a viem `writeContract`/`readContract` `args` array during
+reconciliation (`lib/pull.ts`'s `attemptPull`), and `lib/pull.ts`'s existing
+error-message sniffing (from an earlier cycle's `STALLED_NO_GAS` misdiagnosis
+fix) only special-cases genuine gas-exhaustion patterns — a malformed-address
+revert would fall through to `STALLED_TIMEOUT` with copy that has nothing to
+do with the real cause, actively misleading the user exactly the way that
+earlier fix was written to prevent for the gas case. Also directly undermines
+the brief's "full address confirmation" differentiator: if the API itself
+never validates address shape, the address-confirmation UI step is
+confirming a value that was never checked as being a real address in the
+first place.
+
+### Fix
+Added a shared `/^0x[a-fA-F0-9]{40}$/` regex check in
+`app/api/deposits/route.ts`, applied to `userWallet` (always) and
+`destinationAccount` (when present), each returning a clean
+`400 INVALID_REQUEST` with a specific message — same pattern as the existing
+amount-validation check right below it. Pure request-validation in the API
+route layer; did not touch `lib/*.ts` reconciliation state-machine,
+idempotency, or relayer logic per the standing constraint.
+
+### Verification
+- `npm run build` passes clean (no new warnings).
+- Fresh `npm run start` production build on port 3501:
+  - `userWallet: "not-an-address"` -> `400 INVALID_REQUEST` (previously
+    `201`).
+  - Valid `userWallet` + `destinationAccount: "bogus"` -> `400
+    INVALID_REQUEST` (previously would have been silently accepted).
+  - Valid request (`0x1e9d...Eb37`, amount `12.5`) -> `201`, unchanged.
+  - Immediate duplicate of that same request -> `409 DUPLICATE_IN_FLIGHT`
+    with the original deposit attached — idempotency guard confirmed intact.
+  - Negative amount (`-5`) -> `400 INVALID_REQUEST` — prior amount-validation
+    fix confirmed intact.
+  - Malformed JSON body -> `400 INVALID_REQUEST` — prior malformed-JSON fix
+    confirmed intact.
+- Deleted local test data (`.data/deposits.json`, gitignored) before
+  finishing.
+- Left the parallel Codex-review track's untracked automation files
+  (`.overnight-codex-stdout.log`, `scripts/codex-review-tick.sh`,
+  `scripts/shot-status-identity.mjs`) untouched, per the established
+  convention of not stepping on that track's own commits.
+
+### Honest gap check
+Small, surgical, fully-completed fix within the hard time budget — a real
+gap between "any non-empty string" and "a well-formed Ethereum address,"
+found via live adversarial curl testing per the standing priority order, not
+a guess. Did not get to categories 2-4 (consistency, polish,
+KOL/assignment-fit re-check) fresh this cycle. A reasonable next target,
+per several prior cycles' own notes: a fresh screenshot-driven visual pass
+of the exception screens, or checking whether `PATCH /api/deposits/[id]`
+has the same address-format gap on any field it accepts.
+
+### Deploy confirmation
