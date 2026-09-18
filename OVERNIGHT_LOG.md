@@ -3432,3 +3432,21 @@ results follow below.
 
 npm run build passed, including lint/type checks, with existing dependency
 warnings. git diff --check passed. Deploying the reviewed fix.
+Claude Code tick finished, exit code 1
+
+Fix commit 3a7d5a0 pushed to origin/main. The requested git add -A also
+captured a concurrently created scripts/qa-tmp-shots.mjs screenshot helper;
+inspected its contents, but did not author or run it. Initial requested
+Vercel deploy failed with Request Entity Too Large: the local ignored core
+dump is 2.8 GB. Retrying the same deploy command from a clean git archive
+of the committed code in /tmp/projecto-codex-deploy with the existing
+.vercel project link; no source change needed for this deployment workaround.
+
+Production deploy completed successfully (projecto-gwfxpr9u7). Post-deploy
+curl -fsSL fetched https://projecto-blond.vercel.app/deposit/approve and
+/_next/static/chunks/app/layout-22ed22510ee9538e.js. Assertion confirmed
+that the shipped restore code accepts only explicit "unlimited" and otherwise
+uses "exact". The initial assertion assumed the minifier would reverse the
+comparison operands; corrected to the actual emitted syntax and passed.
+Verification covers the live bundle and local restore behavior, not a manual
+wallet session. Concurrent WalletRoles edits are outside this review/deploy.
