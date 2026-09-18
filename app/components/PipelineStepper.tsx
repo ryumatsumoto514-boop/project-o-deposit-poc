@@ -17,13 +17,13 @@ const STAGES = [
     hash: "0x2b9E…4f10",
   },
   {
-    label: "Relayed & Bridged",
-    telemetry: "Relayer pulling funds, bridging to the trading venue.",
-    hash: "0x91Dc…7a2E",
+    label: "Bridging (simulated)",
+    telemetry: "After the testnet transfer, a simulated delay represents bridging. No funds move to Hyperliquid.",
+    hash: null,
   },
   {
-    label: "Hyperliquid Credited",
-    telemetry: "Balance confirmed and tradable.",
+    label: "Hyperliquid credit (simulated)",
+    telemetry: "A mock balance check completes the demo. No actual trading balance is credited.",
     hash: null,
   },
 ] as const;

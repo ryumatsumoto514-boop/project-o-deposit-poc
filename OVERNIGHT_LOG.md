@@ -3347,3 +3347,26 @@ Claude Code tick finished, exit code 1
 
 Final npm run build passed, including lint/type checks, with existing optional
 dependency warnings. git diff --check passed. Deploying the reviewed change.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T21:12:53Z
+
+## Codex review tick: 2026-09-18T21:12:53Z
+
+### [Codex review] 2026-09-18 — Label simulated stages in the landing pipeline
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log and prior disclosure fixes.
+Read API handlers, globals.css, tailwind.config.ts and the landing components.
+curl -fsSL https://projecto-blond.vercel.app/ returned visible pipeline claims
+"Relayer pulling funds, bridging to the trading venue" and "Balance confirmed
+and tradable." The shared footer disclosure fixed earlier is not rendered on
+this page; generic references to mocked parts do not identify these stages.
+
+Changed app/components/PipelineStepper.tsx to label bridging and Hyperliquid
+credit explicitly as simulated, explain that no funds move to Hyperliquid
+and no actual trading balance is credited, and remove the illustrative hash
+from the simulated bridge stage. No lib changes or transactions submitted.
+Build and production verification follow below.
+
+Verification: npm run build passed, including lint/type checks; existing
+dependency warnings remain. git diff --check passed.
