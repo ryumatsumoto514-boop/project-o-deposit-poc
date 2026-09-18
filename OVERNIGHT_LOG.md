@@ -2695,3 +2695,13 @@ No lib/*.ts changes. Build and post-deploy curl results follow below.
 
 npm run build passed (existing optional wallet-dependency/dynamic-import
 warnings). Production deployment and live request checks follow.
+Claude Code tick finished, exit code 1
+
+Fix commit 74fdf34 pushed to origin/main after incorporating the concurrent
+gas-telemetry commit (log-only conflict resolved preserving both entries).
+vercel --token "$VERCEL_TOKEN" --yes --prod completed successfully;
+deployment 5SWZj94HAZdDo79dChnGBTyXE8qF. Post-deploy curl requests against
+https://projecto-blond.vercel.app/api/deposits verified "0x10", "1e2",
+"0.0000001", "12.3456789", "-1", and "1001" all return HTTP 400
+INVALID_REQUEST; valid "12.345678" returns 201 with that exact amount.
+These checks created records only; no on-chain transfers were requested.

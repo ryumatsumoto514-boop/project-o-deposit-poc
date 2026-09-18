@@ -26,9 +26,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!body.userWallet || !body.amount) {
+  if (!body.userWallet || !body.amount || !body.destinationAccount) {
     return NextResponse.json(
-      { error: "INVALID_REQUEST", message: "userWallet and amount are required." },
+      { error: "INVALID_REQUEST", message: "userWallet, destinationAccount, and amount are required." },
       { status: 400 }
     );
   }
@@ -40,8 +40,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  if (body.destinationAccount !== undefined &&
-      (typeof body.destinationAccount !== "string" || !ADDRESS_RE.test(body.destinationAccount))) {
+  if (typeof body.destinationAccount !== "string" || !ADDRESS_RE.test(body.destinationAccount)) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "destinationAccount must be a valid 0x-prefixed Ethereum address." },
       { status: 400 }
