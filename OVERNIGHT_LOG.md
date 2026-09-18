@@ -2978,3 +2978,17 @@ Added role="alert" to that one error container. No lib engine changes.
 warnings remain for optional wallet SDK modules and ox's dynamic import.
 Deployment and live bundle verification follow below; this is not a claim of
 a manual screen-reader audit.
+Claude Code tick finished, exit code 1
+
+Live verification: commit b9b2a3b pushed to origin/main; production deployment
+projecto-o1xyngdse completed successfully. curl -fsSL fetched the live
+/deposit/approve HTML and its referenced approval JS chunk /_next/static/chunks/app/deposit/approve/page-16a4e9ea40288066.js;
+asserted role:"alert" directly precedes the error banner class in shipped code.
+The conditional error is client-rendered, so this verifies shipped semantics,
+not a manual assistive-technology session.
+
+Concurrent-work note: between the pre-commit status check and the required
+git add -A, another process changed app/api/deposits/[id]/route.ts to reject
+illegal PATCH transitions using canTransition (409 INVALID_TRANSITION).
+That change was included in b9b2a3b; it was not authored by this review.
+Inspected the diff; production build passed with the guard included.
