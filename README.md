@@ -160,6 +160,18 @@ mocked Hyperliquid balance agree.
   local tracking of them) rather than a raw 404. A real deployment needs
   an external store (Vercel KV / Postgres / etc.) — out of scope for an
   overnight PoC with no database credentials available.
+  **The same root cause also weakens duplicate-deposit blocking, not just
+  lookups — confirmed live on 2026-09-18:** two identical
+  `POST /api/deposits` calls (same wallet, same amount) made back-to-back
+  in the same request each returned `201` instead of the second returning
+  `409 DUPLICATE_IN_FLIGHT`, because they landed on two different
+  serverless instances, each with its own empty in-memory store, so
+  neither could see the other's record. A rapid pair of calls that reuse
+  one warm connection *does* correctly return `409` on the second call
+  (also confirmed live the same day) — the guard's logic is correct, but
+  its guarantee only holds within a single warm instance, not across the
+  fleet, which is the same underlying gap as the lookup issue above. A
+  real deployment needs the same external store fix to close both.
 - **No real Hyperliquid integration.** The credited check is a timer, not
   a real balance read. Clearly labeled everywhere it appears.
 - **No real authentication.** Login is a mocked identity string, not a
