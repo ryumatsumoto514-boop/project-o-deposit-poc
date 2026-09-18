@@ -1941,3 +1941,12 @@ suppress the button press scale. Static status text and base LED dots remain.
 No reconciliation or API changes. Used an isolated checkout because the main
 workspace contains unrelated unfinished edits; those are excluded.
 Build and live deployment verification results follow after completion.
+
+Verification: npm run build exited 0 (existing MetaMask async-storage,
+pino-pretty and ox dependency warnings remain). Commit 78112eb pushed to
+origin main. Production deployment dpl_5H9RR6HBxR2JA2se6NaRntiG6fAH reached
+READY and was aliased to https://projecto-blond.vercel.app. Post-deploy
+curl -fsS fetched /, /login and /deposit and each referenced stylesheet;
+assertions confirmed the reduced-motion media query, animation/transition
+overrides and button transform override in the live CSS. This verifies
+deployed rules, not a manual browser/OS preference test.
