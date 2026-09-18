@@ -3055,3 +3055,10 @@ and its referenced chunk /_next/static/chunks/app/deposit/approve/page-4a819a52d
 asserted both radios ship type:"radio",name:"approval-scope". This verifies
 the live native grouping markup in the client bundle, not a manual browser
 or assistive-technology session. No transactions were submitted.
+Claude Code tick finished, exit code 1
+
+Concurrent-work note: the required git add -A for the verification commit
+bd703c9 also picked up another process's app/login/page.tsx color change
+(text-red-400 to text-rose-300 on the connection alert). This review did
+not author that change; its live deployment was not verified here. The
+approval-radio fix itself was built, deployed and verified as described above.
