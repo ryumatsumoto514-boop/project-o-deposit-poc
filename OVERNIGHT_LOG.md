@@ -1677,3 +1677,27 @@ Claude Code tick finished, exit code 137
 Claude Code tick finished, exit code 137
 
 ## Cron tick: 2026-09-18T02:08:27Z
+
+## Manual intervention (Hermes)
+
+Root-caused the string of exit-137 (SIGKILL) failures: this environment
+kills long-running background/cron processes around 5-7 minutes, and
+`--max-turns 100` let Claude Code run long enough to get killed mid-edit,
+leaving the working tree with real, good, uncommitted work (confirmed via
+`git status`/`git diff --cached --stat`: PipelineStepper.tsx, EngineVisual.tsx,
+gas indicator route, expanded globals.css design tokens — genuinely
+implementing the Cyber Amber/trading-terminal brief). Rescued this specific
+instance manually: verified `npm run build` passed clean, committed
+(`f345ee4`), pushed, and redeployed to Vercel — confirmed live at
+https://projecto-blond.vercel.app (new `/api/gas` route returns 200, "pipeline"
+markup present in served HTML).
+
+Fixed the script itself for future cycles: lowered `--max-turns` to 25,
+added an internal 280s soft-timeout that SIGTERMs Claude Code before the
+outer ~350-420s hard kill hits (so it can exit somewhat gracefully instead
+of being SIGKILLed), and added an explicit instruction to do ONE small,
+complete, buildable piece of the brief per cycle rather than attempting
+everything at once. Future cycles should show cleaner exit codes and no
+more stranded uncommitted work.
+
+## Cron tick: 2026-09-18T02:38:27Z

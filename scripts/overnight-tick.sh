@@ -19,35 +19,35 @@ if ! claude auth status 2>/dev/null | grep -q '"loggedIn": true'; then
   exit 0
 fi
 
-claude -p "Read /opt/data/projecto/OVERNIGHT_BRIEF.md and /opt/data/projecto/OVERNIGHT_LOG.md (append-only, read the WHOLE thing, it's long but has critical context from 10+ prior design cycles) in full first.
+claude -p "Read /opt/data/projecto/OVERNIGHT_BRIEF.md and /opt/data/projecto/OVERNIGHT_LOG.md (append-only — it's long, but has critical context: which design directions were already tried, which bugs were already found/fixed, and what's already been verified live) in full first.
 
-USER GAVE DETAILED, SPECIFIC UI/UX DIRECTION (this supersedes all prior generic 'make it better' instructions — the user looked at real screenshots and said it's good but too generic/SaaS-boilerplate-looking, and gave a precise creative brief). Implement this exactly:
+CURRENT MODE: autonomous self-directed QA and iteration on the LIVE deployment at https://projecto-blond.vercel.app. The user has confirmed the core Cyber Amber/trading-terminal brand direction and the 5 core UX improvements (state machine, exact-amount approval, plain-language failures, address confirmation, wallet-role labeling) are genuinely implemented and want you to keep finding real flaws and making it better — NOT to keep re-litigating the same visual direction from scratch. Read the log first so you don't repeat work or re-pivot colors for the Nth time with no new signal — that has already been flagged as low-value in prior cycles.
 
----
-Act as a Principal UI/UX Designer and Lead Frontend Engineer specializing in modern Web3 and High-Frequency Trading interfaces (like Hyperliquid, Uniswap, and Solana Terminal). Refactor the design system and layout of Project O to eliminate the generic 'AI-generated SaaS boilerplate' look. Transform it into a distinct, high-performance visual brand ('Project O / Exchange O').
+Your job this cycle: pick ONE concrete, verifiable improvement using this priority order (skip a category once you've confirmed via the log it's already solid, move to the next):
+1. **Functional bugs** — actually click/curl through the live site's flows and API routes looking for real breakage: broken links, console errors, API routes returning wrong status codes, state machine edge cases, mobile layout overflow, broken images/icons, slow/hanging requests.
+2. **Consistency gaps** — screens that don't match the established design system (check every route, not just the ones recently touched) — inconsistent spacing, colors, border-radius, font usage vs. the tokens already defined in globals.css/tailwind.config.ts.
+3. **Missing polish details** — loading states, empty states, hover/focus states, transitions, accessibility (contrast, tap target size, alt text) — small things a sharp reviewer notices.
+4. **KOL/B2B2C and assignment-fit details** — re-read SPEC.md's requirements around KOL disclosure, wallet-role labeling, and deposit breakdown; confirm the live site still clearly demonstrates these differentiators from a generic DEX clone (this is the actual point of the assignment, don't let visual polish crowd it out).
 
-1. Brand Aesthetic: High-precision cryptographic telemetry interface. Dark mode default with rich obsidian background (#0A0C10), razor-sharp borders (1px border with 0.15 opacity), subtle dot-matrix background pattern, neon electric accent (Cyber Amber #FF9E00 or Hyper Turquoise #00F0FF — pick one and use it consistently, do not mix both). Typography: crisp sans-serif for headings (Inter or Space Grotesk) paired strictly with Monospace fonts (JetBrains Mono / SF Mono) for numeric values, contract addresses, and status badges.
+Use the real screenshot pipeline (chrome-headless-shell + scripts/screenshot.mjs / shot-flow-walk.mjs via CDP on port 9333) to verify visually, not just by reading code, wherever practical. Actually curl API routes and check status codes/bodies, not just assume.
 
-2. Hero Section & 'O Engine' Visual Anchor: Replace generic centered text with an asymmetric hero layout. Left side: high-impact typography with a prominent live status ticker ('ARBITRUM SEPOLIA -> HYPERLIQUID | LATENCY: 42ms' style, can be a static realistic-looking value since this is a PoC, just don't fabricate it as if it's a real live measurement in code comments/docs — label it as illustrative). Right side: an interactive visual model representing the 'Reconciliation Engine' — a dynamic, animated cross-chain telemetry pipeline showing incoming USDC deposits being reconciled and credited in real-time (CSS/SVG animation is fine, no need for a canvas library).
-
-3. Pipeline Visualization (replacing the 3 static feature text blocks): an active horizontal/vertical 'Live Pipeline Stepper' showing the 4 real stages: [1. Signed] -> [2. Arbitrum Confirmed] -> [3. Relayed & Bridged] -> [4. Hyperliquid Credited], with real-time progress indicators, transaction hash previews (can show placeholder/example format on the marketing page, real hashes on the actual status tracker), and plain-language telemetry-style state text instead of static descriptions.
-
-4. Micro-interactions & UX details: Nav should feel like a trading terminal — network status indicator (already have Sepolia dot, refine it), a gas fee indicator, custom branded logo mark for 'Project O' (a simple geometric SVG mark, not a generic icon). Primary CTA upgraded with high-contrast styling, subtle hover glints/tactile feedback (CSS transitions/transforms, no heavy JS libraries needed). Micro-copy: highlight 'Zero Unlimited Allowances' and 'Real-time Exception Handling' as crisp status-tag components with glowing LED-style status dots.
----
-
-IMPORTANT CONSTRAINTS:
-- This must be implemented in the ACTUAL React/Tailwind/Next.js codebase at /opt/data/projecto — not just described. Write real component code.
-- Apply the new design system consistently across EVERY screen (landing, login, deposit amount, address confirm, approval, status tracker, exception screens) — not just the landing page hero. A half-migrated design (new landing page, old-style everything else) is worse than not doing it, so if you run low on turn budget, prioritize getting the design TOKENS (colors, fonts, spacing, border style, the dot-matrix background) applied everywhere consistently over perfecting one flashy hero section.
-- Keep all existing functionality working — this is a visual/component refactor, not a rewrite of the reconciliation engine logic. Do not touch lib/*.ts business logic.
-- Real screenshots exist in prior OVERNIGHT_LOG.md entries proving a screenshot pipeline works (chrome-headless-shell + scripts/screenshot.mjs via CDP on port 9333) — use it to verify your changes actually render correctly, at both mobile (375px) and a reasonable desktop width, before considering this done. Don't just write CSS blind.
-- After verifying with real screenshots: npm run build, commit, push to GitHub, and redeploy to Vercel (source .overnight-env.sh first, then vercel --token \"\$VERCEL_TOKEN\" --yes --prod). Re-verify the LIVE URL https://projecto-blond.vercel.app reflects the changes with a fresh screenshot.
-- Append a detailed, specific summary to OVERNIGHT_LOG.md of exactly what changed (files touched, design tokens chosen, what the hero/pipeline/nav look like now) so a future cycle or the user can see real diffs, not just 'made it better'.
-- This is a multi-cycle effort — if you don't finish everything in this budget, leave the log in a state where the NEXT cycle can clearly see what's done and what's left of this exact brief, rather than treating it as complete prematurely." \
-  --max-turns 100 \
+CONSTRAINTS:
+- HARD TIME LIMIT: this environment kills long-running processes around 5-7 minutes. Pick something SMALL enough to fully finish (find, fix, verify, commit, deploy) within that budget. A tiny real fix that ships beats an ambitious one that gets killed mid-edit.
+- Do not touch lib/*.ts reconciliation-engine business logic unless you find and are fixing a genuine bug in it (state transitions, idempotency) — this is the assignment's actual subject matter, treat it carefully.
+- After any change: npm run build must pass clean, then commit, push to GitHub, redeploy to Vercel (source .overnight-env.sh, then vercel --token \"\$VERCEL_TOKEN\" --yes --prod), and re-verify the change is actually live at https://projecto-blond.vercel.app (not just committed).
+- Append a specific, concrete summary to OVERNIGHT_LOG.md: what flaw you found, how you found it (screenshot/curl/read), what you changed, and how you verified the fix live. If you genuinely find nothing worth fixing after a real look (not a lazy one), say so plainly and note what you checked." \
+  --max-turns 25 \
   --model sonnet \
   --dangerously-skip-permissions \
-  >> /opt/data/projecto/.overnight-claude-stdout.log 2>&1
+  >> /opt/data/projecto/.overnight-claude-stdout.log 2>&1 &
+CLAUDE_PID=$!
+# Hard safety timeout well under whatever kills the outer job (~350-420s
+# observed) so we can at least log a clean state before being reaped.
+( sleep 280 && kill -TERM "$CLAUDE_PID" 2>/dev/null ) &
+TIMEOUT_WATCHER=$!
+wait "$CLAUDE_PID"
 CLAUDE_EXIT=$?
+kill "$TIMEOUT_WATCHER" 2>/dev/null
 
 echo "Claude Code tick finished, exit code $CLAUDE_EXIT" >> "$LOG"
 exit 0
