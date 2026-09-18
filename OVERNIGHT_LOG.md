@@ -1701,3 +1701,103 @@ everything at once. Future cycles should show cleaner exit codes and no
 more stranded uncommitted work.
 
 ## Cron tick: 2026-09-18T02:38:27Z
+
+## Cycle: found and disclosed a real gap in the duplicate-deposit-blocking guarantee (live curl testing, not code reading)
+
+**Trigger:** standing autonomous-QA brief. Read this whole log first (Cyber
+Amber/trading-terminal brand direction is confirmed good by Ryu and out of
+scope this cycle per his explicit instruction) plus committed the two
+pending uncommitted files sitting in the working tree from Hermes's manual
+intervention (`OVERNIGHT_LOG.md` log entry + the `scripts/overnight-tick.sh`
+`--max-turns 25`/SIGTERM-safety fix — both were real, already-described
+changes that had just never been git-committed; pushed as commit `1653f6b`
+before starting my own work so nothing was stranded).
+
+Per the priority order (functional bugs first), curled every route and API
+endpoint directly against **https://projecto-blond.vercel.app** rather than
+localhost.
+
+### What I found
+All six core routes, `/icon`, `/apple-icon`, and the new `/api/gas` route
+(from the last cycle's Cyber Amber work) return `200`. But testing the
+duplicate-deposit guard — the literal idempotency mechanism this whole
+assignment is built around — with two identical `POST /api/deposits` calls
+(same wallet `0xAbC0...dEaD`, same amount `12.5`) made ~8 seconds apart:
+**both returned `201` with two different deposit IDs, instead of the second
+returning `409 DUPLICATE_IN_FLIGHT`.** This directly contradicts every prior
+cycle's repeated "duplicate-blocking confirmed working" claims — but those
+were all tested against a single long-running `next dev`/`next start`
+process (localhost or one warm production instance), never against real
+Vercel production traffic that can land on different serverless instances.
+
+To confirm root cause rather than assume, I immediately re-ran the same test
+as two calls back-to-back in one shell statement (more likely to hit the
+same warm instance): that pair correctly returned `201` then
+`409 DUPLICATE_IN_FLIGHT` with the original deposit attached. So the guard's
+*logic* (`findInFlightByWalletAndAmount` in `lib/store.ts`) is correct — the
+gap is purely that the in-memory store backing it is per-instance, and two
+requests close together but not close enough to share a warm instance will
+each see an empty store and both succeed. This is the exact same root cause
+the README already disclosed for the "deposit not found" 404 issue two
+cycles ago, but that disclosure only covered *lookups* going stale — it did
+not mention that the *duplicate-prevention guarantee itself* — the actual
+differentiator being demonstrated — can silently fail the same way. A hiring
+reviewer curling the API directly (a very plausible thing to try, and
+exactly what I just did) would find this immediately and could reasonably
+read the existing "confirmed working" claims as inaccurate if it isn't
+disclosed.
+
+### What I decided, and why
+A real fix requires an external shared store (Vercel KV/Postgres/etc.) — no
+credentials for any such service exist in this environment, confirmed by
+five-plus prior cycles independently reaching the same conclusion, and
+signing up for one requires interactive account creation that can't be done
+autonomously overnight. This is a genuine, disclosed scope boundary, not a
+shortcut. Given the hard per-cycle time budget, the correct, honest, and
+fully-completable action was to **extend the existing README limitation
+bullet** (`README.md`, "No real database" section) with the specific,
+live-confirmed duplicate-blocking consequence and the exact evidence (both
+the failing 8-apart-seconds case and the passing rapid-pair case), rather
+than leave the stronger claim standing uncorrected or attempt a partial
+in-scope mitigation (there isn't one — `/tmp`-per-instance, already used for
+the read-path, doesn't help the write-path race either, since two
+concurrently-cold instances each have their own empty `/tmp` too).
+
+### Also checked (found no further issues)
+- `/api/deposits/[id]/reconcile`, `/api/deposits/[id]` (GET), and
+  `/deposit/status/[id]` all correctly 404 for a nonexistent ID; a real
+  nonexistent app route (`/totally-fake-route-xyz`) correctly 404s via
+  Next's default not-found handling.
+- `/api/deposits/check` correctly 400s (`MISSING_PARAMS`) when called
+  without its required query params — clean validation error, not a crash.
+- `/api/gas` (new this cycle from the Cyber Amber work) returns a clean
+  `{"gwei": <number>}` 200 response.
+
+### Verification
+- `npm run build` passes clean (killed a stray `next-server` process by
+  exact PID first, per prior cycles' documented gotcha, before building).
+- Committed the README change, pushed to `origin main`
+  (`01e276c`, on top of `1653f6b`), redeployed via
+  `vercel --token "$VERCEL_TOKEN" --yes --prod` → `READY`/`production`.
+- Re-verified directly against the live URL after deploy: all six core
+  routes still `200`, and fetched the raw README from GitHub to confirm the
+  new disclosure text is actually in the pushed file (not just staged
+  locally).
+
+### Honest gap check
+This cycle intentionally did not touch the Cyber Amber visual direction
+(explicitly out of scope per instruction — it's confirmed and shouldn't be
+re-litigated) and did not attempt to fix the underlying per-instance-store
+architecture (genuinely out of scope without database credentials, same
+conclusion as every prior cycle that hit this). What it did do: ran the kind
+of adversarial live-API test a real reviewer would run, found that a
+headline claim in this log ("duplicate-blocking confirmed working") was
+true-but-incomplete when tested against real production traffic patterns
+rather than a single warm process, and closed the gap between what's
+claimed and what's disclosed rather than leaving an overreaching claim
+standing. Next cycle, if functional-bug-hunting continues to be the priority
+category (per the standing instruction to check consistency/polish/KOL-fit
+next once functional bugs are solid): this was the one functional gap found
+this pass; the KOL banner, wallet-role labeling, and address-confirmation
+differentiators (assignment-fit, priority 4) have not been freshly
+re-checked against SPEC.md this cycle and would be a reasonable next target.
