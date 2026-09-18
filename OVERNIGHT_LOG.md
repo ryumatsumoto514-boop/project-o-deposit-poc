@@ -3478,3 +3478,61 @@ will be included by the explicitly requested git add -A.
 npm run build passed with existing dependency warnings; the regression check
 passed. Deploying from a clean git archive to avoid the previously documented
 large ignored local core dump.
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-18T23:33:06Z
+
+## Codex review tick: 2026-09-18T23:33:06Z
+Codex review tick finished, exit code 1
+
+## Autonomous QA cycle: 2026-09-18 — 404 page fell back to Next.js's default unstyled error, breaking the design system
+
+**Trigger:** standing autonomous-QA brief, priority 2 (consistency gaps). With
+the deposit flow's API validation and accessibility surface exhaustively
+covered by many prior/concurrent cycles (type coercion, decimal precision,
+duplicate-amount matching, ARIA roles, keyboard nav, stepper correctness,
+KOL banner, wallet-role labeling, gas caching), I looked for a route/screen
+nobody had visually checked: what a user actually sees when a link is
+mistyped or a flow step no longer exists.
+
+### What was found
+`curl -s https://projecto-blond.vercel.app/nonexistent-route` returned
+HTTP 404 (correct status) but the response body was Next.js's built-in
+default not-found page: `<title>404: This page could not be found.</title>`
+with inline styles (`font-family:system-ui...`, `body{color:#000;background:#fff}`,
+a `.next-error-h1` divider). This rendered below the app's own branded sticky
+header (still present via the root layout), but the actual 404 content was
+plain black-on-white (or white-on-black under OS dark-mode preference) text
+in a generic system font — a jarring, completely unstyled break from the
+dark-fintech design system used on every other one of the app's six screens.
+No repo route previously customized this (only an unrelated screenshot
+helper, `scripts/shot-notfound.mjs`, existed — no styling fix was ever made).
+A hiring reviewer clicking a stale/mistyped link (very plausible when
+poking at a KOL-referral or deposit-status URL) would land on what reads as
+a broken, half-finished page.
+
+### Fix
+Added `app/not-found.tsx`, a Next.js special file that replaces the default
+not-found UI for the whole app. Built entirely from existing design-system
+primitives already defined in `globals.css` (`.page-shell`, `.card`, `.eyebrow`,
+`.h1`, `.body-text`, `.btn-primary`) and the existing `AlertIcon` from
+`app/components/icons.tsx` in an amber warning treatment (consistent with
+how other non-error, orientation-only banners use amber elsewhere in the
+app) plus a "Back to Exchange O" primary-button link home. No new colors,
+spacing values, or components introduced — pure reuse of tokens already
+established across six prior design cycles, so it cannot introduce a new
+consistency gap of its own.
+
+### Verification
+- `npm run build` passes clean; build output now lists `/_not-found` as its
+  own static route (previously implicit/default).
+- `npm run start` (production build) locally, `curl http://localhost:3999/nonexistent`:
+  response now contains `page-shell` and "Page not found" and no longer
+  contains `next-error-h1` (the old default-page marker) — confirmed via
+  direct string search on the actual served HTML, not just source.
+- Did not touch any API route or `lib/*.ts` logic — this is a pure
+  UI-only addition (a new page file), zero risk to the reconciliation
+  engine or idempotency behavior.
+
+### Deploy
