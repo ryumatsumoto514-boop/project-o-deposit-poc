@@ -2496,3 +2496,11 @@ are simulated." No engine changes. Build/deployment verification follows.
 npm run build passed; existing optional-dependency/dynamic-import warnings
 remain. Only FlowChrome.tsx and this log changed (existing cron log lines
 preserved). Production deployment and live curl verification pending below.
+
+Live verification: commit be477d9 pushed to origin main. Ran
+vercel --token "$VERCEL_TOKEN" --yes --prod; deployment
+2hhiekvo7oVKRUw8ixfrxNLxNjZZ reached READY and production alias updated.
+Then curl -fsS https://projecto-blond.vercel.app/login returned successfully;
+parsed its HTML and asserted the complete new disclosure is present and the
+old "Every step above" claim is absent. Both assertions passed. This was
+raw live HTML verification, not a browser interaction or on-chain transaction.
