@@ -26,10 +26,18 @@ export async function PATCH(
   if (!deposit) {
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
   }
-  const body = (await req.json()) as {
-    status?: DepositStatus;
-    failureReason?: string;
-  };
+  let body: { status?: DepositStatus; failureReason?: string };
+  try {
+    body = (await req.json()) as {
+      status?: DepositStatus;
+      failureReason?: string;
+    };
+  } catch {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "Request body must be valid JSON." },
+      { status: 400 }
+    );
+  }
   if (!body.status || !ALLOWED_CLIENT_STATUSES.includes(body.status)) {
     return NextResponse.json({ error: "INVALID_STATUS" }, { status: 400 });
   }

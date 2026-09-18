@@ -2126,3 +2126,85 @@ the new local production build and live URL it verified a disabled aria-busy
 button followed by the expected role=alert text. This simulates wallet
 rejection, not a manual extension session. Build passed with existing
 optional-dependency warnings. Unrelated workspace automation edits preserved.
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-18T05:56:30Z
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T06:08:30Z
+
+## Autonomous QA cycle: 2026-09-18T06:08Z — malformed JSON to /api/deposits[,/[id]] crashed with a raw 500 instead of a clean 400
+
+**Trigger:** standing autonomous-QA brief, priority 1 (functional bugs).
+Cyber Amber direction and the 5 core UX layers are confirmed settled per
+Ryu and this log — did not touch anything visual. Curled the live API at
+https://projecto-blond.vercel.app with a battery of adversarial request
+bodies (malformed JSON, missing Content-Type, absurdly large amount,
+`"Infinity"` amount) rather than just the happy path, since a prior cycle's
+own gap-check flagged that live-API adversarial testing (not code-reading)
+had already twice found real gaps this session (the cross-instance
+duplicate-block race, and the accept-any-string amount bug fixed two
+cycles ago).
+
+### What I found
+`POST /api/deposits` with a truncated/invalid JSON body (`{not valid json`)
+returned a raw `500` with no JSON error body — confirmed live via curl, not
+inferred. Same for a POST with no `Content-Type: application/json` header
+(`req.json()` still tries to parse the raw body and throws). Root cause:
+both `app/api/deposits/route.ts` and `app/api/deposits/[id]/route.ts`
+(`PATCH`) called `await req.json()` with no try/catch, so any parse failure
+propagated as an unhandled exception straight to Next's default 500 error
+page — no `error`/`message` fields, nothing the client UI could show as a
+plain-language failure. This is a real, plausible failure mode: a flaky
+mobile connection truncating a POST body mid-flight (this app's own stated
+audience is mobile KOL-referred users), or a reviewer probing the API
+directly (exactly what this cycle just did), would hit an opaque crash
+instead of a clean validation error — directly undermines the brief's
+"plain-language failure states" differentiator, just one layer lower than
+the UI copy layer prior cycles already polished.
+
+### Fix
+Wrapped both `req.json()` calls in try/catch, returning
+`400 {"error":"INVALID_REQUEST","message":"Request body must be valid
+JSON."}` on parse failure. Pure request-parsing hardening in the API route
+layer — did not touch `lib/*.ts` reconciliation state-machine or
+idempotency logic per the standing constraint; the numeric-amount
+validation (from an earlier cycle) and the in-flight duplicate guard are
+both unmodified and re-verified intact below.
+
+### Verification
+- `npm run build` passes clean (killed stray `next-server` processes first,
+  per prior cycles' documented gotcha).
+- Fresh `npm run start` production build on port 3401:
+  - Malformed JSON body -> `400 INVALID_REQUEST` (previously `500`, empty
+    body).
+  - Missing `Content-Type`, form-encoded body -> `400 INVALID_REQUEST`
+    (previously `500`).
+  - Valid request (`{"userWallet":"0xQAtest...","amount":"7.5"}`) ->
+    `201`, unchanged.
+  - Immediate duplicate of that same request -> `409 DUPLICATE_IN_FLIGHT`
+    with the original deposit attached — idempotency guard confirmed
+    intact, not just unchanged in source.
+  - Malformed JSON `PATCH /api/deposits/[id]` (real id from the request
+    above) -> `400 INVALID_REQUEST` (previously would have 500'd the same
+    way).
+- Deleted local test data (`.data/deposits.json`, gitignored) before
+  finishing.
+
+### Deploy
+Committing this fix now; see the immediately following log entry for the
+exact commit hash, push confirmation, and live-URL re-verification
+(malformed-JSON POST against production before/after).
+
+### Honest gap check
+Small, surgical, fully-completed within the hard time budget — a real gap
+between "any JSON-parseable body" and "any body at all," found via live
+adversarial curl testing per the standing priority order, not a guess. Did
+not get to categories 2-4 (consistency, polish, KOL/assignment-fit
+re-check) this cycle. Left the two untracked automation-support files
+(`.overnight-codex-stdout.log`, `scripts/codex-review-tick.sh`,
+`scripts/shot-status-identity.mjs`) sitting in the working tree untouched —
+they belong to the parallel Codex-review automation track running
+alongside this one, not this cycle's scope, and staging/committing only
+the files this cycle actually changed avoids stepping on that track's own
+commit.

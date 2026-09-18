@@ -8,7 +8,15 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const body = (await req.json()) as CreateDepositInput;
+  let body: CreateDepositInput;
+  try {
+    body = (await req.json()) as CreateDepositInput;
+  } catch {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "Request body must be valid JSON." },
+      { status: 400 }
+    );
+  }
 
   if (!body.userWallet || !body.amount) {
     return NextResponse.json(
