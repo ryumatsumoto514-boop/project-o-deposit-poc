@@ -34,7 +34,7 @@ export function WalletRoles({
     <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3.5">
       {signingInAs !== undefined && <Row label="Signing in as" value={signingInAs} />}
       {fundsFrom !== undefined && <Row label="Funds coming from" value={fundsFrom} />}
-      {tradableIn !== undefined && <Row label="Will be tradable in" value={tradableIn} />}
+      {tradableIn !== undefined && <Row label="Tradable on Hyperliquid as" value={tradableIn} />}
     </div>
   );
 }

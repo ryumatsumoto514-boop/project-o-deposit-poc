@@ -3450,3 +3450,31 @@ uses "exact". The initial assertion assumed the minifier would reverse the
 comparison operands; corrected to the actual emitted syntax and passed.
 Verification covers the live bundle and local restore behavior, not a manual
 wallet session. Concurrent WalletRoles edits are outside this review/deploy.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T22:58:06Z
+
+## Codex review tick: 2026-09-18T22:58:06Z
+
+### [Codex review] 2026-09-18 — Stop approval when the duplicate check returns an HTTP error
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log and searched previous
+preflight fixes. curl fetched live /deposit/confirm and /deposit/approve;
+read the approval page's referenced page-11ba2d571908053c.js. Both shipped
+code and app/deposit/approve/page.tsx parsed the duplicate-check response
+without testing HTTP success. A JSON 429/500 error without conflict therefore
+continued into the wallet approval, spending gas without a successful check.
+
+Added an HTTP-success guard before parsing the check response. Failed checks
+now show a specific retry message and return before requesting approval.
+No lib changes. A Node VM executed the actual preflight code: 400, 429, 500
+and 503 all stop in the error state; 200 with no conflict proceeds. No wallet
+transactions submitted. Build and deployment verification follow below.
+
+Pre-existing workspace changes: WalletRoles label edit and deletion of
+scripts/qa-tmp-shots.mjs were inspected, not authored by this review. They
+will be included by the explicitly requested git add -A.
+
+npm run build passed with existing dependency warnings; the regression check
+passed. Deploying from a clean git archive to avoid the previously documented
+large ignored local core dump.

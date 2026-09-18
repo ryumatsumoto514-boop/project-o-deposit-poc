@@ -74,6 +74,14 @@ export default function DepositApprovePage() {
       const checkRes = await fetch(
         `/api/deposits/check?wallet=${address}&amount=${draftAmount}`
       );
+      if (!checkRes.ok) {
+        setErrorMessage({
+          title: "Couldn't check for an existing deposit",
+          detail: "No approval was requested. Try again once the deposit check is available.",
+        });
+        setStep("error");
+        return;
+      }
       const checkBody = await checkRes.json();
       if (checkBody.conflict) {
         setBlockedDeposit(checkBody.conflict);
