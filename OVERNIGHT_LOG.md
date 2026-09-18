@@ -2237,3 +2237,14 @@ A local production server on port 3419 accepted a valid deposit (201); POST
 and PATCH each rejected null, [], true, 42, and a JSON string with 400, and
 retained the existing malformed-JSON 400 behavior (12 negative checks passed).
 Live deployment verification will be appended after deployment completes.
+
+Live verification: commit 2b78f04 pushed to origin main; Vercel production
+deployment GRCuuzenfCBDTQxaDPKzBgES1Led completed. Repeated the exact curl
+against https://projecto-blond.vercel.app/api/deposits: null now returns
+HTTP 400 application/json with INVALID_REQUEST and "Request body must be a
+JSON object." All six live POST negative cases passed; a valid POST returned
+201. Live PATCH checks could not reach validation because that new record
+returned 404 on the separate request (the documented per-instance store
+limitation); all six PATCH cases passed against the local production server.
+Do not interpret this as live PATCH coverage. Existing automation files and
+uncommitted log lines were preserved; no reconciliation-engine changes.
