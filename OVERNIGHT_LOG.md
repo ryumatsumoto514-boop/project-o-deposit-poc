@@ -3062,3 +3062,24 @@ bd703c9 also picked up another process's app/login/page.tsx color change
 (text-red-400 to text-rose-300 on the connection alert). This review did
 not author that change; its live deployment was not verified here. The
 approval-radio fix itself was built, deployed and verified as described above.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-18T16:32:49Z
+
+## Codex review tick: 2026-09-18T16:32:49Z
+
+### [Codex review] 2026-09-18 — Derive transfer units from the validated deposit amount
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent log entries; searched the full log
+for amountRaw/base-unit coverage. curl fetched live / and /deposit and inspected
+raw HTML metadata. Reading app/api/deposits/route.ts, lib/pull.ts and
+lib/relayer.ts exposed a different amount-validation gap: the API validated
+amount but stored client-supplied amountRaw, which the relayer actually transfers.
+Live curl POST /api/deposits with amount "1" and amountRaw "999000000"
+returned 201 and preserved both contradictory values (record e66ca786-4005-4dfd-918f-9252c3e6fe7e).
+No approval hash was supplied and no pull/reconcile request or transfer was made.
+
+Changed only the API creation route to derive amountRaw using viem parseUnits
+and the existing USDC_DECIMALS constant after decimal/range validation. Client
+amountRaw can no longer override the displayed amount or bypass its cap.
+No lib core changes. Build and live verification results follow below.

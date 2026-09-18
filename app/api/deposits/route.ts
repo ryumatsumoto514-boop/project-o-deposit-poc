@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { parseUnits } from "viem";
+import { USDC_DECIMALS } from "@/lib/chain";
 import { depositStore } from "@/lib/store";
 import { findConflictingInFlightDeposit } from "@/lib/idempotency";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
@@ -99,7 +101,8 @@ export async function POST(req: NextRequest) {
     userWallet: body.userWallet,
     destinationAccount: body.destinationAccount,
     amount: body.amount,
-    amountRaw: body.amountRaw,
+    // The relayer must transfer exactly the validated, displayed amount.
+    amountRaw: parseUnits(body.amount, USDC_DECIMALS).toString(),
     asset: "USDC",
     sourceChainId: body.sourceChainId,
     status: "SIGNED",
