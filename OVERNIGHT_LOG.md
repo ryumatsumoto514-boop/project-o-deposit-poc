@@ -2339,3 +2339,23 @@ has the same address-format gap on any field it accepts.
   `/deposit/confirm`, `/deposit/approve`, `/?ref=kol_alex`) still `200`.
   **This is live, not just committed.**
 Claude Code tick finished, exit code 0
+
+
+### [Codex review] 2026-09-18 — Address regex accepted JSON arrays
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log, and the deposit request
+handlers; fetched /login HTML with curl. Investigated the latest address-format
+fix in app/api/deposits/route.ts with a different JSON type:
+curl -i https://projecto-blond.vercel.app/api/deposits
+-H 'Content-Type: application/json'
+--data '{"userWallet":["0x1111111111111111111111111111111111111111"],"amount":"12.5"}'
+returned HTTP 201 and stored userWallet as an array (record
+a5a48832-c835-43bd-8e53-c8eecdce3c9e). RegExp.test coerces arrays to strings,
+so the existing format check did not enforce the actual field type.
+Reading lib/store.ts also showed that duplicate checks call toLowerCase on
+stored wallets, which assumes a string. The same coercion affected destinationAccount.
+
+Added explicit string checks before both address regex checks. This is one
+request-boundary fix; no lib/*.ts changes. Used an isolated worktree to avoid
+including unrelated automation files in git add -A. Build and live verification
+results follow below.

@@ -33,13 +33,14 @@ export async function POST(req: NextRequest) {
   }
 
   const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
-  if (!ADDRESS_RE.test(body.userWallet)) {
+  if (typeof body.userWallet !== "string" || !ADDRESS_RE.test(body.userWallet)) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "userWallet must be a valid 0x-prefixed Ethereum address." },
       { status: 400 }
     );
   }
-  if (body.destinationAccount !== undefined && !ADDRESS_RE.test(body.destinationAccount)) {
+  if (body.destinationAccount !== undefined &&
+      (typeof body.destinationAccount !== "string" || !ADDRESS_RE.test(body.destinationAccount))) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "destinationAccount must be a valid 0x-prefixed Ethereum address." },
       { status: 400 }
