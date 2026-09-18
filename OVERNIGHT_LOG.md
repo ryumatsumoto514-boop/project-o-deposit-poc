@@ -3232,3 +3232,13 @@ verification results follow below.
 Verification: npm run build passed, including type/lint checks. A local
 React server-render check reproduced the object-as-child exception for the
 stored malformed value. Production deployment and curl checks follow.
+
+Live verification: fix commit 96a9d51 pushed to origin/main; requested
+vercel --token "$VERCEL_TOKEN" --yes --prod completed successfully.
+Post-deploy curl POSTs to https://projecto-blond.vercel.app/api/deposits
+verified object, array, number, short string and non-hex approval hashes
+all return 400 INVALID_REQUEST. A well-formed mixed-case hexadecimal hash,
+null and an omitted field each return 201. Python assertions checked the
+curl status codes and JSON bodies. Test records used random wallet addresses;
+no pull/reconcile requests or transactions were submitted. This verifies
+live API validation, not a manual browser session.
