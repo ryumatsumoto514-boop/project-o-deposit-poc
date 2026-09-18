@@ -2471,3 +2471,28 @@ amount has the same missing-ceiling gap.
   routes (`/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
   `/?ref=kol_alex`) still `200`. **This is live, not just committed.**
 Claude Code tick finished, exit code 0
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-18T08:57:32Z
+
+## Codex review tick: 2026-09-18T08:57:32Z
+
+### [Codex review] 2026-09-18 — Shared footer overstated on-chain verification
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log, and searched the full log
+for prior footer/copy fixes. curl -fsS https://projecto-blond.vercel.app/login
+returned the claim "Every step above is verified against real on-chain state,
+not a mock timer." Traced it to app/components/FlowChrome.tsx (FlowFooter),
+shared by login, deposit, confirmation, approval, and a status-screen branch.
+This contradicts the simulated sign-in on that very page and the timer-based
+Hyperliquid credit check in lib/hyperliquidMock.ts, also documented in README.
+Fetched / and /deposit/approve too; the latter's initial response did not
+render the footer, so this is not claimed as a hydrated approval-screen test.
+
+Replaced that one shared claim with: "Approvals and transfers use Arbitrum
+Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting
+are simulated." No engine changes. Build/deployment verification follows.
+
+npm run build passed; existing optional-dependency/dynamic-import warnings
+remain. Only FlowChrome.tsx and this log changed (existing cron log lines
+preserved). Production deployment and live curl verification pending below.

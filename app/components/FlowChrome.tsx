@@ -39,7 +39,8 @@ export function FlowFooter() {
         <span>Arbitrum Sepolia testnet &middot; no real funds are used</span>
       </div>
       <p className="text-[11px] text-slate-700">
-        Every step above is verified against real on-chain state, not a mock timer.
+        Approvals and transfers use Arbitrum Sepolia testnet. Email/Google sign-in,
+        bridging, and Hyperliquid crediting are simulated.
       </p>
     </footer>
   );
