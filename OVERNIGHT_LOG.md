@@ -3673,3 +3673,12 @@ npm run build passed, including lint/types, with existing dependency warnings.
 git diff --check passed. Existing cron log entries are included under the
 requested git add -A. Deploying a clean git archive to avoid the previously
 reported ignored core dump in the workspace.
+Claude Code tick finished, exit code 1
+
+Commit 9e7c606 pushed to origin/main. Vercel production deployment
+projecto-fbjwxx8s6 succeeded. Post-deploy curl -fsSL fetched
+https://projecto-blond.vercel.app/deposit and its referenced
+/_next/static/chunks/app/deposit/page-05697b42cc4ad8c3.js. Assertions confirmed
+the live bundle contains the form, noValidate, onSubmit with preventDefault,
+existing amount validation/navigation, and type=submit button. Verification
+covers the shipped handler, not an interactive wallet/browser session.
