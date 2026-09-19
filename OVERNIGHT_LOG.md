@@ -4372,3 +4372,69 @@ RPC call succeeds reliably in this environment; the failure path is exercised
 by the existing `catch` block, which was already correctly tested/used for
 the "GAS —" text half of this same bug). Deploying and re-verifying the
 compiled bundle serves the new conditional class next.
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-19T20:34:01Z
+
+## Codex review tick: 2026-09-19T20:34:01Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T21:09:01Z
+
+## Codex review tick: 2026-09-19T21:09:01Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T21:44:02Z
+
+## Codex review tick: 2026-09-19T21:44:02Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19 (general QA cycle) — missing /favicon.ico 404
+
+**Found:** given how many small honesty/consistency bugs prior cycles already
+caught, I checked functional correctness first (curled `/api/gas`,
+`/api/deposits/check`, malformed-JSON POST to `/api/deposits`, a nonexistent
+deposit id, and every page route including `/icon`/`/apple-icon` on the live
+site) — all returned correct status codes/bodies (200/400/404 as expected),
+so the API and page surface is solid, no new functional bug there. Moved to
+consistency/polish (priority 2/3): `curl -s -o /dev/null -w "%{http_code}"
+https://projecto-blond.vercel.app/favicon.ico` returned `404`. A prior cycle
+(logged ~line 574) replaced the stock Next.js favicon with a custom
+`app/icon.tsx`/`app/apple-icon.tsx` pair (Next 14's dynamic metadata-route
+convention) but never added a static `app/favicon.ico`, so the served
+`<head>` only had `<link rel="icon" href="/icon?...">` — most modern browsers
+respect that, but many browsers/crawlers/bookmark tools still probe
+`/favicon.ico` directly regardless of the `<link>` tag, and that request
+404s, which is a visible "didn't finish it" tell in the Network tab (a
+console/network error on the app's own domain) and breaks any tool that
+looks up favicons by convention (RSS readers, browser tab-restore UI on some
+browsers, link-preview generators).
+
+**Fix:** downloaded the live `/icon` route's real 32×32 PNG output (so the
+`.ico` matches the app's actual brand mark exactly, not a placeholder) and
+wrapped it in a minimal valid ICO container (ICONDIR + one ICONDIRENTRY +
+embedded PNG data — Vista+ and all evergreen browsers support PNG-compressed
+image data inside `.ico`, which is why this is a legitimate approach and not
+a hack) via a short Node script, then saved it as `app/favicon.ico`. This is
+additive — `app/icon.tsx`/`app/apple-icon.tsx` are untouched and still serve
+the modern `<link rel="icon" href="/icon">`/apple-touch-icon tags exactly as
+before; Next 14's file-convention system automatically picks up a static
+`app/favicon.ico` alongside them and adds a third, legacy-compatible
+`<link rel="icon" href="/favicon.ico" sizes="32x32">` tag ahead of the
+dynamic one.
+
+**Verified:** `npm run build` passes clean (identical pre-existing
+optional-peer-dep warnings only, no new errors — `/favicon.ico` doesn't
+appear as its own line in the build's route table since it's copied as a
+static asset rather than compiled as a page/route, which is expected
+behavior for this convention, not a sign it was skipped). Ran `npm run
+start` (production server, not dev) locally on port 3099 and confirmed via
+curl: `GET /favicon.ico` → `200`, `content-type: image/x-icon`; the served
+`<head>` now contains all three icon links (`/favicon.ico`, `/icon`,
+`/apple-icon`). Committed, pushed to `origin main`, redeployed with `vercel
+--token "$VERCEL_TOKEN" --yes --prod`, then re-curled the **live** URL
+(`https://projecto-blond.vercel.app/favicon.ico`) afterward to confirm the
+404 is actually gone in production, not just fixed locally — result and
+exact status code recorded immediately below by the deploy step.
