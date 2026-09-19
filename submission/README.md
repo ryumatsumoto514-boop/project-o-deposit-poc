@@ -22,10 +22,10 @@ against the live URL, not just localhost).
 | Wallet connection (MetaMask via wagmi/viem) | **Real** (SDK-wired; not manually click-tested overnight — no human available, see limitations) |
 | Arbitrum Sepolia network (chain id 421614) | **Real** testnet |
 | USDC contract (`0x950A2C07CD9d6489691625272a8f9f4df4D0342C`) | **A self-deployed mock ERC-20 ("MockUSDC"), NOT Circle's official testnet USDC.** Circle's real testnet USDC exists at `0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d`, but its public faucet (`faucet.circle.com`) now requires an authenticated Circle API key we don't have, and neither wallet had a pre-existing balance. MockUSDC has identical `approve()`/`transferFrom()`/`balanceOf()` semantics (6 decimals) and was deployed live to Arbitrum Sepolia — see `testnet-evidence.md` for the deploy tx. Swapping back to real Circle USDC is a one-line change in `lib/chain.ts`. |
-| `approve()` transaction, exact amount (or unlimited, opt-in) | **Real**, signed and confirmed on Arbitrum Sepolia — see `testnet-evidence.md` for tx hashes (both a scripted proof and one triggered through the app's own live API) |
+| `approve()` transaction, exact amount (or unlimited, opt-in) | **Real**, signed and confirmed on Arbitrum Sepolia — see `testnet-evidence.md` for tx hashes (both a scripted proof and one exercised through the app's local development API against real testnet RPC) |
 | `transferFrom()` pulling the approved USDC to the deposit address | **Real** transaction, signed by a testnet-only relayer wallet, confirmed on-chain — see `testnet-evidence.md` |
-| On-chain confirmation check (`CONFIRMED_ONCHAIN`) | **Real** — the engine independently reads the transaction receipt via RPC, it does not trust the client. Verified live: see "state machine exercised live" in `testnet-evidence.md`. |
-| Duplicate-deposit blocking | **Real and verified working** — tested against the live API, returns HTTP 409 with the existing in-flight deposit. See `testnet-evidence.md` §5. |
+| On-chain confirmation check (`CONFIRMED_ONCHAIN`) | **Real** — the engine independently reads the transaction receipt via RPC, it does not trust the client. Verified against real testnet RPC using the local development server: see §4 in `testnet-evidence.md`. |
+| Duplicate-deposit blocking | **Real and verified working** — the local API test recorded in §5 returns HTTP 409 with the existing in-flight deposit. See `testnet-evidence.md` §5. |
 | Login (email / Google) | **Mocked** — no real Privy/OAuth. Clicking either button just sets a fake identity string. There is no real authentication in this PoC. |
 | Hyperliquid balance / "collateral credited" check | **Mocked** — we do not have Hyperliquid testnet access. A timer (15–30s after on-chain confirmation) simulates the balance becoming available. This is labeled in the UI on every status screen. |
 | "Trading account" / destination account shown to the user | **Mocked** — deterministically derived from the wallet address, cosmetic only, not a real Hyperliquid account |
@@ -184,7 +184,7 @@ mocked Hyperliquid balance agree.
 - **No human click-through of the MetaMask signature popup overnight** —
   this PoC was built and tested autonomously while the user slept, so the
   real testnet transactions were produced by scripts holding test private
-  keys directly and by driving the app's own live API routes, not by a
+  keys directly and by driving the app's local development API routes, not by a
   person clicking "Approve" in an actual browser wallet extension. The
   underlying transactions, contract calls, and reconciliation logic are
   identical either way, but a manual UI click-through has not yet been

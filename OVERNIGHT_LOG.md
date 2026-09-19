@@ -4087,3 +4087,33 @@ if a technical reviewer checks it against the source, which I did.
   these two intended changes.
 - Committed and deployed (see below); re-fetched the live URL afterward to
   confirm both changes actually ship, not just build locally.
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-19T10:38:29Z
+
+## Codex review tick: 2026-09-19T10:38:29Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T11:13:29Z
+
+## Codex review tick: 2026-09-19T11:13:29Z
+
+### [Codex review] 2026-09-19 — Distinguish local API transaction evidence from deployment evidence
+
+Found a documentation ambiguity: README's recorded approval proof and manual-test
+limitations say “live API,” adjacent to the Vercel deployment link. Evidence §4
+explicitly says npm run dev; the initial log (lines 64–83) confirms port 3001
+and the same 0xb1c1caa... approval hash. This proves real testnet execution through
+a local API, not execution of that pair through the deployed Vercel API.
+Clarified the README claims and evidence heading/table, added an explicit scope
+statement, and synchronized the submission copies. No hashes were changed.
+
+Also fetched production /login and /deposit with curl -fsSL and parsed their raw
+HTML: language, viewport, description and testnet-disclosing OG/Twitter metadata
+are present. Read globals.css, tailwind.config.ts, login/confirm screens and
+creation/check/PATCH API validation; did not repeat the already logged fixes.
+This is documentation only: no app/core changes, build or redeployment needed.
+Live HTML fetches verify availability and metadata, not these repository-only
+documentation edits or on-chain receipts. Unrelated WalletRoles/script work was
+already present and is excluded from this review's commit.

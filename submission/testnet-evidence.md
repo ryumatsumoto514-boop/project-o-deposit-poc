@@ -105,7 +105,7 @@ overnight — see README "known limitations"), and it does not touch
 Hyperliquid in any way (the Hyperliquid-side "credited" check is explicitly
 mocked throughout, see `lib/hyperliquidMock.ts`).
 
-## 4. Full state machine exercised live through the app's own API routes
+## 4. Full state machine exercised through the local development API
 
 Beyond the scripted proof above, the actual `/api/deposits`,
 `/api/deposits/[id]/reconcile`, and `/api/deposits/[id]/pull` routes were
@@ -134,6 +134,11 @@ This confirms the reconciliation engine's core claim: it does not trust a
 single "pending → done" signal, it independently checks the real on-chain
 receipt AND the (mocked) Hyperliquid-side signal, and only calls a deposit
 done when both agree.
+
+The API server for this recorded proof ran locally (`npm run dev`, port 3001,
+as recorded in the initial overnight log). The transactions used real Arbitrum
+Sepolia RPC. These hashes establish local API/engine execution against testnet;
+they do not establish that this transaction pair ran through the Vercel deployment.
 
 ## 5. Duplicate-deposit blocking — verified working
 
@@ -168,7 +173,7 @@ wallet+amount is genuinely still in-flight, not permanently.
 | Fund test user (mUSDC) | `0xf45b244749a56abee5f457f4079e631fe3024603cf81853702a4ec743e848b16` |
 | approve(25.0) — scripted proof | `0xc110d16ae895b7bc9ec8483c6c788a3967f072b16eaaeb0964d46b6f1a3f6022` |
 | transferFrom(25.0) — scripted proof | `0xbaf69d4752b4f1e3a54614e71a1eb25b0c7b553bb829c5a8a5111df1e513e723` |
-| approve(10.0) — via live API/engine | `0xb1c1caa7d1b37c5848434d24d509fd17585611d389a914587146a8ee259d956a` |
+| approve(10.0) — via local API/engine | `0xb1c1caa7d1b37c5848434d24d509fd17585611d389a914587146a8ee259d956a` |
 | transferFrom(10.0) — triggered by `/reconcile` | `0x1f5988767d76b9048096780911ca6d21e1dc055bb7724272d2ea086410b8c59c` |
 
 All seven are real, confirmed, independently verifiable Arbitrum Sepolia
