@@ -3856,3 +3856,27 @@ live client bundle, not an interactive wallet session; no transaction sent.
 The requested git add -A also captured another process's concurrent edit to
 scripts/screenshot.mjs (safe import/main guards) and cron log additions;
 those are not findings or changes authored by this independent review.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T06:33:21Z
+
+## Codex review tick: 2026-09-19T06:33:21Z
+
+### [Codex review] 2026-09-19 — Remove the timeout funds-safety guarantee
+
+Read the brief, SPEC.md, recent log and prior timeout entries. Fetched live
+/login and /deposit/status/review-timeout with curl -fsSL, then fetched the
+status page’s referenced page-e8e721ab7f1a1064.js bundle. It promises
+"Your funds are not at risk." Reading lib/reconcile.ts showed timeout means
+no successful receipt was confirmed after five minutes, including when RPC
+receipt reads fail; it does not establish safety. The page also claims
+background tracking although polling is tied to the mounted page.
+
+Changed only STALLED_TIMEOUT copy in app/deposit/status/[id]/page.tsx:
+state that transfer success is unconfirmed, ask users to keep the page open,
+check wallet history/explorer evidence, and avoid resending while unresolved.
+No engine changes or transactions. Build/deployment verification follows.
+
+npm run build passed including lint/types, with existing dependency warnings.
+git diff --check passed. Deploying a clean git archive to avoid the previously
+reported ignored core dump. Existing cron log additions are included.

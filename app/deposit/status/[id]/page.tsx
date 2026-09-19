@@ -50,9 +50,9 @@ const STATE_COPY: Record<
   STALLED_TIMEOUT: {
     label: "Taking longer than expected",
     description:
-      "This deposit has been in progress longer than usual. Your funds are not at risk.",
+      "This deposit is taking longer than expected. We have not confirmed a successful transfer on Arbitrum Sepolia.",
     severity: "warning",
-    nextStep: "We're still tracking it in the background — no need to send another deposit or refresh.",
+    nextStep: "Keep this page open for continued checks. Check your funding wallet’s transaction history and any transaction link below; do not send another deposit while the outcome is unresolved.",
   },
   AMBIGUOUS: {
     label: "Under review",
