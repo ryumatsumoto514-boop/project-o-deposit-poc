@@ -6,6 +6,7 @@ import { KolBanner } from "../../../components/KolBanner";
 import { WalletRoles } from "../../../components/WalletRoles";
 import { AlertIcon, CheckIcon, SpinnerIcon } from "../../../components/icons";
 import { FlowFooter } from "../../../components/FlowChrome";
+import { useDocumentTitle } from "../../../useDocumentTitle";
 import type { DepositRecord, DepositStatus } from "@/lib/types";
 import { ARBISCAN_SEPOLIA_TX_URL } from "@/lib/chain";
 
@@ -157,6 +158,10 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   const [notFound, setNotFound] = useState(false);
   const [pollFailed, setPollFailed] = useState(false);
   const pollDelay = useRef(3000);
+
+  useDocumentTitle(
+    notFound ? "Not found" : deposit ? STATE_COPY[deposit.status].label : "Status"
+  );
 
   useEffect(() => {
     let cancelled = false;

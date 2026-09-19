@@ -14,6 +14,7 @@ import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, USDC_ADDRESS, USDC_DECIMALS } from "@/lib/chain";
 import { wagmiConfig } from "@/lib/wagmiConfig";
 import { FAILURE_COPY } from "@/lib/failures";
+import { useDocumentTitle } from "../../useDocumentTitle";
 import type { DepositRecord } from "@/lib/types";
 
 const MIN_GAS_WEI = parseEther("0.0001");
@@ -29,6 +30,7 @@ type Step =
   | "blocked";
 
 export default function DepositApprovePage() {
+  useDocumentTitle("Approve");
   const router = useRouter();
   const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode, hydrated } =
     useFlow();

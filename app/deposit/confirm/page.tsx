@@ -10,8 +10,10 @@ import { AlertIcon } from "../../components/icons";
 import { StepProgress, FlowFooter } from "../../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { DEPOSIT_ADDRESS } from "@/lib/chain";
+import { useDocumentTitle } from "../../useDocumentTitle";
 
 export default function DepositConfirmPage() {
+  useDocumentTitle("Confirm address");
   const router = useRouter();
   const { mockIdentity, draftAmount, setAddressConfirmed, hydrated } = useFlow();
   const { address } = useAccount();

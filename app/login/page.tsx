@@ -7,8 +7,10 @@ import { KolBanner } from "../components/KolBanner";
 import { MockedBadge } from "../components/KolBanner";
 import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
+import { useDocumentTitle } from "../useDocumentTitle";
 
 export default function LoginPage() {
+  useDocumentTitle("Sign in");
   const router = useRouter();
   const { mockIdentity, setMockIdentity } = useFlow();
   const { address, isConnected } = useAccount();

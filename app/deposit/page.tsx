@@ -9,8 +9,10 @@ import { WalletRoles } from "../components/WalletRoles";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
+import { useDocumentTitle } from "../useDocumentTitle";
 
 export default function DepositAmountPage() {
+  useDocumentTitle("Enter amount");
   const router = useRouter();
   const { mockIdentity, draftAmount, setDraftAmount, hydrated } = useFlow();
   const { address, isConnected } = useAccount();
