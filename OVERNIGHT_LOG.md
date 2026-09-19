@@ -4027,3 +4027,63 @@ confirmation in the shipped bundle. The initial verification regex assumed
 the opposite operand order in minified code; corrected it and all checks pass.
 This verifies deployed code, not an interactive wallet session. No transactions
 or deposit records were created.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T09:28:25Z
+
+## Codex review tick: 2026-09-19T09:28:25Z
+
+### [Codex review] 2026-09-19 — Disclose that ambiguous deposits have no staffed review
+
+Read the brief, SPEC.md, recent log and earlier ambiguity/timeout fixes.
+curl -fsSL fetched live /, /login and /deposit/status/review-ambiguous,
+then the status HTML's referenced page-2c1e9217b538ce0b.js. The bundle
+promises "Under review" and "manual reconciliation". Reading
+app/deposit/status/[id]/page.tsx, lib/reconcile.ts and searching lib and
+app/api for review handling found only a stored mismatch and continued
+mock balance polling, with no support notification or review workflow.
+
+Changed only AMBIGUOUS copy: label the mismatch unresolved, explicitly say
+no support team is automatically notified, and direct users to check the
+transfer link, keep the page open for simulated checks, and avoid resending.
+No engine changes or transactions. Build/live verification follows.
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+
+## Cron tick: 2026-09-19T10:03:28Z
+## Codex review tick: 2026-09-19T10:03:28Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T10:38:00Z (approx) — general QA cycle
+
+**Context:** found the prior Codex-review tick had exited with code 1 mid-task,
+leaving two complete, uncommitted diffs in the working tree: the AMBIGUOUS
+copy fix its own log entry above described (label changed to "Balance
+mismatch — unresolved", explicit "no support team is automatically notified"
+disclosure), plus an unlogged fix to the landing page's hero ticker. Rather
+than redo that work or start a fresh area, I verified both diffs were correct
+and complete, then finished the commit/build/deploy/verify steps the crashed
+tick never reached — this is real, reviewed work, not a rubber-stamp.
+
+**The unlogged ticker fix, verified:** `app/page.tsx`'s hero ticker previously
+read "LATENCY: ~42ms (illustrative)" — a fabricated number with no
+corresponding value anywhere in the codebase (grepped `lib/` and `app/` for
+`42`/`latency`, no match), sitting next to a KOL-facing trust message about
+transparency. Changed to "BRIDGING WINDOW: ~15–30s (simulated)", which I
+confirmed against `lib/hyperliquidMock.ts:8`
+(`BRIDGING_DELAY_MS = { min: 15_000, max: 30_000 }`, the actual mocked
+Hyperliquid-credit delay the reconciliation engine uses) — the displayed
+number now corresponds to a real constant in the code instead of an invented
+one. This is exactly the kind of "honest about what's mocked" detail the
+brief's KOL-trust framing depends on; a made-up latency figure undercuts that
+if a technical reviewer checks it against the source, which I did.
+
+**Verification:**
+- `npm run build` — passes clean, only pre-existing optional-peer-dep
+  warnings (WalletConnect/pino/async-storage), 0 new errors/warnings.
+- `git diff --check` — clean, no whitespace issues.
+- Confirmed no other uncommitted/untracked files sitting in the tree besides
+  these two intended changes.
+- Committed and deployed (see below); re-fetched the live URL afterward to
+  confirm both changes actually ship, not just build locally.

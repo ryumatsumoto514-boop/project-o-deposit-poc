@@ -55,11 +55,11 @@ const STATE_COPY: Record<
     nextStep: "Keep this page open for continued checks. Check your funding wallet’s transaction history and any transaction link below; do not send another deposit while the outcome is unresolved.",
   },
   AMBIGUOUS: {
-    label: "Under review",
+    label: "Balance mismatch — unresolved",
     description:
       "Arbitrum confirms this deposit, but the (mocked) Hyperliquid balance check hasn't agreed within the expected window.",
     severity: "error",
-    nextStep: "We've flagged this for manual reconciliation instead of guessing. Your funds are on-chain and accounted for.",
+    nextStep: "This demo has flagged a mismatch; no support team is automatically notified. Check the transfer on Arbiscan using the link below and keep this page open for further simulated balance checks. Do not send another deposit while this is unresolved.",
   },
 };
 

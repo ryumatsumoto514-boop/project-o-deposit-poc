@@ -60,7 +60,7 @@ export default function Home() {
 
           <div
             className="ticker w-fit flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2"
-            title="Illustrative example value — not a live measurement"
+            title="Matches the mocked bridging delay in the reconciliation engine — not a live measurement"
           >
             <span className="flex items-center gap-2 whitespace-nowrap">
               <span className="led-dot led-live bg-accent-400 text-accent-400" />
@@ -68,7 +68,7 @@ export default function Home() {
             </span>
             <span className="hidden text-slate-600 sm:inline">|</span>
             <span className="whitespace-nowrap">
-              LATENCY: ~42ms <span className="text-slate-600">(illustrative)</span>
+              BRIDGING WINDOW: ~15&ndash;30s <span className="text-slate-600">(simulated)</span>
             </span>
           </div>
 
