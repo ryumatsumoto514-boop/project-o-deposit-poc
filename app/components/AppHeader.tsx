@@ -51,9 +51,19 @@ export function AppHeader() {
         <div className="flex shrink-0 items-center gap-1.5">
           <span
             className="pill hidden sm:inline-flex"
-            title="Live Arbitrum Sepolia gas price, read from RPC"
+            title={
+              gwei !== null
+                ? "Live Arbitrum Sepolia gas price, read from RPC"
+                : "Gas price refresh failed — showing no data instead of a stale or fabricated number"
+            }
           >
-            <span className="led-dot led-live bg-accent-400 text-accent-400" />
+            <span
+              className={
+                gwei !== null
+                  ? "led-dot led-live bg-accent-400 text-accent-400"
+                  : "led-dot bg-slate-600 text-slate-600"
+              }
+            />
             {gwei !== null ? `${gwei.toFixed(3)} GWEI` : "GAS —"}
           </span>
           <span className="pill">

@@ -4258,3 +4258,117 @@ The first asset fetch briefly returned 404; repeating both requests with
 ?review=11f7dfe succeeded and confirmed fieldset disabled:K and the dimming
 class in the shipped bundle. This verifies deployment of the native disabled
 fieldset, not a manual wallet-extension interaction test.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T13:33:31Z
+
+## Codex review tick: 2026-09-19T13:33:31Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T14:08:36Z
+
+## Codex review tick: 2026-09-19T14:08:36Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T14:43:44Z
+
+## Codex review tick: 2026-09-19T14:43:44Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T15:18:45Z
+
+## Codex review tick: 2026-09-19T15:18:45Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T15:53:45Z
+
+## Codex review tick: 2026-09-19T15:53:45Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T16:28:46Z
+
+## Codex review tick: 2026-09-19T16:28:46Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T17:03:46Z
+
+## Codex review tick: 2026-09-19T17:03:46Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T17:38:46Z
+
+## Codex review tick: 2026-09-19T17:38:46Z
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19T18:13:47Z
+
+## Codex review tick: 2026-09-19T18:13:47Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T18:48:47Z
+
+## Codex review tick: 2026-09-19T18:48:47Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T19:23:55Z
+
+## Codex review tick: 2026-09-19T19:23:55Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+
+## Cron tick: 2026-09-19T19:59:00Z
+## Codex review tick: 2026-09-19T19:59:00Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19 (general QA cycle) — gas pill falsely claimed "live" during a failed poll
+
+**Found:** read the full brief + this log's recent entries (many small, real
+fixes already landed today: flow-context restore validation, ambiguous-deposit
+disclosure, hero ticker honesty fix, wallet-role auto-derived note, approval
+scope locking while pending, failed-status-poll disclosure). Rather than
+re-litigate the settled dark-fintech visual direction, checked functional
+correctness first (priority 1): curled the live API — `/api/gas`,
+`/api/deposits/check`, `/api/deposits` (missing-field and malformed-JSON
+cases), `GET /api/deposits/:id` for a nonexistent id — all returned correct
+status codes/bodies (200/400/404 as expected), so the API surface is solid.
+
+Moved to consistency/honesty (priority 2/3) and read `app/components/AppHeader.tsx`
+plus its `.led-dot.led-live` CSS in `globals.css`. Found a real bug matching
+this exact codebase's own established pattern (multiple prior cycles fixed
+"UI claims live/success when the underlying data actually failed" bugs — the
+gas-price gwei pill was another instance nobody had caught yet): the gas pill
+polls `/api/gas` every 20s and shows "GAS —" text when the fetch fails
+(`useGasPriceGwei`'s catch block correctly nulls `gwei`), but the LED dot next
+to it was hardcoded to `led-dot led-live bg-accent-400` unconditionally — so
+even on a failed poll, the dot kept pulsing green exactly as if live data was
+flowing, directly contradicting the adjacent "GAS —" text and the tooltip's
+"Live Arbitrum Sepolia gas price, read from RPC" claim.
+
+**Fix:** `AppHeader.tsx` now conditionally renders the dot: pulsing
+`led-live`/accent green only when `gwei !== null` (a real successful RPC
+read), otherwise a static muted `bg-slate-600` dot with an updated tooltip
+explaining the refresh failed rather than showing stale/fabricated data. No
+other pills touched (the "Sepolia" network pill is a static label, not
+data-dependent, so its live-pulse is legitimate).
+
+**Verified:** `npm run build` passes clean (only pre-existing optional-peer-dep
+warnings, no new errors). Live API spot-checks before the fix confirmed the
+endpoints themselves are healthy (`/api/gas` → `{"gwei":0.170032}` in ~0.28s,
+`/api/deposits/check` → `{"conflict":null}`, nonexistent deposit id → 404
+`NOT_FOUND`) — this was a pure front-end display-honesty bug, not an API
+issue, so a live failure state had to be reasoned about via code (the actual
+RPC call succeeds reliably in this environment; the failure path is exercised
+by the existing `catch` block, which was already correctly tested/used for
+the "GAS —" text half of this same bug). Deploying and re-verifying the
+compiled bundle serves the new conditional class next.
