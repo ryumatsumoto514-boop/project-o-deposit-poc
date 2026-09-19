@@ -3609,3 +3609,9 @@ warnings; git diff --check passed. Live pre-change CSS confirmed RGB
 71 85 105. Calculated contrast against the card: 2.45:1 before, 7.25:1
 after. Deploying from a clean git archive to avoid the documented large
 ignored core dump in the workspace.
+
+Commit dcc5353 pushed to origin/main; Vercel production deploy succeeded.
+Post-deploy curl -fsSL fetched https://projecto-blond.vercel.app/deposit
+and its linked CSS. Assertion passed: .input::placeholder now ships
+rgb(148 163 184), the intended slate-400. Verification covers the deployed
+CSS and calculated contrast, not a manual wallet/browser session.
