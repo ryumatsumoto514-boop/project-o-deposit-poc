@@ -4248,3 +4248,13 @@ transactions. Build and production verification results follow below.
 
 npm run build passed (existing optional dependency warnings); git diff --check
 passed. Production verification pending deployment below.
+
+Committed as 11f7dfe and pushed origin/main. Stopped the initial 761.9 MB
+working-directory upload and deployed a clean git-archive copy of that commit
+with the existing .vercel project link, using vercel --token "$VERCEL_TOKEN"
+--yes --prod. Deployment succeeded and aliased projecto-blond.vercel.app.
+Afterward curl fetched /deposit/approve and its new page-8bbe77428d2c3623.js.
+The first asset fetch briefly returned 404; repeating both requests with
+?review=11f7dfe succeeded and confirmed fieldset disabled:K and the dimming
+class in the shipped bundle. This verifies deployment of the native disabled
+fieldset, not a manual wallet-extension interaction test.
