@@ -4117,3 +4117,40 @@ This is documentation only: no app/core changes, build or redeployment needed.
 Live HTML fetches verify availability and metadata, not these repository-only
 documentation edits or on-chain receipts. Unrelated WalletRoles/script work was
 already present and is excluded from this review's commit.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T11:15:25Z — Clarify the Hyperliquid trading-account address
+
+**Found:** a prior cycle (exit 143, killed mid-task) had left an uncommitted,
+half-wired change: `WalletRoles.tsx`'s `Row` component gained an unused
+`note?: string` prop, never passed by any of the 3 render calls. Rather than
+redo the investigation from scratch, I checked whether the underlying finding
+was real. It was — and the previous cycle had already captured the evidence
+in `/tmp/qa-kol/confirm-walletroles.png` via `scripts/qa-kol-walletroles.mjs`
+(also left uncommitted/untracked): on `/deposit/confirm`, "TRADABLE ON
+HYPERLIQUID AS" shows `0x7F1D…cC74` directly under "FUNDS COMING FROM"
+`0x9A11…A3E5` — two completely unrelated-looking addresses stacked with no
+explanation — immediately above the scam-warning callout ("scammers
+sometimes use addresses that look almost identical... double check this
+matches what you expect"). Confirmed in `lib/hyperliquidMock.ts:25-28`
+(`deriveMockTradingAccount`) that this address is a `keccak256`-derived
+mock subaccount, deterministic per wallet but visually unrelated — exactly
+the kind of address-mismatch a mobile user (SPEC.md's stated persona, plus
+the address-poisoning warning right below it) could reasonably mistake for
+a scam or a bug, undermining the wallet-role-labeling feature (SPEC.md
+"Explicit wallet-role labels", item 4) whose entire purpose is preventing
+this confusion.
+
+**Fix:** wired the existing `note` prop through — the "Tradable on
+Hyperliquid as" row (only) now shows a small parenthetical:
+"(auto-derived from your wallet, not a separate deposit)". No other rows
+changed; `signingInAs`/`fundsFrom` were already self-explanatory.
+
+**Verified:** `npm run build` passes clean (only pre-existing optional-peer-dep
+warnings). Ran `npm run start -p 3100` locally and re-ran
+`scripts/qa-kol-walletroles.mjs http://localhost:3100 /tmp/qa-kol-local` —
+screenshot confirms the note renders correctly under the label, wraps
+cleanly at mobile width (375px viewport used by the QA script), and doesn't
+break the row layout when the value is `—` (unconnected wallet state).
+Committing, deploying to Vercel, and re-verifying live at
+https://projecto-blond.vercel.app next.

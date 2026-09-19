@@ -9,11 +9,14 @@
 
 import { truncateAddress } from "@/lib/format";
 
-function Row({ label, value }: { label: string; value: string | null }) {
+function Row({ label, value, note }: { label: string; value: string | null; note?: string }) {
   const display = value && value.startsWith("0x") ? truncateAddress(value) : value;
   return (
     <div className="flex flex-col gap-0.5 border-b border-white/[0.06] py-2.5 last:border-b-0">
-      <span className="label-caps">{label}</span>
+      <span className="label-caps">
+        {label}
+        {note && <span className="normal-case text-slate-600"> ({note})</span>}
+      </span>
       <span className="truncate font-mono text-[13px] text-slate-200" title={value ?? undefined}>
         {display ?? "—"}
       </span>
@@ -34,7 +37,13 @@ export function WalletRoles({
     <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-3.5">
       {signingInAs !== undefined && <Row label="Signing in as" value={signingInAs} />}
       {fundsFrom !== undefined && <Row label="Funds coming from" value={fundsFrom} />}
-      {tradableIn !== undefined && <Row label="Tradable on Hyperliquid as" value={tradableIn} />}
+      {tradableIn !== undefined && (
+        <Row
+          label="Tradable on Hyperliquid as"
+          value={tradableIn}
+          note="auto-derived from your wallet, not a separate deposit"
+        />
+      )}
     </div>
   );
 }
