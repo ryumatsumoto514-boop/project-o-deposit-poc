@@ -4220,3 +4220,31 @@ change, not this finding; it is preserved. Deployment verification follows below
 
 Isolated npm run build passed (existing dependency warnings only); diff --check
 passed. Committing and pushing before deploying the verified source snapshot.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-19T12:58:30Z
+
+## Codex review tick: 2026-09-19T12:58:30Z
+Claude Code tick finished, exit code 1
+
+### [Codex review] 2026-09-19 — Keep approval scope consistent with the pending wallet request
+
+Read OVERNIGHT_BRIEF.md, the recent log and SPEC.md, then the approval page and
+creation/check/pull API routes. Searched the log for scope changes, busy controls
+and fieldset fixes; the earlier radio-group fix did not cover this issue.
+Fetched https://projecto-blond.vercel.app/deposit/approve with curl -fsSL
+--max-time 20, then fetched its page-9946cf69dee5f106.js script. The live scope
+fieldset had no disabled attribute. Both radios remained editable while the
+async handler used the approvalMode captured when submission began. A user
+could start unlimited approval, switch the displayed option to exact while
+the wallet prompt was pending, and see a scope different from the request.
+
+Changed only app/deposit/approve/page.tsx: disable the native fieldset using
+the existing isBusy state, with dimming to communicate the disabled state.
+This covers preflight, wallet signature, confirmation and transfer; scope is
+editable again in form/error states. No reconciliation core changes or real
+transactions. Build and production verification results follow below.
+
+npm run build passed (existing optional dependency warnings); git diff --check
+passed. Production verification pending deployment below.

@@ -252,7 +252,7 @@ export default function DepositApprovePage() {
         </div>
       )}
 
-      <fieldset className="card flex flex-col gap-3">
+      <fieldset disabled={isBusy} className="card flex flex-col gap-3 disabled:opacity-60">
         <legend className="label-caps px-1">Approval scope</legend>
         <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-accent-400/40 has-[:checked]:bg-accent-500/[0.06]">
           <input
