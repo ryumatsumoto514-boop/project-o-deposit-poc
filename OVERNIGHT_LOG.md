@@ -3982,3 +3982,13 @@ Build and live deployment verification follow.
 npm run build passed in an isolated tracked-files copy (avoids concurrent
 .next builds and the previously documented ignored core dump). Existing
 third-party dependency warnings remain; git diff --check passed.
+Claude Code tick finished, exit code 1
+
+Commit 759fe58 pushed to origin/main. Production deployment projecto-p98d345uu
+succeeded and aliased to https://projecto-blond.vercel.app. Post-deploy curl
+-fsSL fetched /deposit/status/review-announcements and its referenced
+/_next/static/chunks/app/deposit/status/%5Bid%5D/page-71d0a3aff89d06c8.js.
+Assertions verified the initial HTML contains the polite atomic status region
+and the deployed bundle includes its dynamic announcement and missing-record
+message. Verification covers shipped markup/code, not a manual screen-reader
+session. No deposit records or wallet transactions were created.
