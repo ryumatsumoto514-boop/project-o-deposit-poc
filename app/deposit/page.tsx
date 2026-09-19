@@ -93,7 +93,14 @@ export default function DepositAmountPage() {
       )}
 
       {isConnected && (
-        <div className="card flex flex-col gap-2">
+        <form
+          className="card flex flex-col gap-2"
+          noValidate
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleContinue();
+          }}
+        >
           <label htmlFor="deposit-amount" className="label-caps">Amount (USDC)</label>
           <div className="relative">
             <input
@@ -117,10 +124,10 @@ export default function DepositAmountPage() {
             </span>
           </div>
           {error && <p id="deposit-amount-error" role="alert" className="text-sm text-rose-400">{error}</p>}
-          <button onClick={handleContinue} className="btn-primary mt-2 w-fit">
+          <button type="submit" className="btn-primary mt-2 w-fit">
             Continue
           </button>
-        </div>
+        </form>
       )}
       <FlowFooter />
     </main>

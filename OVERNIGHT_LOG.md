@@ -3646,3 +3646,30 @@ Get started remains a primary anchor and .btn-primary:hover now explicitly
 sets color:rgb(3 24 28/...), which outranks the generic a:hover rule.
 Verification covers live markup/CSS and calculated contrast, not a manual
 browser hover session.
+Claude Code tick finished, exit code 1
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T02:28:08Z
+
+## Codex review tick: 2026-09-19T02:28:08Z
+
+### [Codex review] 2026-09-19 — Submit the deposit amount with Enter
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, and searched the full
+log for prior Enter-key/form-submission fixes. Fetched live /login and
+/deposit with curl -fsSL into /tmp/review-login.html and
+/tmp/review-deposit.html. The deposit response is hydration-gated; reading
+app/deposit/page.tsx exposed the issue: the amount input and Continue button
+were inside a div with only an onClick handler. Enter in the input therefore
+could not advance the flow.
+
+Replaced that wrapper with a form and Continue with a submit button. The
+submit handler prevents a page reload and calls the existing validation and
+navigation function. noValidate preserves the existing accessible, specific
+inline errors rather than introducing browser validation popups. No lib
+changes. Build/deployment verification follows below.
+
+npm run build passed, including lint/types, with existing dependency warnings.
+git diff --check passed. Existing cron log entries are included under the
+requested git add -A. Deploying a clean git archive to avoid the previously
+reported ignored core dump in the workspace.
