@@ -244,6 +244,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   if (deposit.status === "CREDITED") {
     return (
       <main className="page-shell">
+        <KolBanner />
         <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
             <CheckIcon className="h-8 w-8 text-white" />
