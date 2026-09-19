@@ -3914,3 +3914,12 @@ No lib changes. Build and deployment verification follow below.
 npm run build passed including lint/types (existing dependency warnings).
 git diff --check passed. Deploying a clean git archive to avoid the previously
 reported ignored core dump; existing cron log additions are included.
+Claude Code tick finished, exit code 1
+
+Commit e37a813 pushed to origin/main; production deployment projecto-nk40h1689
+succeeded and was aliased to https://projecto-blond.vercel.app. Post-deploy
+curl -fsSL fetched /?ref= plus the same 200-character value and its referenced
+/_next/static/chunks/app/page-725af11ce4e6091a.js; assertions confirmed the
+referral banner ships overflow-wrap:anywhere. Repeated Chromium checks at
+375px for both the long referral and /?ref=kol_alex: no horizontal overflow
+and no console errors/warnings. No wallet transactions were submitted.
