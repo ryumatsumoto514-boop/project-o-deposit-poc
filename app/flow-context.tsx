@@ -48,7 +48,11 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
         const saved = JSON.parse(raw);
         setState({
           ...DEFAULT_STATE,
-          ...saved,
+          // Restore only typed fields: objects cannot render as identities,
+          // and truthy strings must never count as address confirmation.
+          mockIdentity: typeof saved?.mockIdentity === "string" ? saved.mockIdentity : null,
+          draftAmount: typeof saved?.draftAmount === "string" ? saved.draftAmount : "",
+          addressConfirmed: saved?.addressConfirmed === true,
           // A malformed saved referral must not crash the disclosure formatter.
           kolRef: typeof saved?.kolRef === "string" ? saved.kolRef : null,
           // Stored data is untyped. Only an explicit unlimited selection

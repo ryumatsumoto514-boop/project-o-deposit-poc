@@ -3992,3 +3992,29 @@ Assertions verified the initial HTML contains the polite atomic status region
 and the deployed bundle includes its dynamic announcement and missing-record
 message. Verification covers shipped markup/code, not a manual screen-reader
 session. No deposit records or wallet transactions were created.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T08:53:23Z
+
+## Codex review tick: 2026-09-19T08:53:23Z
+
+### [Codex review] 2026-09-19 — Validate the rest of restored flow state
+
+Read the brief, SPEC.md, recent log and previous session-state fixes. curl
+-fsSL fetched /login and /deposit/confirm and the login HTML's referenced
+app/layout JavaScript. The shipped FlowProvider still spreads arbitrary
+sessionStorage JSON into state: object-valued mockIdentity crashes React's
+identity rendering, and addressConfirmed: "false" is truthy at the approval
+gate. Earlier fixes validate only kolRef and approvalMode.
+
+Changed app/flow-context.tsx to restore only known fields: string identity
+and draft amount, and strict boolean true for address confirmation. Existing
+referral/scope validation remains. Executed the actual restoration expression
+with malformed objects, primitive/null payloads and a valid saved session:
+all assertions passed. No lib changes or transactions. Build/live results follow.
+Claude Code tick finished, exit code 1
+
+npm run build passed in an isolated tracked-files copy, including lint/types
+(existing dependency warnings). git diff --check passed. React server rendering
+also reproduced the object-identity error; approval page lines 48/53 confirm
+its truthiness gate. Deploying the same source copy to avoid the ignored core dump.
