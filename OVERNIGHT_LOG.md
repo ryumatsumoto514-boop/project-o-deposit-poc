@@ -3784,3 +3784,29 @@ amounts, exponent/hex notation, seventh decimal place, and a 310-digit amount
 all returned HTTP 400 JSON errors. Valid amounts 0.000001, 1.00 and 1000
 returned HTTP 200 with conflict:null for an unused wallet. All assertions
 passed. No deposit records or wallet transactions were created by verification.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T04:48:20Z
+
+## Codex review tick: 2026-09-19T04:48:20Z
+
+### [Codex review] 2026-09-19 — Reject malformed saved referral values
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent log; searched earlier storage and
+referral fixes. curl -fsSL fetched live /login and /deposit/confirm. Read
+app/flow-context.tsx and app/components/KolBanner.tsx, then fetched /login's
+referenced shared chunk 328-57dd7b4a66ce9a5b.js and layout chunk. Both restore
+untyped saved kolRef without validation. A saved object/array/number reaches
+formatKolName's .replace call and crashes rendering after refresh. The earlier
+approvalMode restoration fix does not cover this field.
+
+Added a string-or-null guard for kolRef during session restoration in
+app/flow-context.tsx. Valid referral strings remain unchanged; malformed values
+fall back to no attribution. No lib changes. Node assertions reproduced the
+original TypeError and checked eight valid/invalid restoration cases. Build and
+production verification results follow below.
+
+npm run build passed, including lint/types, with existing dependency warnings.
+git diff --check passed. Deploying a clean git archive to avoid the previously
+documented ignored core dump. Verification covers malformed session data, not
+an ordinary fresh-session failure or an on-chain transaction.

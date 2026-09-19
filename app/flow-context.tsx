@@ -49,6 +49,8 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
         setState({
           ...DEFAULT_STATE,
           ...saved,
+          // A malformed saved referral must not crash the disclosure formatter.
+          kolRef: typeof saved?.kolRef === "string" ? saved.kolRef : null,
           // Stored data is untyped. Only an explicit unlimited selection
           // may restore broader spending permission; otherwise use exact.
           approvalMode: saved?.approvalMode === "unlimited" ? "unlimited" : "exact",
