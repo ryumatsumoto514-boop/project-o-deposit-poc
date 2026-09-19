@@ -7,8 +7,9 @@
 // (see OVERNIGHT_LOG.md for the exact launch command).
 
 const CDP = "http://127.0.0.1:9333";
+const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
 const [, , BASE_URL, OUT_DIR] = process.argv;
-if (!BASE_URL || !OUT_DIR) {
+if (isMain && (!BASE_URL || !OUT_DIR)) {
   console.error("usage: node scripts/screenshot.mjs <baseUrl> <outDir>");
   process.exit(1);
 }
@@ -126,7 +127,9 @@ async function shot(page, { url, out, wallet, chainIdHex, seedFlow, click, waitM
   ws.close();
 }
 
-const fs = await import("node:fs");
-fs.mkdirSync(OUT_DIR, { recursive: true });
+if (OUT_DIR) {
+  const fs = await import("node:fs");
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+}
 
 export { newTab, closeTab, shot, BASE_URL };

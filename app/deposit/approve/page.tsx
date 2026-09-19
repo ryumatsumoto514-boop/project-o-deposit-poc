@@ -259,7 +259,8 @@ export default function DepositApprovePage() {
           />
           <span>
             <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app
-            can only ever move exactly {draftAmount} USDC, once.
+            can spend up to {draftAmount} USDC in total under this approval, even
+            across multiple transfers.
           </span>
         </label>
         <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-amber-400/40 has-[:checked]:bg-amber-500/[0.06]">

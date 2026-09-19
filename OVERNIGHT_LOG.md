@@ -3810,3 +3810,37 @@ npm run build passed, including lint/types, with existing dependency warnings.
 git diff --check passed. Deploying a clean git archive to avoid the previously
 documented ignored core dump. Verification covers malformed session data, not
 an ordinary fresh-session failure or an on-chain transaction.
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T05:23:21Z
+
+## Codex review tick: 2026-09-19T05:23:21Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T05:58:21Z
+
+## Codex review tick: 2026-09-19T05:58:21Z
+
+### [Codex review] 2026-09-19 — Correct the exact-approval spending guarantee
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, and searched the full log
+for prior once-only/partial-transfer copy fixes. Fetched live / and /login
+with curl -fsSL and read their raw HTML; read globals.css, tailwind.config.ts,
+API validation and the approval screen. Then fetched /deposit/approve and its
+referenced page-11909c544778f024.js. The shipped exact-approval option claims
+the app "can only ever move exactly [amount] USDC, once." An ERC-20 allowance
+is a cumulative spending limit, not a restriction to one exact-size transfer.
+
+Changed only that sentence in app/deposit/approve/page.tsx to say the app can
+spend up to the amount in total under this approval, even across multiple
+transfers. This preserves the useful exact-vs-unlimited distinction without
+promising a token-contract restriction that does not exist. No lib changes.
+Build and live verification results follow below.
+
+Confirmed the behavior directly in scripts/MockUSDC.sol:40–44: transferFrom
+requires allowed >= amount and subtracts each transfer from the allowance.
+npm run build passed, including lint/types, with existing dependency/cache
+warnings. git diff --check passed. Deploying a clean git archive to avoid the
+previously documented ignored 2.2 GB core dump in the workspace.
