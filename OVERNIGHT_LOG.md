@@ -3706,3 +3706,11 @@ git diff --check passed. Calculated contrast against the pipeline's #10131a:
 slate-500 descriptions 3.90:1 and slate-700 qualifier 1.79:1 before;
 slate-400 7.25:1 after. Deploying a clean git archive to avoid the previously
 documented ignored core dump. Existing cron log lines are included as requested.
+
+Commit 8826754 pushed to origin/main; Vercel production deployment succeeded.
+Post-deploy curl -fsSL fetched https://projecto-blond.vercel.app and its linked
+CSS. HTMLParser assertions confirmed both simulation descriptions and both
+"(example format)" qualifiers use text-slate-400; fetched CSS contains its
+expected RGB 148 163 184. This verifies shipped markup/CSS and calculated
+contrast, not a manual browser session. Another process edited the status
+page during deployment; that subsequent work is outside this review commit.
