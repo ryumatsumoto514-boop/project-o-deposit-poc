@@ -31,7 +31,7 @@ export function KolBanner() {
   return (
     <div className="banner-amber flex w-full items-start gap-2.5">
       <ShieldIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
-      <span className="text-amber-100/90">
+      <span className="min-w-0 [overflow-wrap:anywhere] text-amber-100/90">
         You arrived via <strong className="text-amber-100">{formatKolName(kolRef)}</strong>&apos;s
         content. Exchange O is independent — deposit and trading decisions
         are yours alone.

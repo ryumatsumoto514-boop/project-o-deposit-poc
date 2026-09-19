@@ -3889,3 +3889,28 @@ instruction are shipped; the unsupported safety guarantee is absent. This
 verifies shipped client copy, not an interactive timeout or wallet session.
 The requested git add -A also captured a concurrent scripts/qa-console-overflow.mjs
 addition; that script was not authored as part of this review.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T07:08:22Z
+
+## Codex review tick: 2026-09-19T07:08:22Z
+
+### [Codex review] 2026-09-19 — Wrap long referral names on mobile
+
+Read the brief, SPEC.md, recent log and prior referral/mobile fixes. Fetched
+live /login and /deposit with curl -fsSL and read raw HTML; inspected
+app/components/KolBanner.tsx, globals.css and tailwind.config.ts. Unknown
+referral codes are displayed as names without wrapping long unbroken strings.
+Using the existing Chromium CDP helpers at a 375px viewport, visiting
+https://projecto-blond.vercel.app/?ref= followed by 200 lowercase a characters
+reproduced document scrollWidth 1675 versus clientWidth 375 (no console errors).
+Previous referral fixes address invalid types/prototype keys, not layout.
+
+Added min-w-0 and overflow-wrap:anywhere to the banner's text flex child,
+allowing arbitrary referral names to wrap without truncating the disclosure.
+No lib changes. Build and deployment verification follow below.
+
+npm run build passed including lint/types (existing dependency warnings).
+git diff --check passed. Deploying a clean git archive to avoid the previously
+reported ignored core dump; existing cron log additions are included.
