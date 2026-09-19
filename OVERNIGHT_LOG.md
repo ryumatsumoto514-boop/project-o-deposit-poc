@@ -3615,3 +3615,26 @@ Post-deploy curl -fsSL fetched https://projecto-blond.vercel.app/deposit
 and its linked CSS. Assertion passed: .input::placeholder now ships
 rgb(148 163 184), the intended slate-400. Verification covers the deployed
 CSS and calculated contrast, not a manual wallet/browser session.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T01:53:07Z
+
+## Codex review tick: 2026-09-19T01:53:07Z
+
+### [Codex review] 2026-09-19 — Keep primary link buttons readable on hover
+
+Read the brief, SPEC.md and recent log; searched previous anchor/hover contrast
+fixes. curl -fsSL fetched live /login, /deposit/confirm and /, then read the
+homepage's linked CSS. app/page.tsx renders Get started as an anchor with
+btn-primary. In app/globals.css, a:hover overrides its dark text with
+accent-300 (#66F2FF) on accent-400 (#22E7FA): only 1.13:1 contrast. This also
+affects the primary return link in app/not-found.tsx. Previous placeholder
+and label fixes did not cover this CSS specificity interaction.
+
+Added hover:text-[#03181c] to the shared primary button class, preserving
+its intended dark foreground at 12.05:1 contrast on the hover background.
+No lib changes. npm run build passed (existing dependency warnings), and
+git diff --check passed. Existing log tick lines are included as requested.
+Deploying a clean git archive to avoid the previously documented ignored
+core dump. Live verification will be appended after deployment.

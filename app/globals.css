@@ -58,7 +58,7 @@
   /* Tactile "hover glint" — a light sweep across the button on hover,
      pure CSS (background-position transition), no JS/animation library. */
   .btn-primary {
-    @apply btn bg-accent-500 text-[#03181c] shadow-[0_1px_0_rgba(255,255,255,0.35)_inset,0_8px_20px_-6px_rgba(0,240,255,0.45)] hover:bg-accent-400 disabled:bg-accent-500;
+    @apply btn bg-accent-500 text-[#03181c] shadow-[0_1px_0_rgba(255,255,255,0.35)_inset,0_8px_20px_-6px_rgba(0,240,255,0.45)] hover:bg-accent-400 hover:text-[#03181c] disabled:bg-accent-500;
     background-image: linear-gradient(
       110deg,
       transparent 0%,
