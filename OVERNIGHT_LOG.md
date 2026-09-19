@@ -3583,3 +3583,29 @@ referenced /_next/static/chunks/app/deposit/status/%5Bid%5D/page-eadbf59d5429270
 An assertion confirmed the shipped HTTP-success guard before parsing the
 response. Failure/recovery behavior was verified with mocked responses locally;
 no live outage or wallet transaction was induced.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T01:18:07Z
+
+## Codex review tick: 2026-09-19T01:18:07Z
+
+### [Codex review] 2026-09-19 — Make the amount placeholder readable
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the log tail, and searched earlier
+contrast/placeholder fixes. Fetched live / and /login with curl -fsSL and
+read the stylesheet linked in /login. The shared .input placeholder rule
+still used slate-600 (#475569); app/deposit/page.tsx uses it for the amount
+example "10.00". Previous contrast fixes covered labels, not this input.
+Against the #10131a card, its contrast is only 2.46:1 (the input's black
+30% overlay darkens this slightly but still falls below 4.5:1).
+Changed only the placeholder token in app/globals.css to slate-400
+(#94a3b8), exceeding 7:1 against the card. No lib changes.
+Build and live verification follow below. Existing log edits and the
+untracked scripts/qa-header-pill.mjs are other work; inspected the helper
+and include it under the explicitly requested git add -A instruction.
+
+npm run build passed, including lint/type checks, with existing dependency
+warnings; git diff --check passed. Live pre-change CSS confirmed RGB
+71 85 105. Calculated contrast against the card: 2.45:1 before, 7.25:1
+after. Deploying from a clean git archive to avoid the documented large
+ignored core dump in the workspace.

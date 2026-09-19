@@ -86,7 +86,7 @@
 
   /* Inputs */
   .input {
-    @apply min-h-[46px] w-full rounded-md border border-white/[0.15] bg-black/30 px-3.5 text-[15px] text-slate-100 outline-none transition-colors placeholder:text-slate-600 focus:border-accent-400/60 focus:ring-4 focus:ring-accent-500/15;
+    @apply min-h-[46px] w-full rounded-md border border-white/[0.15] bg-black/30 px-3.5 text-[15px] text-slate-100 outline-none transition-colors placeholder:text-slate-400 focus:border-accent-400/60 focus:ring-4 focus:ring-accent-500/15;
   }
 
   /* Banners — severity coding stays strictly distinct from the brand
