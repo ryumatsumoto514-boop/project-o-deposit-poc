@@ -41,11 +41,11 @@ const STATE_COPY: Record<
       "Both the on-chain transaction and the (mocked) Hyperliquid balance check agree: your funds are tradable.",
   },
   STALLED_NO_GAS: {
-    label: "Paused — needs a little ETH",
+    label: "Paused — deposit service needs ETH",
     description:
-      "A step in the pipeline couldn't proceed because a wallet involved didn't have enough ETH for gas. Your USDC is safe and nothing is lost.",
+      "The deposit service's relayer wallet does not have enough testnet ETH to pay the transfer fee.",
     severity: "warning",
-    nextStep: "Top up a small amount of testnet ETH, then this will resume automatically — no need to restart.",
+    nextStep: "The demo operator needs to top up the relayer. Adding ETH to your funding wallet will not resolve this. Keep this page open for automatic retries; do not send another deposit.",
   },
   STALLED_TIMEOUT: {
     label: "Taking longer than expected",

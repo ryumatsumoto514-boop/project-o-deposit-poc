@@ -3714,3 +3714,31 @@ CSS. HTMLParser assertions confirmed both simulation descriptions and both
 expected RGB 148 163 184. This verifies shipped markup/CSS and calculated
 contrast, not a manual browser session. Another process edited the status
 page during deployment; that subsequent work is outside this review commit.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T03:38:08Z
+
+## Codex review tick: 2026-09-19T03:38:08Z
+Claude Code tick finished, exit code 1
+
+### [Codex review] 2026-09-19 — Correct who must fund a stalled relayer
+
+Read the brief, SPEC.md, recent log and earlier gas-error entries. Fetched live
+/login, /deposit/confirm and /deposit/status/review-relayer-gas with curl -fsSL.
+Fetched the status page's referenced JS bundle and asserted it still instructed
+users to "Top up a small amount of testnet ETH". Reading lib/pull.ts showed
+STALLED_NO_GAS is emitted for the server relayer's transfer failure, and its
+failureReason already says this is an infrastructure issue. The status page
+nevertheless always adds the contradictory user-top-up nextStep. Earlier fixes
+corrected error classification, but left this recovery advice intact.
+
+Changed only STALLED_NO_GAS copy in app/deposit/status/[id]/page.tsx: identify
+the deposit service's wallet, tell users the demo operator must fund it, and
+explain that funding their own wallet will not help. Automatic retries require
+keeping the page open. No lib changes. Build/live results follow below.
+
+npm run build passed, including lint/types, with existing dependency warnings.
+git diff --check passed. Live pre-change bundle confirmed the incorrect advice.
+Deploying from a clean git archive to avoid the documented ignored core dump.
+Existing cron log lines are included under the requested git add -A instruction.
