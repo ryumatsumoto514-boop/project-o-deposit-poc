@@ -4154,3 +4154,69 @@ cleanly at mobile width (375px viewport used by the QA script), and doesn't
 break the row layout when the value is `—` (unconnected wallet state).
 Committing, deploying to Vercel, and re-verifying live at
 https://projecto-blond.vercel.app next.
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-19T11:48:30Z
+
+## Codex review tick: 2026-09-19T11:48:30Z
+
+### [Codex review] 2026-09-19 — Independent markup and invalid-input check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 150 lines of this log first, then SPEC.md;
+searched earlier entries for metadata, contrast, accessibility, gas/cache,
+stepper and validation fixes to avoid repeating them. Read app/globals.css,
+tailwind.config.ts, app/layout.tsx, app/login/page.tsx,
+app/deposit/confirm/page.tsx, app/components/FlowChrome.tsx and AppHeader.tsx,
+and the gas, deposit creation and individual-deposit API routes.
+
+Actually fetched https://projecto-blond.vercel.app/login with curl -fsSL,
+then fetched /, /login, /deposit, /deposit/confirm and /deposit/approve with
+curl -fsSL --max-time 15 and parsed raw HTML with Python HTMLParser.
+All five have lang=en, a device-width viewport and the testnet description;
+no img tags lack alt attributes. Landing/login have one h1 each. Gated deposit
+screens render their content after hydration, so their raw HTML alone does
+not establish the accessibility of the interactive screens. Existing social
+metadata, reduced-motion handling and previously corrected primary-button
+hover colors remain present in source.
+
+Used curl POST /api/deposits with otherwise valid-shaped input and, separately,
+amount=-1, an extremely large decimal amount, userWallet=0x123, and
+amount=0.0000001. All four live responses returned HTTP 400 INVALID_REQUEST
+with appropriate validation messages. No valid deposits or transactions were
+submitted. Did not test replay behavior by creating live records.
+
+No distinct issue worth fixing emerged from this bounded review. This is not
+a claim that the product has no bugs: no interactive wallet session, full
+accessibility audit, or on-chain receipt verification was performed. Left
+application/core files unchanged; no build or deployment was needed. Only
+this review entry was appended, preserving the pre-existing log edits.
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T12:23:30Z
+
+## Codex review tick: 2026-09-19T12:23:30Z
+
+### [Codex review] 2026-09-19 — Expose failed deposit-status refreshes
+
+Read the brief, recent log, SPEC.md, status page and individual-deposit API;
+searched prior connection/polling entries. curl -fsSL --max-time 20 fetched
+https://projecto-blond.vercel.app/deposit/status/review-connection and its
+referenced page-3f73dd725141a04c.js. The shipped catch retried silently:
+a stale deposit remained visible without a failed-refresh indicator. The earlier
+HTTP-poll fix preserved the last known deposit but did not disclose staleness.
+
+Added a role=alert warning in app/deposit/status/[id]/page.tsx for failed polls,
+distinguishing no successful check yet from an old status. It explains automatic
+retries and says not to resend. A successful poll clears the warning. No lib
+changes or transactions. A Node harness executed the actual tick function with
+network, HTTP 503 and malformed-JSON failures followed by recovery; all passed,
+including preservation of the last known deposit and existing 404 behavior.
+
+The shared-directory build failed because pages-manifest.json disappeared while
+Claude's separate next build was running. Re-running npm run build in an isolated
+tracked-files copy. Concurrent WalletRoles note-contrast work is another agent's
+change, not this finding; it is preserved. Deployment verification follows below.
+
+Isolated npm run build passed (existing dependency warnings only); diff --check
+passed. Committing and pushing before deploying the verified source snapshot.

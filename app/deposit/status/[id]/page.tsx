@@ -155,6 +155,7 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
 export default function DepositStatusPage({ params }: { params: { id: string } }) {
   const [deposit, setDeposit] = useState<DepositRecord | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [pollFailed, setPollFailed] = useState(false);
   const pollDelay = useRef(3000);
 
   useEffect(() => {
@@ -175,6 +176,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
         const body = await res.json();
         if (cancelled) return;
         setDeposit(body.deposit);
+        setPollFailed(false);
 
         pollDelay.current = SLOW_POLL_STATUSES.includes(body.deposit.status)
           ? 8000
@@ -184,7 +186,10 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           timer = setTimeout(tick, pollDelay.current);
         }
       } catch {
-        if (!cancelled) timer = setTimeout(tick, pollDelay.current);
+        if (!cancelled) {
+          setPollFailed(true);
+          timer = setTimeout(tick, pollDelay.current);
+        }
       }
     }
 
@@ -209,6 +214,14 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       {announcement}
     </p>
   );
+  const connectionWarning = pollFailed ? (
+    <div role="alert" className="banner-amber">
+      <strong>Cannot refresh deposit status.</strong>{" "}
+      {deposit ? "The status below is the last successful check. " : "No status has been retrieved yet. "}
+      Retrying automatically while this page is open. Check your connection and
+      do not send another deposit while the outcome is unresolved.
+    </div>
+  ) : null;
 
   if (notFound) {
     return (
@@ -249,6 +262,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     return (
       <main className="page-shell">
         {statusAnnouncement}
+        {connectionWarning}
         <p className="flex items-center gap-2 text-sm text-slate-500">
           <SpinnerIcon className="h-4 w-4" /> Loading deposit status…
         </p>
@@ -321,6 +335,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
         {statusAnnouncement}
       <KolBanner />
       <h1 className="h1">Deposit status</h1>
+      {connectionWarning}
 
       <WalletRoles
         signingInAs={deposit.mockIdentity}
