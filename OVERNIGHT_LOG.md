@@ -3775,3 +3775,12 @@ and deployment results follow below.
 npm run build passed, including lint/type checks (existing dependency warnings).
 git diff --check passed. Deploying a clean git archive to avoid the previously
 documented ignored core dump. Existing cron log lines are included as requested.
+
+Commit a045f38 pushed to origin/main; production deployment
+projecto-76jyy9m5j succeeded and was aliased to https://projecto-blond.vercel.app.
+Post-deploy Python harness invoked curl against the live check endpoint for
+12 read-only cases: missing params, malformed wallet, negative/zero/over-cap
+amounts, exponent/hex notation, seventh decimal place, and a 310-digit amount
+all returned HTTP 400 JSON errors. Valid amounts 0.000001, 1.00 and 1000
+returned HTTP 200 with conflict:null for an unused wallet. All assertions
+passed. No deposit records or wallet transactions were created by verification.
