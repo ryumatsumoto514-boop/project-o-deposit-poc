@@ -3742,3 +3742,12 @@ npm run build passed, including lint/types, with existing dependency warnings.
 git diff --check passed. Live pre-change bundle confirmed the incorrect advice.
 Deploying from a clean git archive to avoid the documented ignored core dump.
 Existing cron log lines are included under the requested git add -A instruction.
+
+Commit 0c101b9 pushed to origin/main; production deployment
+projecto-k5yxzce2f succeeded. Post-deploy curl -fsSL fetched
+https://projecto-blond.vercel.app/deposit/status/review-relayer-gas and its
+referenced /_next/static/chunks/app/deposit/status/%5Bid%5D/page-2663f3d4c909e238.js.
+Assertions confirmed the operator/relayer funding instruction and explicit
+explanation that funding the user's wallet will not help; the old top-up
+instruction is absent. This verifies shipped copy, not a real gas-failure
+session. No live wallet transaction was submitted.
