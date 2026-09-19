@@ -15,7 +15,7 @@ function Row({ label, value, note }: { label: string; value: string | null; note
     <div className="flex flex-col gap-0.5 border-b border-white/[0.06] py-2.5 last:border-b-0">
       <span className="label-caps">
         {label}
-        {note && <span className="normal-case text-slate-600"> ({note})</span>}
+        {note && <span className="normal-case text-slate-400"> ({note})</span>}
       </span>
       <span className="truncate font-mono text-[13px] text-slate-200" title={value ?? undefined}>
         {display ?? "—"}
