@@ -3536,3 +3536,41 @@ consistency gap of its own.
   engine or idempotency behavior.
 
 ### Deploy
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T00:08:06Z
+
+## Codex review tick: 2026-09-19T00:08:06Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T00:43:07Z
+
+## Codex review tick: 2026-09-19T00:43:07Z
+
+### [Codex review] 2026-09-19 — Preserve deposit status after failed HTTP polls
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log; searched previous polling
+and HTTP-error fixes. Fetched /, /login and /deposit/status/review-http-error
+with curl from https://projecto-blond.vercel.app. Inspected the status page's
+referenced JavaScript: it parsed non-404 HTTP errors and called setDeposit
+with the error body's absent deposit, erasing the last known status before
+throwing and retrying. This is distinct from previous gas/preflight fixes.
+
+Added an HTTP-success guard in app/deposit/status/[id]/page.tsx before JSON
+parsing. Failed polls now retain the last known deposit and use the existing
+retry path. No lib changes or transactions. A Node harness executed the actual
+tick function with 429/500/503, 200 and 404 responses: failures retain data and
+retry, success updates, and missing records keep their existing behavior.
+The first harness lacked its recursive tick binding; corrected harness passed.
+Build/deployment results follow below.
+
+Pre-existing workspace changes: AppHeader's normal-case class and six dummy/
+PNG screenshots, plus log updates. These are not authored by this review and
+will be included by the user's explicit git add -A instruction.
+
+Initial shared-workspace build failed after compilation because .next/server/
+pages-manifest.json disappeared. Retried npm run build in an isolated copy
+at /tmp/projecto-review-http: passed, including lint/types, with existing
+dependency warnings. git diff --check passed. Deploying the same source copy
+also avoids the previously documented large ignored core dump.

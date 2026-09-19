@@ -170,6 +170,8 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           if (!cancelled) setNotFound(true);
           return;
         }
+        // A failed poll must not replace the last known deposit with an error body.
+        if (!res.ok) throw new Error("Deposit status request failed");
         const body = await res.json();
         if (cancelled) return;
         setDeposit(body.deposit);

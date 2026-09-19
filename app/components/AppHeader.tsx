@@ -62,7 +62,7 @@ export function AppHeader() {
           </span>
           {isConnected && address && (
             <span
-              className="pill font-mono text-slate-300"
+              className="pill normal-case font-mono text-slate-300"
               role="group"
               aria-label={`Funding wallet: ${address}`}
               title={`Funding wallet: ${address}`}
