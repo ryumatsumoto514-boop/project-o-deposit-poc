@@ -129,15 +129,20 @@ export default function DepositApprovePage() {
         hash: approveTxHash,
       });
       if (receipt.status !== "success") {
+        const approvalFailure = {
+          title: "The approval transaction reverted",
+          detail: "The token approval did not complete, so this attempt has not started a deposit transfer. A network fee may still have been charged. Check the transaction in your wallet before trying again.",
+        };
         await fetch(`/api/deposits/${deposit.id}`, {
           method: "PATCH",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            status: "STALLED_NO_GAS",
-            failureReason: FAILURE_COPY.NO_GAS.title,
+            status: "STALLED_TIMEOUT",
+            failureReason: `${approvalFailure.title}. ${approvalFailure.detail}`,
           }),
         });
-        setErrorMessage(FAILURE_COPY.NO_GAS);
+        setErrorMessage(approvalFailure);
+        setOrphanedDepositId(deposit.id);
         setStep("error");
         return;
       }

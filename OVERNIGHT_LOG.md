@@ -3923,3 +3923,37 @@ curl -fsSL fetched /?ref= plus the same 200-character value and its referenced
 referral banner ships overflow-wrap:anywhere. Repeated Chromium checks at
 375px for both the long referral and /?ref=kol_alex: no horizontal overflow
 and no console errors/warnings. No wallet transactions were submitted.
+Codex review tick finished, exit code 0
+
+
+## Cron tick: 2026-09-19T07:43:22Z
+## Codex review tick: 2026-09-19T07:43:22Z
+
+### [Codex review] 2026-09-19 — Stop diagnosing every reverted approval as missing ETH
+
+Read the brief, SPEC.md, recent log and the earlier relayer failure fix.
+Fetched live /login and /deposit/approve with curl -fsSL, inspected raw HTML,
+and read app/deposit/approve/page.tsx. Its receipt.status !== "success"
+branch unconditionally recorded STALLED_NO_GAS and told users to obtain ETH.
+A reverted approval receipt does not establish insufficient ETH; the earlier
+fix in lib/pull.ts only covered relayer transfer failures.
+
+Changed this client branch to record the existing STALLED_TIMEOUT fallback
+for unclassified failures, with an explicit reverted-approval failureReason.
+The alert explains that no deposit transfer started and a network fee may
+still have been charged, and links to the already-created deposit record.
+No lib files changed. Build and production verification follow below.
+Claude Code tick finished, exit code 1
+
+Fetched the live approval page's referenced page-4edb02560bb9fed6.js with
+curl and confirmed that the unconditional STALLED_NO_GAS branch is shipped.
+Executed the actual receipt branch with mocked fetch/state setters: reverted
+receipts save the accurate failure and expose the record link; successful
+receipts do not enter the failure path. No transaction was submitted.
+The first npm run build collided with another process using .next (missing
+build-manifest.json); rerunning in an isolated tracked-files copy.
+
+Isolated npm run build passed, including lint/types (existing dependency
+warnings); git diff --check passed. The requested git add -A also includes
+another process's app/api/deposits/route.ts validation for kolRef and
+approvalMode, reviewed but not authored as this review's finding.

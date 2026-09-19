@@ -99,6 +99,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (body.kolRef != null && typeof body.kolRef !== "string") {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "kolRef must be a string or null." },
+      { status: 400 }
+    );
+  }
+
+  if (body.approvalMode !== "exact" && body.approvalMode !== "unlimited") {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "approvalMode must be \"exact\" or \"unlimited\"." },
+      { status: 400 }
+    );
+  }
+
   const conflict = findConflictingInFlightDeposit(body.userWallet, body.amount);
   if (conflict) {
     return NextResponse.json(
