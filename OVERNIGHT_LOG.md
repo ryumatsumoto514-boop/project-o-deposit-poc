@@ -4438,3 +4438,58 @@ curl: `GET /favicon.ico` → `200`, `content-type: image/x-icon`; the served
 (`https://projecto-blond.vercel.app/favicon.ico`) afterward to confirm the
 404 is actually gone in production, not just fixed locally — result and
 exact status code recorded immediately below by the deploy step.
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-19T22:19:02Z
+
+## Codex review tick: 2026-09-19T22:19:02Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T22:54:03Z
+
+## Codex review tick: 2026-09-19T22:54:03Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19 (general QA cycle) — missing clickjacking/MIME-sniffing security headers
+
+**Found:** given how extensively prior cycles had already covered visual
+consistency, native-control polish, and copy-accuracy bugs (see the many
+entries above), I checked functional correctness first via live curls
+(`/nonexistent-route` → 404 with the app's own styled not-found page, not a
+bare Vercel error; `POST /api/deposits/does-not-exist/reconcile` → 404
+`NOT_FOUND`; `GET /api/deposits/check` with no params → 400 `MISSING_PARAMS`
+— all correct). While checking response headers on the live domain
+(`curl -s -D - -o /dev/null https://projecto-blond.vercel.app/`), found this
+app ships with **zero security headers** — no `X-Frame-Options`, no
+`X-Content-Type-Options`, no `Referrer-Policy`, nothing beyond Vercel/Next's
+defaults. Confirmed this wasn't already addressed by grepping the full log
+for "X-Frame"/"clickjack"/"security header" — no prior cycle had touched it.
+This is a real gap specifically for *this* app: it has users connect a
+wallet and sign actual on-chain approve/transferFrom transactions. Without
+`X-Frame-Options`, the entire deposit-approval flow could be embedded in an
+invisible/transparent iframe on a malicious site and clickjacked — the
+classic attack is overlaying a fake "claim your airdrop" button exactly over
+the real "Approve" button so a click both looks harmless and actually
+authorizes a wallet action. This isn't hypothetical for a wallet-signing UI;
+it's one of the standard attack classes such apps are expected to mitigate.
+
+**Fix:** added a `headers()` function to `next.config.mjs` (previously only
+had a `webpack` config) setting `X-Frame-Options: DENY`,
+`X-Content-Type-Options: nosniff`, and `Referrer-Policy:
+strict-origin-when-cross-origin` on every route (`/:path*`). DENY is
+appropriate since this app has no legitimate embedding use case (it's not a
+widget meant to be iframed by partners). Did not add a full
+Content-Security-Policy in this cycle — that requires enumerating every
+external origin the app legitimately talks to (RPC endpoints, wagmi/
+WalletConnect, Google Fonts for the Space Grotesk display font) and a wrong
+CSP is worse than none (silently breaks wallet connection), so a rushed CSP
+within this cycle's time budget would be a worse trade than the two safe,
+unambiguous headers added here.
+
+**Verified:** `npm run build` passes clean (identical pre-existing
+optional-peer-dep warnings only, no new errors). Ran `npm run start` on a
+fresh local port (3223) and confirmed via `curl -s -D -`: all three headers
+present on `/` with the exact expected values. Committing, deploying to
+Vercel, and re-curling the **live** production headers next to confirm
+they're actually served in production, not just locally.
