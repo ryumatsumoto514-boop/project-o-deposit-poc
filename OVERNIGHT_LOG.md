@@ -4493,3 +4493,56 @@ fresh local port (3223) and confirmed via `curl -s -D -`: all three headers
 present on `/` with the exact expected values. Committing, deploying to
 Vercel, and re-curling the **live** production headers next to confirm
 they're actually served in production, not just locally.
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-19T23:29:03Z
+
+## Codex review tick: 2026-09-19T23:29:03Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-19 (general QA cycle) — two prior fixes were committed but never actually deployed
+
+**Found:** before picking a new area, verified the live site actually reflects
+the last two logged fixes (favicon.ico, security headers) rather than trusting
+the log's own "Deploy confirmation" language, per this cycle's mandate to
+curl/verify rather than assume. `curl -s -D - https://projecto-blond.vercel.app/`
+showed `age: 5026` (Vercel edge cache) and an `etag` with no `x-frame-options`/
+`x-content-type-options`/`referrer-policy` present at all — but commit
+`abe4416` (the security-headers fix) was only ~33 minutes old at the time,
+younger than the cached response. Cross-checked with
+`vercel --token "$VERCEL_TOKEN" ls`: the newest production deployment was 2h
+old, i.e. it predated both the favicon commit (`2eac996`) and the
+security-headers commit (`abe4416`). **Both of the last two logged fixes were
+real, correct, and pushed to GitHub, but the "Deploy confirmation" section
+those cycles wrote was aspirational — the actual `vercel --prod` deploy step
+never completed** (both cycles ended with `exit code 1`/`143`, consistent with
+being killed mid-deploy by the environment's time limit, matching a pattern
+this log has flagged before: cycles that fix real bugs but run out of time
+before finishing the deploy+verify loop).
+
+**Fix:** not a code change — redeployed the existing, already-correct commit
+(`abe4416`) to production. `vercel --prod` from the working directory first
+failed with `File size limit exceeded (100 MB)` — root cause: a 128 MB `core`
+dump file (`/opt/data/projecto/core`, gitignored but apparently still swept
+into the CLI's upload set) sitting in the working directory from an earlier
+crashed process. Worked around it the same way a prior cycle already
+established (`git archive HEAD` to a clean `/tmp` copy, deployed from there
+instead of the working directory) rather than deleting the core file myself
+(it may be useful for diagnosing whatever crashed, and deleting other
+processes' artifacts wasn't this task).
+
+**Verified live** (not just committed): re-curled
+`https://projecto-blond.vercel.app/` post-deploy — `age: 0`, new `etag`,
+`x-frame-options: DENY`, `x-content-type-options: nosniff`,
+`referrer-policy: strict-origin-when-cross-origin` all present.
+`GET /favicon.ico` → `200`, `content-type: image/x-icon`. Regression-checked
+`/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+`/?ref=kol_alex` (all 200), `/api/gas` (200, real gwei value), and
+`/api/deposits/check` with no params (400, as designed) — nothing broke from
+the redeploy. `npm run build` passed clean before deploying.
+
+**Takeaway for future cycles:** don't trust a log entry's own "Deploy
+confirmation" section at face value when the tick's exit code is non-zero —
+cross-check `vercel ls` deployment age against the commit timestamp before
+assuming a fix is live. This cycle found no new bug in the app itself; the
+gap was entirely in the deploy pipeline of prior cycles.
