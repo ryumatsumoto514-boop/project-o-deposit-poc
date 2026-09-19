@@ -3574,3 +3574,12 @@ pages-manifest.json disappeared. Retried npm run build in an isolated copy
 at /tmp/projecto-review-http: passed, including lint/types, with existing
 dependency warnings. git diff --check passed. Deploying the same source copy
 also avoids the previously documented large ignored core dump.
+Claude Code tick finished, exit code 1
+
+Fix commit 4c2e87e pushed to origin/main. Production deployment succeeded
+(projecto-l22xjbalm). Post-deploy curl -fsSL fetched the live
+https://projecto-blond.vercel.app/deposit/status/review-http-error and its
+referenced /_next/static/chunks/app/deposit/status/%5Bid%5D/page-eadbf59d54292705.js.
+An assertion confirmed the shipped HTTP-success guard before parsing the
+response. Failure/recovery behavior was verified with mocked responses locally;
+no live outage or wallet transaction was induced.
