@@ -3751,3 +3751,27 @@ Assertions confirmed the operator/relayer funding instruction and explicit
 explanation that funding the user's wallet will not help; the old top-up
 instruction is absent. This verifies shipped copy, not a real gas-failure
 session. No live wallet transaction was submitted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T04:13:15Z
+
+## Codex review tick: 2026-09-19T04:13:15Z
+Claude Code tick finished, exit code 1
+
+### [Codex review] 2026-09-19 — Reject invalid duplicate-check inputs
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent log entries, then searched prior
+preflight/validation fixes. curl fetched live /login and /deposit/confirm;
+read app/api/deposits/check/route.ts and compared its validation with
+app/api/deposits/route.ts. Live GET
+/api/deposits/check?wallet=not-a-wallet&amount=-1 returned HTTP 200 with
+{"conflict":null}, incorrectly presenting invalid input as a clear preflight.
+
+Added wallet format and amount validation only in the check route, matching
+creation's decimal precision, positive amount, and shared 1000 USDC cap.
+Missing parameters keep their existing response. No lib changes. Verification
+and deployment results follow below.
+
+npm run build passed, including lint/type checks (existing dependency warnings).
+git diff --check passed. Deploying a clean git archive to avoid the previously
+documented ignored core dump. Existing cron log lines are included as requested.
