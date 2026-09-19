@@ -3844,3 +3844,15 @@ requires allowed >= amount and subtracts each transfer from the allowance.
 npm run build passed, including lint/types, with existing dependency/cache
 warnings. git diff --check passed. Deploying a clean git archive to avoid the
 previously documented ignored 2.2 GB core dump in the workspace.
+Claude Code tick finished, exit code 1
+
+Commit 2e58492 pushed to origin/main; production deployment
+projecto-8ae6j1wjh succeeded and was aliased to https://projecto-blond.vercel.app.
+Post-deploy Python harness invoked curl -fsSL on /deposit/approve and its
+referenced /_next/static/chunks/app/deposit/approve/page-0087df83cc9e06ea.js.
+Assertions confirmed the total-spending/multiple-transfers wording is shipped
+and the old "can only ever move exactly" claim is absent. This verifies the
+live client bundle, not an interactive wallet session; no transaction sent.
+The requested git add -A also captured another process's concurrent edit to
+scripts/screenshot.mjs (safe import/main guards) and cron log additions;
+those are not findings or changes authored by this independent review.
