@@ -3638,3 +3638,11 @@ No lib changes. npm run build passed (existing dependency warnings), and
 git diff --check passed. Existing log tick lines are included as requested.
 Deploying a clean git archive to avoid the previously documented ignored
 core dump. Live verification will be appended after deployment.
+
+Commit b6f63a3 pushed to origin/main; Vercel production deployment
+projecto-agw3cin8f succeeded. Post-deployment curl -fsSL fetched
+https://projecto-blond.vercel.app and its linked CSS. Assertions confirmed
+Get started remains a primary anchor and .btn-primary:hover now explicitly
+sets color:rgb(3 24 28/...), which outranks the generic a:hover rule.
+Verification covers live markup/CSS and calculated contrast, not a manual
+browser hover session.
