@@ -3682,3 +3682,27 @@ https://projecto-blond.vercel.app/deposit and its referenced
 the live bundle contains the form, noValidate, onSubmit with preventDefault,
 existing amount validation/navigation, and type=submit button. Verification
 covers the shipped handler, not an interactive wallet/browser session.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-19T03:03:08Z
+
+## Codex review tick: 2026-09-19T03:03:08Z
+
+### [Codex review] 2026-09-19 — Make pipeline simulation disclosures readable
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, and searched earlier
+contrast/stepper fixes. curl -fsSL fetched live /login, /deposit/confirm and
+/ (saved /tmp/review-pipeline-before.html). Read globals.css,
+tailwind.config.ts and PipelineStepper.tsx. Live homepage markup confirms
+pipeline descriptions (including the simulated-bridge disclosure) use
+slate-500 and the hash qualifier "(example format)" uses slate-700 against
+#10131a. The earlier shared label fix is overridden by this component's
+explicit utility classes. Changed only pipeline text colors to slate-400,
+including stage labels, descriptions and illustrative hashes/qualifiers.
+No reconciliation logic changed. Build and live verification follow below.
+
+npm run build passed, including lint/types (existing dependency warnings).
+git diff --check passed. Calculated contrast against the pipeline's #10131a:
+slate-500 descriptions 3.90:1 and slate-700 qualifier 1.79:1 before;
+slate-400 7.25:1 after. Deploying a clean git archive to avoid the previously
+documented ignored core dump. Existing cron log lines are included as requested.

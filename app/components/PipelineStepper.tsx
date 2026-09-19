@@ -38,13 +38,13 @@ export function PipelineStepper() {
               className="led-dot led-live bg-accent-400 text-accent-400"
               style={{ animationDelay: `${i * 0.45}s` }}
             />
-            <span className="label-caps text-slate-500">Stage {i + 1}</span>
+            <span className="label-caps text-slate-400">Stage {i + 1}</span>
           </div>
           <p className="text-sm font-semibold text-slate-100">{stage.label}</p>
-          <p className="text-[12px] leading-relaxed text-slate-500">{stage.telemetry}</p>
+          <p className="text-[12px] leading-relaxed text-slate-400">{stage.telemetry}</p>
           {stage.hash && (
-            <p className="mt-auto pt-1 font-mono text-[11px] text-slate-600">
-              {stage.hash} <span className="text-slate-700">(example format)</span>
+            <p className="mt-auto pt-1 font-mono text-[11px] text-slate-400">
+              {stage.hash} <span className="text-slate-400">(example format)</span>
             </p>
           )}
         </div>
