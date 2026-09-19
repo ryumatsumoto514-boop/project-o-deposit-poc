@@ -3957,3 +3957,28 @@ Isolated npm run build passed, including lint/types (existing dependency
 warnings); git diff --check passed. The requested git add -A also includes
 another process's app/api/deposits/route.ts validation for kolRef and
 approvalMode, reviewed but not authored as this review's finding.
+Codex review tick finished, exit code 0
+
+
+## Cron tick: 2026-09-19T08:18:22Z
+## Codex review tick: 2026-09-19T08:18:22Z
+
+### [Codex review] 2026-09-19 — Announce polled deposit status changes
+
+Read the brief, SPEC.md, recent log, CSS/config, and status screen source.
+curl -fsSL fetched live /login, /deposit and /deposit/status/review-announcements;
+fetched the status route's referenced JavaScript and confirmed no aria-live
+or status role. Polling replaces visible progress, exceptions and success
+without announcing those changes. The previous announcement fix covered only
+the approval screen's error banner.
+
+Added a polite, atomic status region as the same first child in every status
+page branch, preserving its DOM position across loading, progress, missing
+record and success. Announces state descriptions and exception next steps;
+the credited description explicitly includes the mocked balance check.
+Unchanged poll results leave announcement text unchanged. No lib changes.
+Build and live deployment verification follow.
+
+npm run build passed in an isolated tracked-files copy (avoids concurrent
+.next builds and the previously documented ignored core dump). Existing
+third-party dependency warnings remain; git diff --check passed.

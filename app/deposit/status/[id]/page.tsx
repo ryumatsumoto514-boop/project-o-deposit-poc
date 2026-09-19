@@ -195,9 +195,25 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     };
   }, [params.id]);
 
+  // Keep the same live-region node mounted across loading, progress and result
+  // branches. Only meaningful text changes are announced, not every poll.
+  const announcement = notFound
+    ? "Deposit record unavailable. Check your wallet history before sending again."
+    : deposit
+    ? `${STATE_COPY[deposit.status].label}. ${STATE_COPY[deposit.status].description}${
+        STATE_COPY[deposit.status].nextStep ? ` ${STATE_COPY[deposit.status].nextStep}` : ""
+      }`
+    : "Loading deposit status…";
+  const statusAnnouncement = (
+    <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+      {announcement}
+    </p>
+  );
+
   if (notFound) {
     return (
       <main className="page-shell">
+        {statusAnnouncement}
         <div className="flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-400/30">
             <AlertIcon className="h-7 w-7 text-amber-300" />
@@ -232,6 +248,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   if (!deposit) {
     return (
       <main className="page-shell">
+        {statusAnnouncement}
         <p className="flex items-center gap-2 text-sm text-slate-500">
           <SpinnerIcon className="h-4 w-4" /> Loading deposit status…
         </p>
@@ -244,6 +261,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   if (deposit.status === "CREDITED") {
     return (
       <main className="page-shell">
+        {statusAnnouncement}
         <KolBanner />
         <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
@@ -300,6 +318,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   return (
     <main className="page-shell">
+        {statusAnnouncement}
       <KolBanner />
       <h1 className="h1">Deposit status</h1>
 
