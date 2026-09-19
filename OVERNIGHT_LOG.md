@@ -3880,3 +3880,12 @@ No engine changes or transactions. Build/deployment verification follows.
 npm run build passed including lint/types, with existing dependency warnings.
 git diff --check passed. Deploying a clean git archive to avoid the previously
 reported ignored core dump. Existing cron log additions are included.
+
+Commit 136f769 pushed to origin/main; production deployment projecto-hfmzvt3rj
+succeeded. Post-deploy curl -fsSL fetched https://projecto-blond.vercel.app/deposit/status/review-timeout
+and its referenced /_next/static/chunks/app/deposit/status/%5Bid%5D/page-498f0fe41344dae8.js.
+Assertions confirmed the unconfirmed-transfer wording and keep-page-open
+instruction are shipped; the unsupported safety guarantee is absent. This
+verifies shipped client copy, not an interactive timeout or wallet session.
+The requested git add -A also captured a concurrent scripts/qa-console-overflow.mjs
+addition; that script was not authored as part of this review.
