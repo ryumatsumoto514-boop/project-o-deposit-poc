@@ -4018,3 +4018,12 @@ npm run build passed in an isolated tracked-files copy, including lint/types
 (existing dependency warnings). git diff --check passed. React server rendering
 also reproduced the object-identity error; approval page lines 48/53 confirm
 its truthiness gate. Deploying the same source copy to avoid the ignored core dump.
+
+Commit d90b690 pushed to origin/main; production deployment succeeded.
+Post-deploy curl -fsSL fetched https://projecto-blond.vercel.app/login
+and its referenced /_next/static/chunks/app/layout-3d3aa5f9ffaf7d72.js.
+Assertions confirmed string checks for identity/amount and strict boolean
+confirmation in the shipped bundle. The initial verification regex assumed
+the opposite operand order in minified code; corrected it and all checks pass.
+This verifies deployed code, not an interactive wallet session. No transactions
+or deposit records were created.
