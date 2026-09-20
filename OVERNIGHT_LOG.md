@@ -4629,3 +4629,57 @@ which it did not before this change (previously only `/?ref=...` would show
 it). Committing this relocation plus the new QA script, then deploying to
 Vercel and re-curling the live site's `/login?ref=kol_alex` response to
 confirm the fix ships in production, not just locally.
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T04:09:14Z
+
+## Codex review tick: 2026-09-20T04:09:14Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-20 (general QA cycle) — KOL deep-link fix (commit d51da64) was pushed but never deployed
+
+**Found:** before picking a new area, checked whether the last logged fix (KOL
+`?ref=` attribution now captured on every route, commit `d51da64`, committed
+2026-09-20T03:36:39Z) actually reached production, since that tick ended with
+"exit code 1" — matching this log's own documented pattern (line ~4503) of
+fixes that are correctly committed/pushed but die mid-deploy. Confirmed via
+`vercel --token "$VERCEL_TOKEN" ls`: the newest production deployment was 5h
+old, i.e. from well before the 03:36 commit. Cross-checked live:
+`curl -s -D - https://projecto-blond.vercel.app/` showed `age: 16665`
+(~4.6h cached), consistent with a stale production build. So the fix was real
+and correct in git, but not yet live — exactly the same undeployed-fix gap as
+two cycles ago, just for a different commit.
+
+**Fix:** not a code change. Verified `npm run build` passes clean first, then
+redeployed the current `HEAD` (`d51da64`) to production. The gitignored
+128 MB `core` dump in the working directory (flagged in a prior cycle, still
+present, not mine to delete) still trips Vercel CLI's 100 MB upload limit
+when deploying from the working directory, so used the same workaround an
+earlier cycle established: `git archive HEAD` into a clean `/tmp` copy (plus
+the existing `.vercel/project.json` link) and deployed from there with
+`vercel --token "$VERCEL_TOKEN" --yes --prod`.
+
+**Verified live** (not just committed): post-deploy, `age: 0` and a new
+`etag` on `/`. Because `KolBanner`/`CaptureKolRef` are client components that
+render post-hydration (via `useEffect`/`useSearchParams`), a raw `curl` of
+`/login?ref=kol_alex` correctly shows no banner text in the static HTML —
+that's expected, not a bug, so verification requires a real browser. Used the
+existing real screenshot pipeline (chrome-headless-shell on CDP port 9333,
+`scripts/qa-login-kolref.mjs`) against the **live** URL at a 390×844 mobile
+viewport: the KOL disclosure banner ("You arrived via **KOL Alex**'s content.
+Exchange O is independent — deposit and trading decisions are yours alone.")
+now renders correctly on `https://projecto-blond.vercel.app/login?ref=kol_alex`
+in production. Also regression-checked live: `/`, `/login`, `/deposit`,
+`/deposit/confirm`, `/deposit/approve`, `/?ref=kol_alex` all `200`;
+`/favicon.ico` `200` `image/x-icon`; `x-frame-options: DENY`,
+`x-content-type-options: nosniff` still present; `/api/gas` `200`;
+`/api/deposits/check` (no params) `400` as designed — nothing broke from the
+redeploy.
+
+**Takeaway for future cycles:** this is now the *second* time a correct fix
+sat undeployed because the tick was killed by the time limit before finishing
+`vercel --prod`. Given this recurring pattern, future cycles should treat
+"check `vercel ls` deployment age vs. latest commit timestamp" as the very
+first step of every cycle, before looking for new bugs — it's cheap and has
+twice now found a real, ready-to-ship fix just sitting there undeployed.
+Claude Code tick finished, exit code 0
