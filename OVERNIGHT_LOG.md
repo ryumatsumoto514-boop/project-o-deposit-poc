@@ -4546,3 +4546,86 @@ confirmation" section at face value when the tick's exit code is non-zero —
 cross-check `vercel ls` deployment age against the commit timestamp before
 assuming a fix is live. This cycle found no new bug in the app itself; the
 gap was entirely in the deploy pipeline of prior cycles.
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-20T00:04:03Z
+
+## Codex review tick: 2026-09-20T00:04:03Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T00:39:09Z
+
+## Codex review tick: 2026-09-20T00:39:09Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+
+## Cron tick: 2026-09-20T01:14:12Z
+## Codex review tick: 2026-09-20T01:14:12Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T01:49:12Z
+
+## Codex review tick: 2026-09-20T01:49:12Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-20T02:24:12Z
+
+## Cron tick: 2026-09-20T02:24:13Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+
+## Cron tick: 2026-09-20T02:59:13Z
+## Codex review tick: 2026-09-20T02:59:13Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+
+## Codex review tick: 2026-09-20T03:34:13Z
+## Cron tick: 2026-09-20T03:34:13Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-20 (general QA cycle) — KOL attribution only captured on the landing page, not on deep-linked routes
+
+**Found:** on picking up this cycle, found an already-staged but uncommitted
+change from a prior cycle that got killed mid-flight (exit code 143, before
+it could commit/log): `CaptureKolRef` (the effect that reads `?ref=` from the
+URL and calls `setKolRef`) previously lived only inside `app/page.tsx`, mounted
+in a `<Suspense>` boundary around the landing hero. That means a KOL's link
+only produced the attribution banner (`KolBanner`, priority-4 differentiator
+per SPEC.md) if it pointed at `/` — a link or shortener pointing anywhere else
+(`/login?ref=kol_alex`, `/deposit?ref=...`, etc.) silently dropped attribution
+entirely, since no other route ever read the query param. This is exactly the
+kind of KOL/B2B2C-differentiator gap priority 4 calls out: the disclosure
+banner is core to the assignment's thesis, and having it silently fail to
+appear depending on which URL the KOL happened to share undermines that.
+
+Rather than redo the work from scratch, I reviewed the prior cycle's diff for
+correctness before trusting it: it extracts `CaptureKolRef` into its own file
+(`app/components/CaptureKolRef.tsx`), removes it from `app/page.tsx`, and
+mounts it once inside `app/providers.tsx` (inside `FlowProvider`, wrapped in
+its own `<Suspense fallback={null}>` since `useSearchParams()` requires
+Suspense in Next 14 App Router) — so every route under `Providers` now
+captures `?ref=` on first load, not just `/`. The logic itself (read `ref`,
+call `setKolRef` in a `useEffect`) is byte-identical to the original; this is
+purely a relocation, not new behavior. No `lib/*.ts` reconciliation code
+touched.
+
+**Verified:** `npm run build` passed clean (only pre-existing optional-peer-dep
+warnings, no new errors or type issues — confirms `useSearchParams` inside the
+new component still resolves correctly through the relocated `Suspense`
+boundary). Ran `npm run start -p 3311` (production server) locally and used
+the real screenshot pipeline (chrome-headless-shell on CDP port 9333 via
+`scripts/screenshot.mjs`) with the prior cycle's own prepared QA script
+(`scripts/qa-login-kolref.mjs`) to load `http://localhost:3311/login?ref=kol_alex`
+at a 390×844 mobile viewport — the KOL disclosure banner ("You arrived via
+**KOL Alex**'s content. Exchange O is independent — deposit and trading
+decisions are yours alone.") now renders correctly on the `/login` deep link,
+which it did not before this change (previously only `/?ref=...` would show
+it). Committing this relocation plus the new QA script, then deploying to
+Vercel and re-curling the live site's `/login?ref=kol_alex` response to
+confirm the fix ships in production, not just locally.

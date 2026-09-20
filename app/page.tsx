@@ -1,24 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect } from "react";
 import Link from "next/link";
-import { useFlow } from "./flow-context";
 import { KolBanner } from "./components/KolBanner";
 import { EngineVisual } from "./components/EngineVisual";
 import { PipelineStepper } from "./components/PipelineStepper";
-
-function CaptureKolRef() {
-  const searchParams = useSearchParams();
-  const { setKolRef } = useFlow();
-  const ref = searchParams.get("ref");
-
-  useEffect(() => {
-    if (ref) setKolRef(ref);
-  }, [ref, setKolRef]);
-
-  return null;
-}
 
 function StatusTag({
   dot = "accent",
@@ -39,9 +24,6 @@ function StatusTag({
 export default function Home() {
   return (
     <main className="page-shell-wide">
-      <Suspense fallback={null}>
-        <CaptureKolRef />
-      </Suspense>
       <KolBanner />
 
       {/* Asymmetric hero: high-impact copy + live ticker on the left,
