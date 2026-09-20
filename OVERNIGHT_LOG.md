@@ -4683,3 +4683,102 @@ sat undeployed because the tick was killed by the time limit before finishing
 first step of every cycle, before looking for new bugs — it's cheap and has
 twice now found a real, ready-to-ship fix just sitting there undeployed.
 Claude Code tick finished, exit code 0
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-20T04:44:14Z
+
+## Codex review tick: 2026-09-20T04:44:14Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T05:19:21Z
+
+## Codex review tick: 2026-09-20T05:19:21Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T05:54:28Z
+
+## Codex review tick: 2026-09-20T05:54:28Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T06:29:29Z
+
+## Codex review tick: 2026-09-20T06:29:29Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-20T07:04:29Z
+
+## Cron tick: 2026-09-20T07:04:29Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T07:39:30Z
+
+## Codex review tick: 2026-09-20T07:39:30Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-20T08:14:30Z
+
+## Codex review tick: 2026-09-20T08:14:30Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T08:49:31Z
+
+## Codex review tick: 2026-09-20T08:49:31Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-20 (general QA cycle) — a11y focus-ring fix (commit b8316e0) was committed but never deployed or logged
+
+**Found:** per this log's own established first-step (checking `vercel ls`
+deployment age vs. latest commit before hunting new bugs, flagged twice
+already as a recurring gap), found the previous tick (07:39:30Z, exit code
+143 — killed mid-flight) had already committed a real fix, `b8316e0 fix: add
+visible keyboard focus ring to buttons (a11y)`: `.btn` used `outline-none`
+with no `focus-visible` replacement, so tabbing through the deposit flow
+(Continue/Approve/Confirm buttons) gave keyboard-only users zero visible
+focus indicator, confirmed by that cycle via CDP (`activeElement` matched
+`:focus-visible` but computed `boxShadow` was `none`). That cycle died before
+writing its own log entry or deploying — the log's tail had only bare cron/
+codex tick markers with no content, and `vercel ls` showed the newest
+production deployment was already 1h old at the time I checked (older than
+the 07:42:57Z commit), so the fix was sitting undeployed exactly like the two
+prior instances of this same gap.
+
+**Verified pre-deploy:** confirmed via live curl that the fix was genuinely
+missing from production before acting — fetched the live CSS bundle
+(`/_next/static/css/34e1c770cebff8f1.css`) and found no `.btn-primary:
+focus-visible` (etc.) rule with the accent-colored ring box-shadow, matching
+what a stale (pre-fix) deployment would look like.
+
+**Fix:** not a new code change — the fix itself (`app/globals.css`:
+`.btn` gained `focus-visible:ring-4 focus-visible:ring-accent-500/50`,
+matching the existing `.input` focus treatment) was already correct from the
+prior cycle. Ran `npm run build` clean, then redeployed `HEAD` (`b8316e0`) to
+production via the established core-dump workaround (`git archive HEAD` into
+a clean `/tmp` copy plus the existing `.vercel/project.json` link, since the
+128 MB gitignored `core` file in the working directory still trips Vercel
+CLI's 100 MB upload limit).
+
+**Verified live** (not just committed): post-deploy, `curl -D -` on `/` showed
+`age: 0` and a new `etag`. Re-fetched the live CSS bundle and this time found
+`.btn-primary:focus-visible{...--tw-ring-color:rgba(0,240,255,.5)}` (and the
+same for `.btn-secondary`/`.btn-warning`) — the ring-shadow rule is now
+genuinely served in production, not just present in git. Regression-checked
+live: `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+`/?ref=kol_alex`, `/favicon.ico` all `200`; `x-frame-options: DENY` and
+`x-content-type-options: nosniff` still present; `/api/gas` → `200` real
+gwei value; `/api/deposits/check` (no params) → `400` as designed — nothing
+broke from the redeploy. No `lib/*.ts` reconciliation code touched this
+cycle; this was purely a deploy-pipeline catch-up plus retroactive logging of
+a prior cycle's already-correct fix.
+
+**Takeaway:** this is the *third* time a correct fix sat undeployed because
+its tick was killed by the time limit before finishing `vercel --prod` (and
+this time it also skipped writing its own log entry). The "check `vercel ls`
+age vs. latest commit" first step continues to pay off — worth keeping as
+the mandatory first action of every cycle.
