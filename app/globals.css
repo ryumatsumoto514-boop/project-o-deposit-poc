@@ -53,7 +53,7 @@
 
   /* Buttons */
   .btn {
-    @apply relative inline-flex min-h-[46px] items-center justify-center gap-2 overflow-hidden rounded-md px-5 text-sm font-semibold tracking-tight transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98];
+    @apply relative inline-flex min-h-[46px] items-center justify-center gap-2 overflow-hidden rounded-md px-5 text-sm font-semibold tracking-tight transition-all duration-150 outline-none focus-visible:ring-4 focus-visible:ring-accent-500/50 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98];
   }
   /* Tactile "hover glint" — a light sweep across the button on hover,
      pure CSS (background-position transition), no JS/animation library. */
