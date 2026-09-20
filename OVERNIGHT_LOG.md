@@ -4782,3 +4782,72 @@ its tick was killed by the time limit before finishing `vercel --prod` (and
 this time it also skipped writing its own log entry). The "check `vercel ls`
 age vs. latest commit" first step continues to pay off — worth keeping as
 the mandatory first action of every cycle.
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T09:24:31Z
+
+## Codex review tick: 2026-09-20T09:24:31Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T09:59:35Z
+
+## Codex review tick: 2026-09-20T09:59:35Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 1
+
+## Cron tick: 2026-09-20T10:34:36Z
+
+## Codex review tick: 2026-09-20T10:34:36Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-20 (general QA cycle, user-directed) — OG image existed but link previews were broken (no metadataBase)
+
+**Found:** picking up this cycle, found an uncommitted `app/opengraph-image.tsx`
+sitting in the working tree from a prior killed cycle (a branded 1200×630 OG
+image matching `app/icon.tsx`'s LogoMark motif — never committed, no log
+entry). Before just committing it as-is, ran `npm run build` and noticed a
+real warning: `metadataBase property in metadata export is not set for
+resolving social open graph or twitter images, using "http://localhost:3000"`.
+Checked `app/layout.tsx`'s `metadata` export — no `metadataBase` was set, and
+`twitter.card` was `"summary"` (small thumbnail) not `"summary_large_image"`.
+This is a real functional bug, and it directly undercuts priority 4
+(KOL/B2B2C distribution): a KOL's shared link is this app's actual
+distribution channel per SPEC.md, and the whole point of adding an OG image
+was so that link previews on Twitter/Discord/Slack show the brand mark
+instead of a blank card. Without `metadataBase`, Next.js resolves the
+`og:image` meta tag's URL using the localhost fallback in production — so
+every external platform trying to unfurl the link would request
+`http://localhost:3000/opengraph-image`, get nothing, and show no image at
+all. The new OG image file would have shipped completely inert.
+
+**Fix:** added `metadataBase: new URL("https://projecto-blond.vercel.app")`
+to the `metadata` export in `app/layout.tsx`, and changed
+`twitter.card` from `"summary"` to `"summary_large_image"` so the 1200×630
+image actually renders large on X instead of as a small thumbnail. Committed
+this together with the pending `app/opengraph-image.tsx` addition (single
+commit `6bde9c0`) since they're two halves of the same fix — the image file
+alone was not shippable without the metadataBase correction.
+
+**Verified:** `npm run build` clean, and the `metadataBase` warning is gone
+from build output. Ran `next start` locally (port 3312) and curled `/`: the
+`<meta property="og:image">` tag now resolves to a full
+`https://projecto-blond.vercel.app/opengraph-image?...` URL (previously would
+have been `http://localhost:3000/...` even for the production build), and
+`<meta name="twitter:card">` reads `summary_large_image`. Curled
+`/opengraph-image` directly: `200`, `content-type: image/png`, and the first
+8 bytes are the real PNG magic number (`89 50 4E 47 0D 0A 1A 0A`) — not a
+broken/empty response.
+
+**Deployed and verified live** (not just committed): pushed `6bde9c0` to
+GitHub, redeployed via the established `git archive HEAD` → `/tmp` copy
+workaround (the gitignored 128 MB `core` dump in the working directory still
+trips Vercel's 100 MB upload limit). Post-deploy, `curl -D -` on
+`https://projecto-blond.vercel.app/` shows `age: 0` and a new `etag`, and the
+live HTML's `og:image` meta tag now correctly reads
+`https://projecto-blond.vercel.app/opengraph-image?...` (matching the live
+domain, not localhost). Curled the live `/opengraph-image` route directly:
+`200`, `content-type: image/png`, 21155 bytes, valid PNG magic number.
+Regression-checked `/`, `/login`, `/deposit`, `/deposit/confirm`,
+`/deposit/approve`, `/icon` all still `200` live — nothing broken by the
+deploy. No `lib/*.ts` reconciliation code touched.
