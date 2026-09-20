@@ -22,6 +22,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  // Without this, Next.js resolves the OG image route to an absolute URL
+  // using a localhost fallback in production — link unfurls on the KOL's
+  // actual distribution channels (Twitter/Discord/Slack) would silently
+  // show no image at all.
+  metadataBase: new URL("https://projecto-blond.vercel.app"),
   title: "Exchange O — Deposit (PoC)",
   description: "Deposit Reconciliation Engine PoC — Arbitrum Sepolia testnet",
   openGraph: {
@@ -32,7 +37,7 @@ export const metadata: Metadata = {
       "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Exchange O — Testnet deposit demo",
     description:
       "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
