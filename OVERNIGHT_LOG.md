@@ -4851,3 +4851,820 @@ domain, not localhost). Curled the live `/opengraph-image` route directly:
 Regression-checked `/`, `/login`, `/deposit`, `/deposit/confirm`,
 `/deposit/approve`, `/icon` all still `200` live — nothing broken by the
 deploy. No `lib/*.ts` reconciliation code touched.
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-21T23:35:43Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-21T23:42:05Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T00:10:52Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T00:17:14Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T00:46:11Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T00:52:35Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T01:21:35Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T01:28:01Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T01:56:55Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T02:03:01Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T02:32:34Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T02:38:50Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T03:07:29Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T03:14:33Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T03:42:57Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T03:50:00Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T04:18:35Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T04:24:57Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T04:54:02Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T05:00:26Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T05:29:24Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T05:35:48Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T06:04:45Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T06:11:09Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T06:40:24Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T06:46:37Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T07:15:49Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T07:22:04Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T07:51:13Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T07:57:38Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T08:26:36Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T08:33:04Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T09:01:41Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T09:08:45Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T09:36:54Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T09:43:57Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T10:12:15Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T10:19:17Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T10:47:50Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T10:54:12Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T11:23:10Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T11:29:33Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T11:58:24Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T12:04:47Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T12:33:45Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T12:39:53Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T13:09:06Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T13:15:23Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T13:44:16Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T13:51:18Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T14:19:25Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T14:26:27Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T14:54:55Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T15:01:58Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-22T15:30:17Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T15:37:20Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T16:05:11Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T16:12:17Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T16:40:06Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T16:47:34Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T17:15:29Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T17:22:53Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T17:50:16Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T17:58:19Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T18:25:45Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T18:33:48Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T19:00:39Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T19:08:51Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T19:35:46Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T19:44:16Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T20:10:55Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T20:20:01Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T20:46:11Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T20:55:44Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T21:21:34Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T21:30:48Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-22T21:56:38Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T22:06:10Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T22:32:05Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T22:41:23Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T23:07:01Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T23:16:37Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-22T23:42:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-22T23:51:49Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-23T00:17:26Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T00:27:04Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T00:52:12Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T01:02:22Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T01:27:03Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T01:37:21Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-23T02:02:33Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T02:13:04Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T02:37:28Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T02:48:33Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T03:13:13Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T03:23:53Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T03:48:07Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T03:59:18Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T04:23:01Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T04:34:51Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T04:58:35Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T05:10:07Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T05:33:44Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T05:45:57Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T06:08:56Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T06:21:01Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T06:43:40Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T06:56:02Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T07:19:05Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T07:31:55Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T07:54:29Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T08:07:43Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T08:29:18Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T08:43:37Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-23T09:05:01Z
+Claude Code is actively editing right now — skipping this tick to avoid concurrent-edit conflicts.
+
+## Cron tick: 2026-09-23T09:18:43Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T09:35:31Z
+Claude Code is actively editing right now — skipping this tick to avoid concurrent-edit conflicts.
+
+## Cron tick: 2026-09-23T09:53:59Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-23T10:06:23Z
+Claude Code is actively editing right now — skipping this tick to avoid concurrent-edit conflicts.
+
+## Cron tick: 2026-09-23T10:29:27Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T10:37:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T11:04:27Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T11:13:08Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T11:39:49Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T11:47:57Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T12:15:12Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T12:23:30Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T12:50:19Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T12:58:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T13:25:59Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T13:33:35Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T14:01:13Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T14:09:14Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T14:36:28Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T14:44:39Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T15:12:00Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T15:20:04Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T15:47:47Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-23T15:55:28Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T16:23:01Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-23T16:31:05Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T16:58:32Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T17:06:08Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T17:33:52Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T17:41:32Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T18:09:14Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T18:16:54Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T18:44:38Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T18:51:55Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T19:19:35Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T19:26:56Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T19:54:30Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T20:02:32Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T20:29:52Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T20:37:56Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T21:05:42Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T21:12:54Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T21:41:37Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T21:48:09Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T22:16:49Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T22:23:17Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T22:51:57Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T22:58:21Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-23T23:27:09Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-23T23:33:40Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T00:02:20Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T00:09:24Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T00:37:54Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T00:44:25Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T01:12:55Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-09-24T01:19:58Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T01:47:59Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T01:55:02Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T02:23:02Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T02:30:04Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T02:58:47Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T03:05:18Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T03:34:01Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T03:40:33Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T04:09:17Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T04:15:49Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T04:44:42Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T04:51:11Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T05:19:52Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T05:26:30Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T05:55:35Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T06:01:49Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T06:30:46Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T06:36:49Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T07:06:19Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T07:12:32Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T07:41:19Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T07:47:49Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T08:16:52Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T08:23:01Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T08:52:07Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T08:58:10Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T09:27:25Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T09:33:47Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T10:03:30Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T10:08:56Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T10:38:47Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T10:44:10Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T11:13:54Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T11:19:23Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T11:48:54Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T11:54:56Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T12:24:26Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T12:29:56Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T12:59:26Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T13:05:27Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T13:34:53Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T13:40:11Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T14:10:29Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T14:15:32Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T14:45:49Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T14:50:51Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T15:21:34Z
+
+## Codex review tick: 2026-09-24T15:25:54Z
+Claude Code is actively editing right now — skipping this tick to avoid concurrent-edit conflicts.
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-24T15:56:42Z
+
+## Codex review tick: 2026-09-24T15:56:43Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-24T16:31:47Z
+
+## Codex review tick: 2026-09-24T16:31:48Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T17:07:08Z
+
+## Cron tick: 2026-09-24T17:07:09Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T17:42:37Z
+
+## Cron tick: 2026-09-24T17:42:37Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 0
+
+## Cron tick: 2026-09-24T18:17:32Z
+
+## Codex review tick: 2026-09-24T18:17:33Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-24T18:52:48Z
+
+## Codex review tick: 2026-09-24T18:52:48Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+
+## Cron tick: 2026-09-24T19:27:51Z
+## Codex review tick: 2026-09-24T19:27:51Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-24T20:03:07Z
+
+## Codex review tick: 2026-09-24T20:03:08Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 143
+
+## Cron tick: 2026-09-24T20:38:53Z
+
+## Codex review tick: 2026-09-24T20:38:53Z
+Codex review tick finished, exit code 1
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-24T21:13:40Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T21:14:44Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T21:49:19Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T21:50:20Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T22:24:58Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T22:26:02Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T23:00:06Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T23:01:11Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-24T23:35:13Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-24T23:36:17Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-25T00:10:21Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T00:11:28Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T00:45:15Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T00:47:16Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-25T01:20:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T01:22:23Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T01:55:20Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T01:57:21Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T02:30:10Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T02:33:21Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-25T03:04:58Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T03:08:59Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T03:40:30Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-09-25T03:44:45Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-09-25T04:15:38Z
+
+### [Codex review] 2026-09-25 — Correct impossible MockUSDC self-funding instructions
+
+Found one documentation issue after reading OVERNIGHT_BRIEF.md, SPEC.md,
+recent log entries and prior fixes, README.md and testnet-evidence.md.
+README's real-flow step 2 said to "mint yourself" tokens using transfer(),
+even though Setup generates a fresh relayer with no token balance.
+Read scripts/MockUSDC.sol, its ABI, scripts/setup-test-user.js and
+lib/chain.ts: supply is assigned only in the constructor; there is no
+public mint function, and the setup script transfers existing holdings.
+Earlier log mentions repeated the mint wording but did not fix this.
+
+Changed README step 2 to require a transfer from an existing holder,
+explain that a new relayer has no MockUSDC, and give the correct base-unit
+example (100 mUSDC = 100000000). No application or lib code changed.
+Verified the ABI contains transfer and no mint function, and checked the
+script actually calls transfer with the original holder as signer.
+
+Live checks used curl -fsSL against https://projecto-blond.vercel.app/,
+/login, /deposit and /deposit/confirm. Parsed raw home/login HTML to check
+language, viewport, descriptions, absolute OG/Twitter image URLs, icon
+links and login button markup. Also read globals.css and tailwind.config.ts.
+Live duplicate-preflight GETs with amount=-1 and wallet=bad each returned
+HTTP 400 INVALID_REQUEST, matching existing fixes. These checks did not
+execute transactions or establish current wallet balances.
+
+This is a repository documentation correction, not a change served by the
+Next.js app: no build or Vercel redeploy is needed, and no claim is made that
+curl of the app verifies README text. Existing uncommitted status-page
+changes were left untouched. The accumulated existing log entries are
+preserved with this append.

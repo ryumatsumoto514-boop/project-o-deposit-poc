@@ -86,12 +86,16 @@ Open http://localhost:3000.
    Sepolia ETH.
 2. Get a MetaMask (or other injected-wallet) account with:
    - A small amount of Arbitrum Sepolia ETH (gas for the `approve()` tx).
-   - Some MockUSDC on Arbitrum Sepolia — since Circle's official faucet
-     requires an API key we don't have (see the table above), mint yourself
-     some by calling `transfer()` from the relayer address (which holds the
-     initial MockUSDC supply) — see `scripts/setup-test-user.js` for the
-     pattern, or use any block explorer's "Write Contract" tab against
-     `0x950A2C07CD9d6489691625272a8f9f4df4D0342C`.
+   - Some MockUSDC on Arbitrum Sepolia at
+     `0x950A2C07CD9d6489691625272a8f9f4df4D0342C`. This contract has no public
+     mint function: its entire supply was assigned to the deployer at
+     deployment. Ask an existing token holder to transfer some to your
+     test wallet. Generating a new relayer key in Setup does not give that
+     wallet any MockUSDC. If you control a funded token holder, sign
+     `transfer(yourTestWallet, amountInBaseUnits)` with that holder's wallet
+     (100 mUSDC = 100000000 base units). `scripts/setup-test-user.js`
+     demonstrates this transfer using the original relayer's existing
+     balance; it does not mint tokens or act as a public faucet.
 3. Add Arbitrum Sepolia to MetaMask if it isn't already there (chain id
    `421614`).
 4. Open the app, click through: landing → sign in (mock) → connect wallet →
