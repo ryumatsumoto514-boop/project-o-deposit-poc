@@ -54,8 +54,10 @@ This wallet:
 - Holds **no real value**, ever. Its private key lives in `.env.local`
   (gitignored) and is never committed.
 - Needs a trivial amount of Arbitrum Sepolia ETH to pay gas for the
-  `transferFrom` calls it submits. It is currently **unfunded** — see
-  "Running the real on-chain flow" below.
+  `transferFrom` calls it submits. A newly generated relayer starts unfunded;
+  fund it as described in "Running the real on-chain flow" below. The
+  existing testnet relayer used for the recorded evidence has been funded,
+  but its remaining ETH balance must be checked before running transactions.
 
 ## Setup
 

@@ -5668,3 +5668,166 @@ Next.js app: no build or Vercel redeploy is needed, and no claim is made that
 curl of the app verifies README text. Existing uncommitted status-page
 changes were left untouched. The accumulated existing log entries are
 preserved with this append.
+
+## Cron tick: 2026-09-25T04:19:56Z
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T04:51:21Z
+
+## Cron tick: 2026-09-25T04:55:24Z
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T05:26:47Z
+
+### [Codex review] 2026-09-25 — Make the sign-in alternative separator readable
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the log tail and earlier login/contrast
+entries. Fetched live /login and /deposit using curl -fsSL. Parsed /login's
+raw HTML and fetched its linked CSS: the visible "or" between simulated
+sign-in and wallet sign-in uses text-slate-600 (rgb 71 85 105). Read
+app/login/page.tsx, app/globals.css and tailwind.config.ts to confirm this
+is active text, not a disabled control. Its contrast against the #0a0c10
+base background is 2.58:1; the decorative cyan glow does not improve it.
+Earlier contrast fixes did not cover this separator.
+
+Changed only this separator to the existing text-slate-400 token (rgb
+148 163 184), giving 7.63:1 against the base background. This preserves
+the existing layout and wording. No reconciliation logic changed.
+Validation: fetched production HTML/CSS before the edit and calculated
+contrast from their actual RGB values. Build/deploy outcome follows below.
+The pre-existing status-page edit is excluded from this review commit.
+
+## Cron tick: 2026-09-25T05:31:11Z
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T06:02:16Z
+
+### [Codex review] 2026-09-25 — Independent live markup/API review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md and
+searched earlier review entries to avoid repeating known fixes. No new,
+well-supported issue worth changing emerged from this bounded review.
+
+Fetched https://projecto-blond.vercel.app/, /login, /deposit and
+/deposit/confirm with curl -fsSL, saved the raw HTML in /tmp/codex-*.html,
+and parsed its tags with Python HTMLParser. Home/login each have one main
+and h1; all four responses have lang=en, viewport, description, absolute
+production OG/Twitter image URLs, and icon links. Social descriptions
+explicitly disclose simulated stages. Deposit/confirm return the initial
+client-gated shell, so these curl checks do not validate hydrated forms.
+No canonical is emitted, but I did not treat optional SEO polish on this
+transactional testnet demo as a demonstrated product bug.
+
+Read app/layout.tsx, app/login/page.tsx, app/components/AppHeader.tsx,
+app/components/FlowChrome.tsx, app/globals.css and tailwind.config.ts.
+Checked shared surface/radius tokens, focus-visible styles, reduced-motion
+rules, wallet indicator naming, connection-error messaging and simulation
+copy. The login separator contrast issue is already logged and its edit
+already exists in the worktree; it is not a fresh finding.
+
+Read app/api/deposits/route.ts, app/api/deposits/check/route.ts,
+app/api/gas/route.ts and the duplicate comparison in lib/store.ts (read
+only). Live GET /api/deposits/check with wallet=0x1111111111111111111111111111111111111111
+and amount=1e3 returned HTTP 400 INVALID_REQUEST; POST /api/deposits with
+JSON null returned HTTP 400 and the JSON-object error. Source comparison
+normalizes wallet casing and compares numeric amounts. No valid deposit
+was created and no transaction was sent.
+
+Only appended this log entry. Left pre-existing login/status-page edits
+untouched. No application change, build, commit, push or deployment was
+performed by this review. This is a limited inspection, not a claim that
+the entire product is defect-free.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-25T06:06:33Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T06:37:43Z
+
+### [Codex review] 2026-09-25 — Remove false funds-safety claim after an unknown approval error
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, recent log entries and searched prior
+approval/error fixes. Read app/deposit/approve/page.tsx and lib/failures.ts:
+the generic catch spans approval submission, record creation, receipt
+waiting and the pull request. It used UNKNOWN copy claiming funds had not
+left unless a transaction hash was shown below, although the error screen
+renders no transaction hash. A failed response after submission cannot
+establish that no transaction occurred. Earlier reverted-approval and
+timeout fixes did not cover this generic catch.
+
+Fetched /deposit/approve with curl -fsS and then its actual referenced
+/_next/static/chunks/app/deposit/approve/page-3930803afa9e4dcc.js; confirmed
+the misleading sentence is present in the production bundle. Changed only
+the approval page's generic catch copy to acknowledge an unknown outcome
+and direct users to wallet activity/existing deposit status before retrying.
+No lib code changed. Pre-existing login/status edits were temporarily
+stashed to keep this code change isolated and will be restored afterward.
+
+Additional read-only live checks: /nonexistent-review-route returns HTTP
+404, a Page not found heading and robots=noindex; duplicate preflight with
+a 78-digit amount returns 400 INVALID_REQUEST (1000 USDC cap). /api/gas
+returned numeric gwei. Read PATCH/pull/reconcile routes and flow hydration/
+confirmation code. No deposit or transaction was created during review.
+Build and deployment verification results follow below.
+
+## Cron tick: 2026-09-25T06:42:05Z
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T07:13:15Z
+
+### [Codex review] 2026-09-25 — Stop repeated referral state updates
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and recent/prior log entries. Fresh inspection
+of app/components/CaptureKolRef.tsx and app/flow-context.tsx found a feedback
+loop: the referral effect depends on setKolRef, whose identity changes each
+provider render, and setKolRef always allocates new state even for the same
+referral. A nonempty ?ref= therefore keeps scheduling provider updates.
+Prior deep-link fixes moved the effect but did not address this dependency.
+Changed only setKolRef to return the existing state when the referral matches,
+letting React bail out while still accepting changed referral codes.
+No lib files changed. Existing login, approval and status edits were stashed
+for isolation and must be restored after deployment.
+
+Also fetched live /login and /deposit/confirm via curl -fsSL and inspected
+API creation/preflight/PATCH routes, globals.css and tailwind.config.ts.
+Live preflight GETs with amount=0.0000001 and amount=Infinity returned 400
+INVALID_REQUEST. No deposit or transaction was created.
+Build/deployment results will be appended once available; a browser probe
+against the shared CDP instance has not yet returned and is not evidence
+of a successful before/after verification.
+
+## Cron tick: 2026-09-25T07:17:29Z
+Codex review tick finished, exit code 0
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T07:48:48Z
+
+### [Codex review] 2026-09-25 — Correct stale relayer funding claim
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log first; searched prior
+funding entries to avoid repeating the MockUSDC mint/setup correction.
+README.md's "The relayer wallet" section still said it was "currently
+unfunded." Checked the evidence relayer address against a live RPC:
+POST https://sepolia-rollup.arbitrum.io/rpc via curl, eth_getBalance for
+0xCEfAe626B7CFfC6Ab72f7df4F9609018Ee5a09a6 at latest returned
+0x94a0c7e8356ac0 (41835077007928000 wei). This contradicts that blanket claim.
+
+Changed only README wording to distinguish an unfunded newly generated
+wallet from the previously funded evidence relayer and instruct readers
+to check its remaining balance. Avoided inserting another aging balance
+claim. No application or lib code changed.
+
+Also fetched production /login HTML and /api/gas via curl; gas returned
+HTTP 200 with gwei=0.131924, age=0 and MISS, plus frame/content-type
+security headers. Read globals.css, tailwind.config.ts, not-found.tsx,
+WalletRoles.tsx, deposit GET/PATCH and preflight routes, README.md and
+testnet-evidence.md. These checks do not validate wallet UI execution or
+all historical transaction receipts.
+
+Verification for this documentation fix is the live RPC balance and
+README diff; the Next.js deployment does not serve README, so no build
+or redeploy is needed. Existing application edits and stash left intact.
