@@ -161,9 +161,11 @@ mocked Hyperliquid balance agree.
   returned `NOT_FOUND` a few minutes later with zero redeploys in between —
   Vercel recycled the serverless instance holding it in memory, and `/tmp`
   isn't shared across instances, so the record was gone. The status page
-  now shows a dedicated, reassuring "we lost track of this deposit" screen
-  for this case (any on-chain funds are never at risk, only the app's
-  local tracking of them) rather than a raw 404. A real deployment needs
+  shows a dedicated missing-record recovery screen rather than a raw 404.
+  A missing record does not establish whether a transfer succeeded or failed;
+  it also prevents this instance from detecting that deposit as a duplicate.
+  Check wallet transaction history and Arbiscan Sepolia before sending again.
+  A real deployment needs
   an external store (Vercel KV / Postgres / etc.) — out of scope for an
   overnight PoC with no database credentials available.
   **The same root cause also weakens duplicate-deposit blocking, not just

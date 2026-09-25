@@ -6720,3 +6720,42 @@ These live checks do not verify repository-only documentation changes.
 No application code change, build or redeployment was needed. Preserved
 all four pre-existing application edits; commit includes only these docs
 and the log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-25T22:00:45Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T22:29:29Z
+
+### [Codex review] 2026-09-25 — README retained the missing-record funds-safety guarantee
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md. Found
+one documentation drift issue in README.md's Known limitations paragraph:
+it still claimed that on-chain funds were "never at risk" when a deposit
+record disappeared. submission/README.md repeated the same claim. The
+2026-09-18 review had already corrected this claim in the status UI, but
+these documentation copies retained it; this change fixes the missed docs,
+not the already-fixed UI. Read lib/store.ts and the record lookup route
+without editing them: missing temporary records establish neither transfer
+outcome nor effective duplicate protection for that record.
+
+Replaced the guarantee in both README copies with the unknown-outcome and
+duplicate-detection limitations, plus instructions to check wallet history
+and Arbiscan Sepolia before resending. Both copies match byte-for-byte and
+git diff --check passes.
+
+Live checks: curl -sS --max-time 20 fetched / and /login from
+https://projecto-blond.vercel.app, saving raw HTML/headers to
+/tmp/second-opinion-{home,login}.*. Python HTMLParser found one main landmark,
+viewport/testnet description/absolute OG image on both, and no images lacking
+alt attributes. GET /api/deposits/codex-second-opinion-missing returned
+HTTP 404 with {"error":"NOT_FOUND"}; this demonstrates the missing-record
+response, not any transaction outcome. GET /api/deposits/check with the
+evidence relayer wallet and amount=0001.000000 returned {"conflict":null};
+no records or transactions were created. Also read globals.css,
+tailwind.config.ts, layout.tsx, AppHeader and PipelineStepper.
+
+This is a repository-only documentation correction; curl cannot verify the
+changed README in the deployed app. No application change, build or redeploy
+needed. Preserved all four pre-existing application edits; staging only the
+two README files and this log for the documentation commit.
