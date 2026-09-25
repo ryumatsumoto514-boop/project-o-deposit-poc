@@ -45,6 +45,21 @@ testnet-only and hold no real value.
 | Deployer | `0xCEfAe626B7CFfC6Ab72f7df4F9609018Ee5a09a6` (relayer wallet) |
 | Reproduce | `node scripts/deploy-mock-usdc.js` |
 
+Before running the deployment reproduction command on a fresh checkout,
+install the Solidity compiler used for this evidence and create the output
+directory. `npm install` alone does not install `solc`: the deployment script
+requires it, but it is not an application dependency.
+
+```bash
+npm install --no-save --package-lock=false solc@0.8.24
+mkdir -p .data
+node scripts/deploy-mock-usdc.js
+```
+
+This also requires the funded testnet relayer and `.env.local` described in
+README.md. It deploys a new contract; it does not recreate the historical
+address or transaction hash recorded above.
+
 ## 2. Funding the test user wallet
 
 A fresh test-user wallet was generated and funded with gas + mock USDC by

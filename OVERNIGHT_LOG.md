@@ -6688,3 +6688,35 @@ git diff --check passed. These repository-only documentation corrections do
 not appear in the deployed app: curl verifies live responses, not the changed
 README. No application/core code change, build or redeployment needed. Preserved
 the four pre-existing application edits and excluded them from this docs commit.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-09-25T21:25:00Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-09-25T21:54:43Z
+
+### [Codex review] 2026-09-25 — Missing compiler prerequisite in evidence reproduction
+
+Read OVERNIGHT_BRIEF.md, recent OVERNIGHT_LOG.md entries and SPEC.md first.
+Found one fresh-checkout documentation gap by comparing the reproduction
+command in testnet-evidence.md with scripts/deploy-mock-usdc.js and
+package.json/package-lock.json: the script requires solc, but neither
+manifest nor lockfile declares it. The local environment has solc 0.8.24,
+which masks that missing prerequisite. Added explicit installation of
+solc@0.8.24 (without changing app dependencies/lockfile), creation of the
+.data output directory, and funded-relayer prerequisites to both the root
+and submission evidence documents. Clarified that reproduction deploys a
+new contract rather than recreating historical addresses/hashes.
+
+Verified the documented compiler version with require('solc').version()
+and compiled scripts/MockUSDC.sol using the deployment script's optimizer
+and output settings: nonempty bytecode, no fatal compiler errors. No
+transaction was submitted. Both evidence copies match byte-for-byte;
+git diff --check passed. Also read README.md, globals.css, tailwind.config.ts,
+layout.tsx and gas route. Production curl -sS --max-time 20 checks fetched
+/ (HTML saved at /tmp/review-home.html), /api/gas (200, gwei 0.166784,
+cache MISS), and /deposit/not-a-screen (404 with custom recovery HTML).
+These live checks do not verify repository-only documentation changes.
+No application code change, build or redeployment was needed. Preserved
+all four pre-existing application edits; commit includes only these docs
+and the log.
