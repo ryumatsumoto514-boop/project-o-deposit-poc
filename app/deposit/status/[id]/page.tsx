@@ -158,6 +158,12 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   const [notFound, setNotFound] = useState(false);
   const [pollFailed, setPollFailed] = useState(false);
   const pollDelay = useRef(3000);
+  // The deposit store is a best-effort in-memory Map per serverless
+  // instance (see lib/store.ts) — a single 404 can be a cold instance that
+  // hasn't seen the record yet, not proof the record is gone. Only give up
+  // after several consecutive misses, same as the existing retry-on-failure
+  // behavior below for network errors.
+  const notFoundStreak = useRef(0);
 
   useDocumentTitle(
     notFound ? "Not found" : deposit ? STATE_COPY[deposit.status].label : "Status"
@@ -173,13 +179,22 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           method: "POST",
         });
         if (res.status === 404) {
-          if (!cancelled) setNotFound(true);
+          notFoundStreak.current += 1;
+          if (notFoundStreak.current >= 3) {
+            if (!cancelled) setNotFound(true);
+            return;
+          }
+          if (!cancelled) {
+            setPollFailed(true);
+            timer = setTimeout(tick, pollDelay.current);
+          }
           return;
         }
         // A failed poll must not replace the last known deposit with an error body.
         if (!res.ok) throw new Error("Deposit status request failed");
         const body = await res.json();
         if (cancelled) return;
+        notFoundStreak.current = 0;
         setDeposit(body.deposit);
         setPollFailed(false);
 
@@ -223,8 +238,8 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     <div role="alert" className="banner-amber">
       <strong>Cannot refresh deposit status.</strong>{" "}
       {deposit ? "The status below is the last successful check. " : "No status has been retrieved yet. "}
-      Retrying automatically while this page is open. Check your connection and
-      do not send another deposit while the outcome is unresolved.
+      Retrying automatically while this page is open. Do not send another
+      deposit while the outcome is unresolved.
     </div>
   ) : null;
 

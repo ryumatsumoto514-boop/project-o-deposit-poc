@@ -76,12 +76,12 @@ export function EngineVisual() {
         {NODES.map((node) => (
           <div key={node.key} className="flex flex-col gap-0.5">
             <p className="text-[11px] font-medium leading-tight text-slate-200">{node.label}</p>
-            <p className="font-mono text-[10px] leading-tight text-slate-500">{node.sub}</p>
+            <p className="font-mono text-[10px] leading-tight text-slate-400">{node.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-between border-t border-white/[0.15] pt-4 font-mono text-[11px] text-slate-500">
+      <div className="flex items-center justify-between border-t border-white/[0.15] pt-4 font-mono text-[11px] text-slate-400">
         <span>
           THROUGHPUT <span className="text-accent-300">~1 dep / 8s</span>
         </span>

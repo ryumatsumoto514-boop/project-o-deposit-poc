@@ -95,6 +95,10 @@ export default function DepositApprovePage() {
 
       setStep("awaiting-signature");
       const approveTxHash = await writeContract(wagmiConfig, {
+        // The wallet may change while the duplicate check is in flight.
+        // Sign for the same account/network that the deposit record uses.
+        account: address,
+        chainId: CHAIN.id,
         address: USDC_ADDRESS,
         abi: ERC20_ABI,
         functionName: "approve",
@@ -128,6 +132,7 @@ export default function DepositApprovePage() {
 
       setStep("confirming-approval");
       const receipt = await waitForTransactionReceipt(wagmiConfig, {
+        chainId: CHAIN.id,
         hash: approveTxHash,
       });
       if (receipt.status !== "success") {
@@ -173,7 +178,10 @@ export default function DepositApprovePage() {
           detail: "No transaction was sent and no funds moved. You can try again whenever you're ready.",
         });
       } else {
-        setErrorMessage(FAILURE_COPY.UNKNOWN);
+        setErrorMessage({
+          title: "We couldn't confirm the outcome",
+          detail: "An approval or deposit transaction may already have been sent. Check your wallet activity and any existing deposit status before trying again. A missing transaction hash on this screen does not mean no transaction occurred.",
+        });
       }
       if (createdDepositId) setOrphanedDepositId(createdDepositId);
       setStep("error");

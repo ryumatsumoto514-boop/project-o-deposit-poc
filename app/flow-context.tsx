@@ -78,7 +78,8 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
   const value: FlowContextValue = {
     ...state,
     hydrated,
-    setKolRef: (kolRef) => setState((s) => ({ ...s, kolRef })),
+    setKolRef: (kolRef) =>
+      setState((s) => (s.kolRef === kolRef ? s : { ...s, kolRef })),
     setMockIdentity: (mockIdentity) => setState((s) => ({ ...s, mockIdentity })),
     // Changing the amount re-requires address confirmation — don't let a
     // confirmation from a previous deposit amount silently carry over.

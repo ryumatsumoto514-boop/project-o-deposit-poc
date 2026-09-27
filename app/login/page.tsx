@@ -61,7 +61,7 @@ export default function LoginPage() {
             Continue with Email
             <span className="ml-auto text-xs font-normal text-slate-400">mock</span>
           </button>
-          <div className="flex items-center gap-3 text-xs text-slate-600">
+          <div className="flex items-center gap-3 text-xs text-slate-400">
             <div className="h-px flex-1 bg-white/10" />
             or
             <div className="h-px flex-1 bg-white/10" />
