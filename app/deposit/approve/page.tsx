@@ -34,9 +34,10 @@ export default function DepositApprovePage() {
   const router = useRouter();
   const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode, hydrated } =
     useFlow();
-  const { address, chainId } = useAccount();
+  const { address, chainId, status: accountStatus } = useAccount();
   const { data: ethBalance } = useBalance({ address, chainId: CHAIN.id });
   const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
+  const walletSettling = accountStatus === "connecting" || accountStatus === "reconnecting";
 
   const [step, setStep] = useState<Step>("form");
   const [errorMessage, setErrorMessage] = useState<{ title: string; detail: string } | null>(null);
@@ -44,15 +45,15 @@ export default function DepositApprovePage() {
   const [orphanedDepositId, setOrphanedDepositId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || walletSettling) return;
     if (!mockIdentity || !draftAmount || !address) {
       router.replace("/deposit");
     } else if (!addressConfirmed) {
       router.replace("/deposit/confirm");
     }
-  }, [hydrated, mockIdentity, draftAmount, address, addressConfirmed, router]);
+  }, [hydrated, walletSettling, mockIdentity, draftAmount, address, addressConfirmed, router]);
 
-  if (!hydrated || !mockIdentity || !draftAmount || !address || !addressConfirmed) return null;
+  if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address || !addressConfirmed) return null;
 
   const lowGas = ethBalance !== undefined && ethBalance.value < MIN_GAS_WEI;
   const wrongNetwork = chainId !== undefined && chainId !== CHAIN.id;

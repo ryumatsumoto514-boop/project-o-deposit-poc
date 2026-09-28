@@ -16,14 +16,16 @@ export default function DepositConfirmPage() {
   useDocumentTitle("Confirm address");
   const router = useRouter();
   const { mockIdentity, draftAmount, setAddressConfirmed, hydrated } = useFlow();
-  const { address } = useAccount();
+  const { address, status: accountStatus } = useAccount();
   const [confirmed, setConfirmed] = useState(false);
+  const walletSettling = accountStatus === "connecting" || accountStatus === "reconnecting";
 
   useEffect(() => {
-    if (hydrated && (!mockIdentity || !draftAmount || !address)) router.replace("/deposit");
-  }, [hydrated, mockIdentity, draftAmount, address, router]);
+    if (!hydrated || walletSettling) return;
+    if (!mockIdentity || !draftAmount || !address) router.replace("/deposit");
+  }, [hydrated, walletSettling, mockIdentity, draftAmount, address, router]);
 
-  if (!hydrated || !mockIdentity || !draftAmount || !address) return null;
+  if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address) return null;
 
   return (
     <main className="page-shell">
