@@ -394,8 +394,10 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
       <div className="banner-accent">
         <strong>Mocked for this PoC:</strong> the Hyperliquid-side balance
-        check above is simulated (no real Hyperliquid testnet access). The
-        Arbitrum Sepolia transaction below is real.
+        check above is simulated (no real Hyperliquid testnet access).{" "}
+        {deposit.txHash || deposit.approveTxHash
+          ? "The Arbitrum Sepolia transaction below is real."
+          : "No Arbitrum Sepolia transaction has been broadcast yet."}
       </div>
 
       {deposit.approveTxHash && (
