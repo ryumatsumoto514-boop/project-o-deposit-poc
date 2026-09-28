@@ -144,9 +144,17 @@ Sepolia transactions.
 ```
 SIGNED → CONFIRMED_ONCHAIN → BRIDGING → CREDITED
               │                  │
-              └──────────────────┴──→ AMBIGUOUS (flagged, not auto-retried)
-Any step can also fall into STALLED_NO_GAS or STALLED_TIMEOUT.
+              └──────────────────┴──→ AMBIGUOUS
 ```
+
+`CREDITED` is terminal: it cannot move into a stalled state. The transition
+policy allows `STALLED_NO_GAS` from `SIGNED`, and `STALLED_TIMEOUT` from
+`SIGNED`, `CONFIRMED_ONCHAIN`, or `BRIDGING`.
+
+`AMBIGUOUS` flags a confirmed transfer whose simulated destination balance
+has not agreed. While the status page remains open, reconciliation keeps
+checking that balance and can resolve the record to `CREDITED`; it does
+not resend the confirmed transfer. The slow mock case clears after 90 seconds.
 
 `CREDITED` is the only true "done" state, and is only reached when the
 engine has independently verified both the real on-chain receipt and the

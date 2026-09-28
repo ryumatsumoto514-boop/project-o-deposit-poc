@@ -10195,3 +10195,26 @@ source for the updated conditional copy; the old unconditional "transaction
 below is real" string is gone from the shipped bundle and the new
 conditional text is present.
 
+
+### [Codex review] 2026-09-28 — Corrected README state-machine recovery description
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md and
+historical review headings. Found one documentation mismatch in README.md
+and submission/README.md: the diagram said any step could enter either
+stalled state (incorrectly including terminal CREDITED), and called
+AMBIGUOUS "not auto-retried" without explaining continued balance checks.
+Verified against lib/stateMachine.ts, lib/reconcile.ts, lib/hyperliquidMock.ts
+and the status page's polling code, all read-only. Both README copies now
+list the transition policy's actual stall predecessors, identify CREDITED
+as terminal, and distinguish continued balance reconciliation from resending
+a confirmed transfer, including the 90-second slow mock recovery.
+
+Fetched production /login and /deposit/status/codex-doc-review-missing using
+curl -sS --max-time 20; parsed the raw HTML with Python HTMLParser. Login
+has testnet/mock disclosures and production-origin social images. Status
+returned HTTP 200 with a loading shell, not a verified deposit result.
+This documentation correction is not rendered by the app, so no live UI
+change or live recovery verification is claimed. Checked matching README
+copies and git diff --check. No application code changed; no build or
+redeployment was needed. Existing AppHeader.tsx edits, scratch files and
+prior uncommitted log entries were preserved.
