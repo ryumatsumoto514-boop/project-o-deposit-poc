@@ -321,12 +321,14 @@ export default function DepositApprovePage() {
 
       <button
         onClick={handleApproveAndDeposit}
-        disabled={isBusy || wrongNetwork}
+        disabled={isBusy || wrongNetwork || lowGas}
         className="btn-primary w-fit"
       >
         {isBusy && <SpinnerIcon className="h-4 w-4" />}
         {step === "form" || step === "error"
-          ? "Approve & deposit"
+          ? lowGas
+            ? "Add ETH to continue"
+            : "Approve & deposit"
           : step === "checking"
           ? "Checking for existing deposits…"
           : step === "awaiting-signature"
