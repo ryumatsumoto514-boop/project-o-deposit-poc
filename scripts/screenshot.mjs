@@ -8,11 +8,15 @@
 
 const CDP = "http://127.0.0.1:9333";
 const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
-const [, , BASE_URL, OUT_DIR] = process.argv;
-if (isMain && (!BASE_URL || !OUT_DIR)) {
+const [, , argBaseUrl, argOutDir] = process.argv;
+if (isMain && !argBaseUrl) {
   console.error("usage: node scripts/screenshot.mjs <baseUrl> <outDir>");
   process.exit(1);
 }
+const BASE_URL = argBaseUrl;
+// Scripts that only `import { shot }` (no CLI args) never set this — default
+// so their screenshots don't silently fail with ENOENT: 'undefined/x.png'.
+const OUT_DIR = argOutDir || "shots-out";
 
 async function newTab() {
   const res = await fetch(`${CDP}/json/new`, { method: "PUT" });

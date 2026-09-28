@@ -111,7 +111,7 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
                     ? exceptionStyle!.ring
                     : active
                     ? "pulse-ring bg-accent-500 text-[#03181c]"
-                    : "border border-white/15 bg-white/[0.03] text-slate-600"
+                    : "border border-white/15 bg-white/[0.03] text-slate-400"
                 }`}
               >
                 {done ? (
@@ -135,13 +135,13 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
             <div className="pb-6 pt-0.5">
               <p
                 className={`text-sm font-medium transition-colors duration-300 ${
-                  stuck ? exceptionStyle!.text : active ? "text-accent-300" : done ? "text-emerald-300" : "text-slate-600"
+                  stuck ? exceptionStyle!.text : active ? "text-accent-300" : done ? "text-emerald-300" : "text-slate-400"
                 }`}
               >
                 {stuck ? STATE_COPY[status].label : STATE_COPY[s].label}
               </p>
               {(active || stuck) && (
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-slate-400">
                   {stuck ? STATE_COPY[status].description : STATE_COPY[s].description}
                 </p>
               )}
@@ -283,7 +283,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       <main className="page-shell">
         {statusAnnouncement}
         {connectionWarning}
-        <p className="flex items-center gap-2 text-sm text-slate-500">
+        <p className="flex items-center gap-2 text-sm text-slate-400">
           <SpinnerIcon className="h-4 w-4" /> Loading deposit status…
         </p>
       </main>
@@ -431,7 +431,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       )}
 
       {ACTIVE_STATUSES.includes(deposit.status) && (
-        <p className="flex items-center gap-1.5 text-xs text-slate-500">
+        <p className="flex items-center gap-1.5 text-xs text-slate-400">
           <SpinnerIcon className="h-3 w-3" /> Checking every few seconds…
         </p>
       )}

@@ -48,9 +48,9 @@ export default function Home() {
               <span className="led-dot led-live bg-accent-400 text-accent-400" />
               ARBITRUM SEPOLIA &rarr; HYPERLIQUID
             </span>
-            <span className="hidden text-slate-600 sm:inline">|</span>
+            <span className="hidden text-slate-400 sm:inline">|</span>
             <span className="whitespace-nowrap">
-              BRIDGING WINDOW: ~15&ndash;30s <span className="text-slate-600">(simulated)</span>
+              BRIDGING WINDOW: ~15&ndash;30s <span className="text-slate-400">(simulated)</span>
             </span>
           </div>
 
@@ -63,7 +63,7 @@ export default function Home() {
             <Link href="/login" className="btn-primary w-fit">
               Get started
             </Link>
-            <span className="text-xs text-slate-500">No real funds involved</span>
+            <span className="text-xs text-slate-400">No real funds involved</span>
           </div>
         </div>
 
@@ -76,14 +76,14 @@ export default function Home() {
       <section className="fade-up flex flex-col gap-4" style={{ animationDelay: "140ms" }}>
         <div className="flex items-baseline justify-between gap-3">
           <h2 className="h1">Live pipeline</h2>
-          <span className="label-caps hidden text-slate-600 sm:inline">
+          <span className="label-caps hidden text-slate-400 sm:inline">
             Real-time on the status tracker
           </span>
         </div>
         <PipelineStepper />
       </section>
 
-      <p className="text-center text-xs text-slate-600">
+      <p className="text-center text-xs text-slate-400">
         Arbitrum Sepolia testnet · not real funds
       </p>
     </main>
