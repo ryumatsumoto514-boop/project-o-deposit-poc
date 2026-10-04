@@ -44,7 +44,7 @@ export default function DepositApprovePage() {
     useFlow();
   const { address, chainId, status: accountStatus } = useAccount();
   const { data: ethBalance } = useBalance({ address, chainId: CHAIN.id });
-  const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
+  const { switchChain, isPending: isSwitchingChain, error: switchChainError } = useSwitchChain();
   const walletSettling = accountStatus === "connecting" || accountStatus === "reconnecting";
 
   const [step, setStep] = useState<Step>("form");
@@ -260,6 +260,13 @@ export default function DepositApprovePage() {
           >
             {isSwitchingChain ? "Switching…" : "Switch to Arbitrum Sepolia"}
           </button>
+          {switchChainError && (
+            <p role="alert">
+              The network switch did not complete. Try again and accept the
+              request in your wallet, or select Arbitrum Sepolia manually in
+              your wallet before continuing.
+            </p>
+          )}
         </div>
       )}
 

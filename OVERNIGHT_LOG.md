@@ -16290,3 +16290,186 @@ Assertions passed for role:"status", aria-live:"polite", aria-atomic:"true",
 and signature/confirmation/transfer progress strings. Saved responses as
 /tmp/codex-independent-approve-after.{html,js}. This verifies the shipped
 client code; no manual screen-reader or connected-wallet session performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T11:23:49Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T11:51:49Z
+
+### [Codex review] 2026-10-04 — Independent referral, wallet-error and missing-record review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 140 log lines first, then SPEC.md;
+searched historical entries for prior confirmation, focus, label and request
+validation fixes. Inspected app/components/KolBanner.tsx, AppHeader.tsx,
+FlowChrome.tsx, app/flow-context.tsx, login and deposit amount/confirmation
+pages, globals.css, tailwind.config.ts, deposit creation/preflight/pull/
+reconcile handlers, and lib/pull.ts (read only).
+
+Specifically checked referral name handling for inherited object properties
+(the known-name lookup already uses hasOwnProperty), typed session restoration,
+wallet connection error alerts and pending-button disabling, amount field
+label/error associations, and missing-record behavior before any relayer call.
+The CSS accent literals match the theme and the motion preference override
+already covers the decorative animations. These did not establish a distinct
+small defect beyond work already recorded.
+
+Fetched https://projecto-blond.vercel.app/login with curl -sS --compressed
+--max-time 20 to /tmp/codex-review-1151-login.html and parsed visible text with
+Python HTMLParser excluding scripts/styles. The delivered login explicitly
+labels both simulated identity options and the mock bridging/credit boundary.
+Live POST requests to /api/deposits/review-nonexistent/pull and
+/api/deposits/review-nonexistent/reconcile both returned HTTP 404 with JSON
+{"error":"NOT_FOUND"}. GET /api/deposits/check with a syntactically valid
+wallet and amount=1e3 returned HTTP 400 INVALID_REQUEST with decimal/cap
+instructions, rather than accepting exponent notation as a clear preflight.
+
+No new substantiated small fix from this bounded pass. No connected-wallet,
+screen-reader, concurrent relayer execution or historical receipt test was
+performed; source inspection does not validate those behaviors. No deposit
+records or chain transactions created. Only appended this entry, preserving
+pre-existing log modifications. No code changes, build, commit, push or
+redeployment performed for this no-fix review.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T11:58:49Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-04T12:26:49Z
+
+### [Codex review] 2026-10-04 — Independent historical receipt and live cache review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 180 log lines first, then SPEC.md;
+searched previous review headings to avoid repeating known fixes. Read
+app/globals.css, tailwind.config.ts, app/layout.tsx, WalletRoles,
+app/deposit/confirm/page.tsx, deposit creation/preflight/record/reconcile
+handlers, the status polling call, next.config.mjs, README.md, and the
+first 100 lines of testnet-evidence.md.
+
+Fetched production / and /deposit/confirm with curl -fsS --compressed
+--max-time 20; saved raw HTML to /tmp/review-home-1226.html and
+/tmp/review-confirm-1226.html. Python HTMLParser extracted home metadata
+and anchor destinations: social metadata discloses simulation and uses the
+production image origin; anchors point to / and /login. The confirmation
+route's initial HTML does not establish hydrated wallet behavior.
+
+Checked live response bodies and headers with curl -i for
+/api/deposits/codex-cache-review-missing (404 NOT_FOUND) and
+/api/deposits/check?wallet=0x1111111111111111111111111111111111111111&amount=0.000001
+(200, conflict:null). Both returned age:0, x-vercel-cache:MISS and
+cache-control:public,max-age=0,must-revalidate. No stale-cache defect was
+established; the status screen polls the POST reconcile endpoint. No
+existing-record cache or multi-instance persistence guarantee was tested.
+
+Fresh independent evidence check: sent a read-only JSON-RPC batch using
+curl to https://sepolia-rollup.arbitrum.io/rpc, calling
+eth_getTransactionReceipt for the documented section 3 approval
+0xc110d16ae895b7bc9ec8483c6c788a3967f072b16eaaeb0964d46b6f1a3f6022
+and transfer
+0xbaf69d4752b4f1e3a54614e71a1eb25b0c7b553bb829c5a8a5111df1e513e723.
+Both returned status 0x1 and exactly the documented blocks 309873172 and
+309873206. Receipt targets/event emitters match MockUSDC
+0x950A2C07CD9d6489691625272a8f9f4df4D0342C. Approval and Transfer event
+wallets match the documented user and relayer; each event amount is
+0x17d7840 = 25000000 base units (25 mUSDC). Raw receipts saved to
+/tmp/codex-review-1226-receipts.json. This verifies those historical receipt
+claims, not current balances, historical balance snapshots, or UI signing.
+
+No new substantiated small issue found. Only appended this entry, preserving
+pre-existing log changes. No code/core edits, deposit creation, or chain
+transactions; no build, commit, push, or redeployment for this no-fix pass.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T12:33:49Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T13:01:50Z
+
+### [Codex review] 2026-10-04 — Independent setup/configuration and delivered-copy cross-check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 180 log lines first, then SPEC.md.
+Checked README.md setup commands and mock/real boundaries against package.json,
+.env.example, lib/chain.ts, lib/wagmiConfig.ts and lib/relayer.ts (read only).
+The documented scripts exist; relayer key/address variable names match their
+consumers; the server RPC override has a default fallback; MockUSDC address
+and six-decimal configuration agree. README already explains the lack of public
+minting, separate wallet funding, and limitations of per-instance persistence.
+No fresh-install or wallet-signing test was performed.
+
+Also inspected app/globals.css, tailwind.config.ts, layout, providers, header,
+confirmation screen, gas endpoint and deposit-creation validation. Searched
+prior log entries for setup, RPC, faucet and canonical reviews to avoid
+repackaging known issues. No distinct small defect was substantiated.
+
+Fetched production / and /login using curl -fsS --compressed --max-time 20;
+raw bodies saved to /tmp/codex-1301-home.html and /tmp/codex-1301-login.html.
+Parsed both with Python HTMLParser, excluding script/style content: delivered
+copy labels illustrative telemetry, simulated bridging/credit, and mock login;
+social images resolve to the production origin and metadata discloses testnet
+usage. GET /api/gas with curl -i returned HTTP 200, {"gwei":0.060442}, age:0
+and x-vercel-cache:MISS. This checks a successful response, not RPC outage
+handling or independently verified gas pricing.
+
+No new issue worth fixing found in this bounded pass. Only appended this entry,
+preserving the existing log modification. No code or core edits, deposits or
+chain transactions; no build, commit, push or redeploy for this no-fix review.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T13:08:50Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T13:36:50Z
+
+### [Codex review] 2026-10-04 — Independent delivered fallback and invalid-input review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 160 log lines first, then SPEC.md and
+historical review headings/404, metadata and contrast entries to avoid repeating
+known fixes. Inspected app/globals.css, tailwind.config.ts, app/layout.tsx,
+app/not-found.tsx, AppHeader.tsx, the status screen, and the gas, deposit creation
+and duplicate-preflight API handlers. No distinct small defect was established.
+
+Fetched production /, /review-nonexistent-route and
+/deposit/status/review-nonexistent with curl --compressed --max-time 20.
+Raw HTML saved to /tmp/codex-1336-{home,missing,status}.html and missing-route
+headers to /tmp/codex-1336-missing.headers. Parsed actual HTML with Python
+HTMLParser, excluding script/style content: landing copy explicitly labels
+illustrative telemetry and simulated bridging/credit; missing route returns
+HTTP 404 with robots=noindex and recovery copy/link; status HTML contains its
+loading announcement. No image lacking an alt attribute was observed. This
+is not a hydrated-browser or screen-reader verification.
+
+Live curl checks of /api/deposits/check with amounts -1,
+999999999999999999999999999999 and 0.0000001 all returned HTTP 400
+INVALID_REQUEST. POST /api/deposits with JSON [], null, and an object-valued
+userWallet likewise returned HTTP 400 with specific validation messages.
+These rejected inputs created no records or chain transactions. This does
+not test concurrent requests or a valid connected-wallet flow.
+
+No new substantiated issue worth fixing in this bounded pass. Only appended
+this entry, preserving pre-existing log modifications. No code/core changes;
+no build, commit, push or deployment performed for this no-fix review.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T13:43:50Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T14:11:50Z
+
+### [Codex review] 2026-10-04 — Surface failed wallet network switches
+
+Read OVERNIGHT_BRIEF.md and the last 160 log lines first, then SPEC.md;
+searched historical log entries for network-switch error fixes. Inspected
+app/deposit/approve/page.tsx, confirmation, flow context, providers, and the
+record API handler. Found the approval screen consumed only switchChain and
+isPending from useSwitchChain: failed/rejected switches silently returned the
+button to idle, with no error explanation or recovery guidance.
+
+Fetched production /deposit/approve and /login using curl -fsS --compressed
+--max-time 20, saving /tmp/codex-1411-{approve,login}.html. Parsed the approval
+HTML's script references and fetched its actual route chunk to
+/tmp/codex-1411-approve-before.js; the shipped switch button likewise had no
+error feedback. Added a conditional role=alert using the hook's error state,
+with retry/accept guidance and manual Arbitrum Sepolia selection instructions.
+The alert is inside the wrong-network banner, so a successful switch removes
+it. No reconciliation-core changes or blockchain writes. Build and production
+verification results follow below.
