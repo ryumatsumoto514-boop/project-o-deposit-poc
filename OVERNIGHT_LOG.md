@@ -16473,3 +16473,14 @@ with retry/accept guidance and manual Arbitrum Sepolia selection instructions.
 The alert is inside the wrong-network banner, so a successful switch removes
 it. No reconciliation-core changes or blockchain writes. Build and production
 verification results follow below.
+
+Verification: npm run build exited 0 (dependency warnings for MetaMask optional
+storage, pino-pretty and ox dynamic imports). Committed as 3f5e3f4 and pushed
+origin main, including pre-existing log additions as requested by git add -A.
+Ran vercel --token "$VERCEL_TOKEN" --yes --prod; deployment
+Dk6AqnTqPaXdGRK7Nm21Fj5w18pC reached READY and aliased projecto-blond.vercel.app.
+Re-fetched /deposit/approve with curl, parsed its new script URL, then fetched
+the actual production route chunk and asserted the new guidance appears in a
+role:"alert" element. Evidence: /tmp/codex-1411-approve-after.{html,js}.
+This verifies the deployed conditional UI, not an interactive wallet rejection
+or screen-reader session; neither was performed.
