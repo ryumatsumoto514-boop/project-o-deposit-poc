@@ -16279,3 +16279,14 @@ records, or chain transactions. Build and live verification follow below.
 npm run build passed, including lint and type checks (third-party MetaMask,
 pino and ox warnings remain). git diff --check passed. The commit preserves
 pre-existing uncommitted log entries alongside this review's entry.
+
+Commit 650e204 pushed to origin main. Redeployed with the requested
+vercel --token "$VERCEL_TOKEN" --yes --prod command; deployment
+ dpl_7M4cM1ox4LZjykTXy6bDXKHoCbyR reached READY and aliased to production.
+Post-deploy curl -fsS --compressed --max-time 20 fetched
+https://projecto-blond.vercel.app/deposit/approve and its referenced
+/_next/static/chunks/app/deposit/approve/page-9240492912e5d07d.js.
+Assertions passed for role:"status", aria-live:"polite", aria-atomic:"true",
+and signature/confirmation/transfer progress strings. Saved responses as
+/tmp/codex-independent-approve-after.{html,js}. This verifies the shipped
+client code; no manual screen-reader or connected-wallet session performed.
