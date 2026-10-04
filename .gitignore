@@ -28,6 +28,9 @@ yarn-error.log*
 # crash dumps from OOM-killed processes
 /core
 
+# local QA screenshot output (scripts/*.mjs write here)
+/shots-out/
+
 # local env files
 .env*.local
 
