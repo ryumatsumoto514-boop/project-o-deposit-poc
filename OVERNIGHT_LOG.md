@@ -15455,3 +15455,65 @@ entry if the deploy step succeeded by the time this was written.
 No lib/*.ts reconciliation logic touched. No new records or transactions
 created. This was a targeted, scoped fix for one confirmed, screenshot/CDP-
 verified mobile accessibility bug — not a revisit of color/visual direction.
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-04T02:31:07Z
+
+### [Codex review] 2026-10-04 — Independent live malformed-preflight matrix; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 180 log lines first, then SPEC.md.
+Inspected all six deposit API handlers, api/gas, flow-context, login,
+AppHeader, layout, globals.css and tailwind.config.ts. Searched historical
+cache, validation and metadata findings to avoid presenting existing fixes
+as new work. No substantiated new small defect worth fixing emerged.
+
+Fetched production /, /login and /deposit/status/codex-independent-review
+using curl -sS --compressed --max-time 20. All returned HTTP 200. Read their
+raw HTML through Python HTMLParser excluding script/style text. Landing and
+login disclose testnet use and simulated credit/sign-in; the unknown status
+route serves a loading shell, so its HTTP 200 alone does not establish the
+hydrated not-found behavior. Saved bodies/headers to
+/tmp/codex-second-{home,login,status}.{html,headers} and parsed evidence to
+/tmp/codex-second-review.json.
+
+Tested the deployed read-only /api/deposits/check endpoint with eight invalid
+inputs: negative amount, extremely large amount, exponent notation, hex,
+seven decimal places, NaN, leading whitespace and a short malformed wallet.
+Every request returned HTTP 400 with INVALID_REQUEST and an appropriate
+plain-language validation message, rather than a false conflict-free result
+or server error. Exact cases and response bodies are in the JSON evidence.
+No successful creation, replay test, wallet interaction or transaction was
+performed. Source inspection found typed session restoration and exact-only
+fallback already present; no new palette/radius inconsistency established.
+
+Only appended this entry, preserving the pre-existing log edits. No application
+change, build, commit, push or redeploy warranted. Reconciliation core unchanged.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T02:38:09Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T03:06:17Z
+
+### [Codex review] 2026-10-04 — Committed header fix absent from production
+
+Read OVERNIGHT_BRIEF.md and recent log first, then SPEC.md, README.md,
+testnet-evidence.md, layout, globals.css, Tailwind config, confirmation,
+referral/footer components and selected API handlers. No new application
+logic defect established. Found a concrete release gap instead: commit
+bb8e802 contains the already-known header tap-target fix, but production
+still serves class="min-w-0 shrink" on the home link, without its padding.
+Confirmed by curl -sS --compressed --max-time 20 against /,
+/deposit/confirm, /review-missing-page and /?review=20261004T0306.
+The last request independently confirmed the old class with a fresh query.
+This is not a new discovery of the tap-target bug; it is evidence that the
+prior cycle's committed fix has not reached the live product.
+
+Raw responses saved to /tmp/codex-independent-*.html and .headers; parsed
+copy, links, metadata and status headers saved to
+/tmp/codex-independent-recovery-audit.json. Missing page correctly returns
+404/noindex with recovery link. Confirmation returns the expected gated
+shell; no hydrated wallet interaction was tested. No deposit or chain write.
+
+Rebuilding and redeploying the existing commit to close this release gap.
+No application source or reconciliation core changed. Verification follows.
