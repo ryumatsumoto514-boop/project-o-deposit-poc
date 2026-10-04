@@ -1,0 +1,15 @@
+# Explicit allowlist-by-exclusion for `vercel --prod` uploads.
+# A prior cycle's deploy failed with "Request Entity Too Large" because a
+# 2.8GB OOM crash dump (`core`, gitignored but NOT vercelignored) sat in the
+# project directory and got swept into the upload anyway. .vercelignore is
+# always honored by the Vercel CLI, so list crash artifacts here explicitly
+# rather than relying on .gitignore inference.
+core
+core.*
+node_modules
+.next
+.git
+coverage
+shots-out
+.data
+*.tsbuildinfo
