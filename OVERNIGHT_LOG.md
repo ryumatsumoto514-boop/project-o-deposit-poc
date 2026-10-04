@@ -15702,3 +15702,99 @@ No source code changed this cycle — this was purely closing a deploy gap
 between git and the live site. No lib/*.ts reconciliation logic touched,
 no new deposit records or chain transactions created. OVERNIGHT_LOG.md is
 the only file with pending changes (this entry); committing it now.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-04T06:01:20Z
+
+### [Codex review] 2026-10-04 — Independent delivered SVG and disclosure review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md;
+searched historical findings to avoid repeating known-fixed issues. Read
+app/globals.css, tailwind.config.ts, app/layout.tsx, landing/login source,
+components/icons.tsx, EngineVisual.tsx, PipelineStepper.tsx, and the deposit
+creation/preflight handlers. A guessed lib/validation.ts path does not exist;
+validation was inspected directly in the actual route handlers instead.
+
+Fetched https://projecto-blond.vercel.app/, /login and /deposit/approve with
+curl -sS --compressed --max-time 20, saving raw bodies under
+/tmp/codex-independent-{home,login,approve}.html. Parsed and read their text,
+metadata, links and SVG attributes using Python HTMLParser, excluding
+script/style text. All 10 delivered SVG instances have aria-hidden="true";
+their adjacent text supplies the meaning. No unnamed meaningful SVG was
+established. Social image URLs use the production origin, sign-in and pipeline
+copy disclose simulation, and the home link includes the recently deployed
+padding. Detailed extraction: /tmp/codex-independent-semantics.json.
+
+CSS uses explicit reduced-motion handling and consistent component radius
+roles; the accent scale's nonmonotonic brightness alone is not a substantiated
+user-facing defect. Creation/preflight source rejects malformed addresses,
+non-decimal, negative, overprecision and excessive amounts. These were source
+checks, not new live API mutations. Approval delivers only a gated shell;
+this pass does not validate hydrated signing or screen-reader behavior.
+
+No new concrete small issue worth fixing found in this bounded review.
+Only appended this entry, preserving pre-existing log changes. No application
+change, build, commit, push or redeploy warranted; no reconciliation-core
+edits, deposit records or blockchain transactions performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T06:08:20Z
+
+## QA cycle: 2026-10-04T06:10:58Z (Claude, fresh session)
+
+### Real hydrated interactive-flow check (not shell-only); no new fix
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md (15740 lines) first.
+Recent Codex-review cycles had repeatedly noted that their curl/HTML-parser
+checks "do not validate hydrated amount input, signing, or the approval
+scope toggle" — that gap was the one area in priority 1 (functional bugs)
+not yet exercised with an actual interactive browser session. Targeted it
+this cycle instead of re-checking already-solid metadata/accessibility/SVG
+ground.
+
+Used the existing Chrome CDP endpoint on :9333 to run
+scripts/shot-flow-walk.mjs against the LIVE production site
+(https://projecto-blond.vercel.app) with a mocked injected wallet
+(window.ethereum), mobile viewport (375x812): connected wallet, entered the
+amount step, checked the address-confirmation checkbox, advanced to
+/deposit/approve, and toggled the "Approve for future deposits too" radio.
+Screenshots saved to /tmp/flow-walk-live/.
+
+The screenshots alone were ambiguous about whether the radio toggle and the
+gas-insufficient button state were actually correct (second radio sits below
+the screenshot fold; "Add ETH to continue" looked solid-colored by eye, not
+obviously dimmed). Rather than guess from pixels, wrote a second script
+(/tmp/check-radio-and-button.mjs, /tmp/check-button-disabled2.mjs) that reads
+actual DOM/computed-style state through the same CDP session:
+- Radio toggle: confirmed via `input.checked` before/after click —
+  `[{"checked":true},{"checked":false}]` -> `[{"checked":false},{"checked":true}]`.
+  Works correctly; the amber "higher risk" selected-state card renders as
+  intended (previously only visually spot-checked, never asserted via DOM).
+- Gas-insufficient button: replicated the full click path (connect -> amount
+  Continue -> confirm checkbox -> Continue -> wait for the live gas balance
+  fetch to resolve to 0 ETH), then read the button's actual computed style:
+  `{"text":"Add ETH to continue","disabled":true,"opacity":"0.4","cursor":
+  "not-allowed","bg":"rgb(0, 240, 255)"}`. Confirmed `disabled:opacity-40` and
+  `disabled:cursor-not-allowed` from the shared `.btn` class in globals.css
+  are correctly applied on top of `.btn-primary`'s `disabled:bg-accent-500`
+  override — the button is genuinely non-interactive, not just same-colored.
+  (My own eyeballing of the screenshot alone would have been inconclusive;
+  the computed-style read is the actual verification.)
+
+Also did a fast curl sweep of API edge cases not recently re-checked: GET
+/api/deposits (wrong method) -> 405, OPTIONS /api/deposits -> 204, an
+unknown route -> 404, GET /api/gas?address=... -> 200 with a plausible gwei
+value, /favicon.ico -> 200. All as expected, nothing new.
+
+No defect found in this bounded pass — both the approval-scope radio
+reactivity and the low-gas disabled-button state (shipped in earlier
+commits 827b3c0 and the approval-scope UI) hold up under genuine hydrated
+DOM/computed-style verification, not just a glance at a screenshot. Per the
+brief's own instruction to say so plainly when a real look turns up nothing:
+this was a real look, specifically closing the "hydrated flow untested" gap
+multiple prior cycles flagged, and it came up clean.
+
+No source change made. No lib/*.ts reconciliation logic touched, no build,
+commit, push, or redeploy performed (nothing to ship). No chain transaction
+or deposit record created — the mocked wallet never reached actual signing.
+Claude Code tick finished.
