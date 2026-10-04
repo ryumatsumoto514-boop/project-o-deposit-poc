@@ -15798,3 +15798,142 @@ No source change made. No lib/*.ts reconciliation logic touched, no build,
 commit, push, or redeploy performed (nothing to ship). No chain transaction
 or deposit record created — the mocked wallet never reached actual signing.
 Claude Code tick finished.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-04T06:36:21Z
+
+### [Codex review] 2026-10-04 06:38 UTC — Independent API error-contract and delivered-copy check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md.
+Read README.md, testnet-evidence.md, next.config.mjs and all seven API
+handlers; searched historical validation, gas/cache and evidence findings
+rather than presenting their existing fixes as new issues.
+
+Fetched production / and /deposit/confirm with curl -sS --compressed
+--max-time 20, saved raw HTML to /tmp/codex-review-root.html and
+/tmp/codex-review-confirm.html, and extracted visible text and metadata with
+Python HTMLParser (excluding scripts/styles). Landing copy explicitly labels
+bridging and credit as simulated and says no actual trading balance is
+credited. Confirmation returns a gated shell; its delivered social image
+uses the production origin. This does not test hydrated confirmation behavior.
+
+Checked live API error contracts without creating records or transactions:
+GET /api/deposits/check with wallet=0x0000000000000000000000000000000000000001
+and amount=1e3 returned HTTP 400 INVALID_REQUEST; POST /api/deposits with
+JSON [] returned HTTP 400 and the JSON-object requirement; PATCH
+/api/deposits/codex-independent-nonexistent with malformed JSON { returned
+HTTP 404 NOT_FOUND, consistent with the handler checking existence before
+parsing the body. No stack trace or HTML error response appeared. Source
+inspection also confirms creation rejects non-string addresses, invalid hash
+shapes, excessive amounts and wrong chain IDs. README distinguishes local
+API testnet evidence from Vercel execution and documents instance-local
+storage/duplicate limitations. Historical transaction receipts were not
+re-fetched in this pass; documentation reading is not fresh chain verification.
+
+No new substantiated small defect found in this bounded review. Only appended
+this entry, preserving the log changes already present at session start.
+No application edits, build, commit, push or redeploy warranted; no lib core
+changes, deposit records or blockchain transactions made.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T06:43:24Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T07:11:33Z
+
+### [Codex review] 2026-10-04 — Independent deployed route-chunk and status-recovery review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md.
+Inspected app/deposit/status/[id]/page.tsx, record GET/PATCH and reconcile
+handlers, app/layout.tsx, app/providers.tsx, app/useDocumentTitle.ts,
+app/globals.css, tailwind.config.ts and next.config.mjs. Searched historical
+status-recovery, polling, metadata and asset findings to avoid reporting an
+already-fixed defect. The status implementation retains the last successful
+record on failed polls and warns against resending when records disappear.
+No new substantiated small defect was established in this bounded review.
+
+Fetched https://projecto-blond.vercel.app/, /login and
+/deposit/status/independent-review using curl -sS --compressed --max-time 20.
+Parsed their raw HTML using Python HTMLParser, excluding script/style text
+from copy inspection. Home and login disclose mocked stages/sign-in; status
+returns its loading shell. Extracted and fetched all 18 unique script/CSS URLs
+referenced by those responses, including the percent-encoded dynamic status
+route chunk: all returned HTTP 200 with the expected JavaScript/CSS MIME type
+and nonempty bodies. This checks deployed asset availability, not JavaScript
+execution, hydrated state transitions or actual wallet signing. Prior reviews
+also checked asset availability; these results are a current verification,
+not a claim of a newly discovered issue. Evidence is saved under
+/tmp/codex-asset-review-{home,login,status}.html and
+/tmp/codex-asset-review-results.json.
+
+Only appended this entry. Preserved the pre-existing OVERNIGHT_LOG.md changes,
+modified app/login/page.tsx and untracked app/error.tsx/app/global-error.tsx.
+No application edits, build, commit, push or redeploy performed because this
+review found no fix to ship. No reconciliation-core changes, deposit records,
+or chain transactions made.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T07:18:33Z
+
+## QA cycle: 2026-10-04 (Claude, fresh session)
+
+### Fix: missing App Router error boundaries — crashes fell through to Next's default overlay instead of a branded recovery screen; also cleaned up a dangling unused import left from a killed prior cycle
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md (15876 lines) first.
+Before picking a new target, checked `git status`: it showed an interrupted
+prior cycle's work-in-progress — two untracked files, app/error.tsx and
+app/global-error.tsx (a complete, well-formed Next.js App Router error
+boundary and root-level global error fallback, correctly using existing
+page-shell/card classes and the real AlertIcon export from
+app/components/icons.tsx), plus one unrelated uncommitted line in
+app/login/page.tsx: `import { useEffect } from "react";` added but never
+used anywhere in the file — clearly a stray edit abandoned mid-edit when
+that cycle's process was killed by the environment's 5-7 minute limit,
+not a finished change.
+
+This is a real, previously-unaddressed functional gap (priority 1): the app
+had NO error.tsx or global-error.tsx anywhere before this — confirmed via
+`find app -name "error.tsx" -o -name "global-error.tsx"` returning only the
+two new untracked files. Any uncaught render exception in any route (or in
+the root layout itself) would have fallen through to Next's default
+unstyled/blank error screen instead of something reassuring — a bad look for
+a polished fintech-style demo, and inconsistent with the rest of the site's
+"plain-language, reassuring" failure-state philosophy already established
+for deposit exceptions (STALLED_NO_GAS, AMBIGUOUS, etc).
+
+Verified the new files before trusting them: confirmed `AlertIcon` really is
+exported from app/components/icons.tsx and `.page-shell`/`.card` really exist
+in app/globals.css, so nothing would reference missing tokens at runtime.
+Removed the dangling unused `useEffect` import from app/login/page.tsx since
+it did nothing and isn't related to the error-boundary work (reverted that
+file to its last-committed state). Ran `npm run build` clean (only a
+pre-existing, unrelated third-party critical-dependency warning from
+viem/ox's tempo chain config, not a new error).
+
+Smoke-tested locally first: `npm run start -p 3100` then curled `/` and
+`/login`, both 200.
+
+Committed (3795487), pushed to GitHub, and redeployed with
+`vercel --token "$VERCEL_TOKEN" --yes --prod` (deployment
+dpl_GWAtx6A1bFqE6kcxKtbMzFtys5W1, readyState READY, promoted to production).
+
+Re-verified live rather than trusting the deploy response: curled
+https://projecto-blond.vercel.app/ and /login (200/200), then went further —
+extracted every JS chunk URL referenced by the live /login page, downloaded
+each one, and grepped for the fallback copy. Found the error boundary's
+"This screen hit an error" string in a dedicated `error-*.js` chunk and the
+global fallback's "Exchange O hit an error" string in a dedicated
+`global-error-*.js` chunk, both served directly from production — confirming
+the fix is actually compiled into the live bundle, not just sitting in git.
+Did not attempt to trigger a genuine uncaught React render exception live
+(React error boundaries only catch render/lifecycle errors, not event-handler
+errors, and rigging a real render-time throw would need a temporary code
+change not worth doing in this time-boxed cycle) — so the boundary's
+*presence and deployment* is verified, but its actual on-screen catch
+behavior was verified by code review (standard Next.js error.tsx/
+global-error.tsx contract: receives `error`/`reset`, calls `reset()` on
+retry) rather than a live-triggered crash. Noting this honestly rather than
+overclaiming a live exception test that wasn't actually done.
+
+No lib/*.ts reconciliation logic touched, no deposit records created, no
+chain transactions made. Cleaned up /tmp verification artifacts after use.
