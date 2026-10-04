@@ -43,7 +43,12 @@ export default function DepositApprovePage() {
   const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode, hydrated } =
     useFlow();
   const { address, chainId, status: accountStatus } = useAccount();
-  const { data: ethBalance, isLoading: gasCheckLoading } = useBalance({ address, chainId: CHAIN.id });
+  const {
+    data: ethBalance,
+    isLoading: gasCheckLoading,
+    isError: gasCheckFailed,
+    refetch: refetchGasCheck,
+  } = useBalance({ address, chainId: CHAIN.id });
   const { switchChain, isPending: isSwitchingChain, error: switchChainError } = useSwitchChain();
   const walletSettling = accountStatus === "connecting" || accountStatus === "reconnecting";
 
@@ -275,7 +280,26 @@ export default function DepositApprovePage() {
         </div>
       )}
 
-      {lowGas && (
+      {gasCheckFailed && (
+        <div className="banner-amber flex items-start gap-2.5">
+          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+          <span>
+            <strong>Couldn&apos;t check your gas balance.</strong> We can&apos;t
+            confirm you have enough ETH for network fees right now, so approval
+            is paused.{" "}
+            <button
+              type="button"
+              onClick={() => refetchGasCheck()}
+              className="underline hover:text-amber-100"
+            >
+              Try again
+            </button>
+            .
+          </span>
+        </div>
+      )}
+
+      {lowGas && !gasCheckFailed && (
         <div className="banner-amber flex items-start gap-2.5">
           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
           <span>
@@ -286,7 +310,10 @@ export default function DepositApprovePage() {
         </div>
       )}
 
-      <fieldset disabled={isBusy || gasCheckLoading} className="card flex flex-col gap-3 disabled:opacity-60">
+      <fieldset
+        disabled={isBusy || gasCheckLoading || gasCheckFailed}
+        className="card flex flex-col gap-3 disabled:opacity-60"
+      >
         <legend className="label-caps px-1">Approval scope</legend>
         <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-accent-400/40 has-[:checked]:bg-accent-500/[0.06]">
           <input
@@ -344,16 +371,18 @@ export default function DepositApprovePage() {
 
       <button
         onClick={handleApproveAndDeposit}
-        disabled={isBusy || wrongNetwork || lowGas || gasCheckLoading}
+        disabled={isBusy || wrongNetwork || lowGas || gasCheckLoading || gasCheckFailed}
         className="btn-primary w-fit"
       >
         {(isBusy || gasCheckLoading) && <SpinnerIcon className="h-4 w-4" />}
         {step === "form" || step === "error"
           ? gasCheckLoading
             ? "Checking gas balance…"
-            : lowGas
-              ? "Add ETH to continue"
-              : "Approve & deposit"
+            : gasCheckFailed
+              ? "Can't verify gas balance"
+              : lowGas
+                ? "Add ETH to continue"
+                : "Approve & deposit"
           : PROGRESS_COPY[step] ?? "Done"}
       </button>
       <FlowFooter />
