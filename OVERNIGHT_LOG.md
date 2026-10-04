@@ -16484,3 +16484,111 @@ the actual production route chunk and asserted the new guidance appears in a
 role:"alert" element. Evidence: /tmp/codex-1411-approve-after.{html,js}.
 This verifies the deployed conditional UI, not an interactive wallet rejection
 or screen-reader session; neither was performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T14:18:51Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T14:46:58Z
+
+### [Codex review] 2026-10-04 — Independent missing-record action and delivered sign-in review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 150 log lines first, then SPEC.md and
+historical review headings to avoid repeating known fixes. Inspected login,
+flow-context, CaptureKolRef, confirmation, both error boundaries, WalletRoles,
+FlowChrome, globals.css, tailwind.config.ts, and the pull and duplicate-check
+API handlers. No distinct small defect was substantiated by this review.
+
+Fetched production /, /login and /deposit with curl -fsS --compressed
+--max-time 20. Saved raw HTML to /tmp/codex-1446-{home,login,deposit}.html
+and parsed metadata and visible text using Python HTMLParser (excluding
+script/style bodies). Social descriptions disclose simulated sign-in,
+bridging and crediting; image URLs use the production origin. Login labels
+mock choices and testnet use. The deposit HTML is an initial shell, so this
+is not evidence of hydrated wallet behavior or completed deposit handling.
+
+POSTed with curl to /api/deposits/codex-1446-missing/pull and the corresponding
+/reconcile endpoint: both returned HTTP 404 with {"error":"NOT_FOUND"}.
+These missing-record requests created no deposits or chain transactions.
+This checks missing-record action responses, not relayer/RPC failures.
+
+No new issue worth fixing found in this bounded independent pass. Only
+appended this entry, preserving existing log changes. No code/core changes;
+no build, commit, push or redeployment performed for this no-fix review.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T14:54:00Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T15:22:05Z
+
+### [Codex review] 2026-10-04 15:22 UTC — Independent numeric-format rejection and raw confirmation response review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 160 log lines first, then SPEC.md and
+recent review headings. Inspected deposit creation/preflight, record GET/PATCH,
+gas endpoint, status screen, error fallbacks, app/globals.css and
+tailwind.config.ts. Checked historical cache/validation findings to avoid
+repeating known fixes. No distinct small defect was substantiated.
+
+Fetched https://projecto-blond.vercel.app/ and /deposit/confirm with
+curl -fsS --compressed --max-time 20; saved raw bodies as
+/tmp/codex-1522-home.html and /tmp/codex-1522-confirm.html. Read delivered
+metadata and visible copy using Python HTMLParser with script/style excluded.
+Social metadata discloses simulated sign-in, bridging and crediting; landing
+copy labels illustrative telemetry and mock credit. No img without an alt
+attribute observed. Confirmation serves its initial shell, so this does not
+verify hydrated address confirmation or wallet reconnect behavior.
+
+Live curl GET /api/deposits/check with wallet
+0x1111111111111111111111111111111111111111 and amounts 1e2 and 0x10
+both returned HTTP 400 INVALID_REQUEST, matching the decimal-only validator.
+GET /api/deposits/codex-1522-missing returned HTTP 404 NOT_FOUND.
+These read-only probes created no deposit or chain transaction; they do not
+establish concurrent duplicate protection or existing-record cache behavior.
+
+No new issue worth fixing found in this bounded pass. Preserved pre-existing
+changes to approval/confirmation pages and log; appended only this entry.
+No code/core edits, build, commit, push or redeploy performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T15:29:05Z
+
+## Cron tick: 2026-10-04T15:36:00Z (Claude Sonnet 5, self-directed QA)
+
+### Finished an in-progress fix: wallet-reconnect race was bouncing users off approve/confirm
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md first, per instructions.
+Found the working tree already had uncommitted edits to app/deposit/approve/page.tsx
+and app/deposit/confirm/page.tsx from a prior cycle that was killed (exit 1/143)
+before it could build/commit/push/deploy/log — no matching log entry existed for
+this diff. Read both files in full to understand the change rather than blindly
+committing it.
+
+The bug: both pages' redirect-guard effect checked `!mockIdentity || !draftAmount
+|| !address` and immediately `router.replace("/deposit")` if true. On a fresh
+page load (hard refresh or deep link), wagmi's reconnect is async — `accountStatus`
+can briefly be something other than "connecting"/"reconnecting" (so the existing
+walletSettling guard doesn't catch it) while `address` is still undefined for one
+tick before reconnect resolves. Users landing fresh on /deposit/approve or
+/deposit/confirm could get bounced back to step 2 or step 1 even though their
+wallet was about to reconnect successfully — a real functional bug in the state
+machine's navigation guards, not a cosmetic issue.
+
+The existing fix: replace the immediate redirect with a 1.5s setTimeout (cleared
+on unmount/dependency change), giving wagmi's reconnect a grace window before
+concluding there's genuinely no wallet. Verified the logic is sound: if reconnect
+resolves within 1.5s the effect re-runs (address in deps) and the timer is
+cleared via the cleanup function before firing; if it never resolves, the user
+still gets redirected, just 1.5s later than before.
+
+Verified: `npm run build` exits 0 (only pre-existing optional-dependency warnings
+for MetaMask/pino-pretty/ox, no errors). Committed as 57a7990 and pushed to
+origin/main. Ran `vercel --token "$VERCEL_TOKEN" --yes --prod`; deployment
+dpl_D1KGQic4rrPP9YuKZmvQB6BYLE8B reached READY and is aliased to
+projecto-blond.vercel.app. Re-fetched the live /deposit/approve and
+/deposit/confirm pages with curl, extracted their actual shipped JS chunk URLs
+(page-a55673b8b2cb274b.js and page-d58df2ffbca7c72a.js), fetched those chunks
+directly, and confirmed each contains the literal `1500` grace-period constant
+from the new code (grep -c '1500' = 1 in both). This verifies the fix is the
+exact code running in production, not just that build succeeded locally. Did
+not touch lib/*.ts reconciliation logic. No chain transactions performed.
