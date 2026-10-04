@@ -15957,3 +15957,132 @@ fallbacks with uncertainty about deposit status, instructions to check the
 wallet before sending again, and clarification that retrying the screen does
 not cancel a submitted transaction. No reconciliation logic changed.
 Build and deployment verification results will be appended below.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T07:53:34Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T08:21:34Z
+
+### [Codex review] 2026-10-04 — Independent markup, styling and approval-copy review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md.
+Inspected app/globals.css, tailwind.config.ts, layout, login, confirmation,
+approval, both error boundaries, not-found, flow-context, AppHeader and
+FlowChrome. Searched the historical log for focus, contrast, reduced motion,
+storage, confirmation and 404 findings to avoid presenting existing work as
+new. Button/input focus treatments and reduced-motion overrides are present;
+confirmation shows the full transfer destination and has a wrapping checkbox
+label. Approval copy describes exact allowance as a total across transfers,
+and the generic uncertain-outcome error warns against assuming no transaction
+occurred. The recent error-boundary copy fix is already in source/git.
+
+Fetched https://projecto-blond.vercel.app/, /login and
+/nonexistent-independent-review with curl -sS --compressed --max-time 20.
+Read the response bodies using Python HTMLParser, excluding script/style text.
+Home explicitly labels bridging and credit as simulated and says no actual
+trading balance is credited; login labels simulated sign-in. Both deliver
+viewport, description and absolute production-origin OG/Twitter image metadata.
+The nonexistent route returns HTTP 404, robots=noindex, a descriptive heading
+and home recovery link. None of these responses contains an img element with
+missing alt text. Raw bodies saved to /tmp/codex-fresh-{home,login,404}.html.
+These are source/raw-response checks, not hydrated wallet interaction, a
+rendered contrast audit, social-image fetching or a live error-boundary test.
+
+No new substantiated small defect found in this bounded review. Only appended
+this entry, preserving the pre-existing OVERNIGHT_LOG.md modification. No
+application changes, build, commit, push or redeploy warranted. No lib core
+changes, deposit records or blockchain transactions made.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T08:28:34Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T08:56:34Z
+
+### [Codex review] 2026-10-04 — Independent deployed error-fallback verification; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 150 log lines first, then SPEC.md;
+searched historical review headings/validation findings to avoid repeating
+known-fixed issues. Reviewed creation/preflight API validation, record GET/PATCH
+and reconciliation route handlers, AppHeader, layout, not-found, both recently
+added error boundaries and status polling/recovery source.
+
+Fetched https://projecto-blond.vercel.app/login and
+/deposit/status/second-opinion-missing using curl -sS --compressed --max-time 20.
+Parsed the raw HTML with Python HTMLParser, excluding script/style content.
+Login discloses simulated sign-in and testnet funds; status delivers a loading
+shell, which alone does not verify hydrated recovery. Extracted and fetched
+both error boundary script URLs directly from the live login HTML:
+error-db15e6908c3b86b0.js and global-error-3149b897845d3b63.js. Both fetched
+successfully, contain the wallet-status check and warning that retrying does
+not cancel a submitted transaction, and omit the old unsupported assurance
+"No deposit or balance was affected". This closes the prior log's missing
+live-verification evidence for that existing fix; it is not a new finding.
+GET /api/deposits/second-opinion-missing returned HTTP 404 with
+{"error":"NOT_FOUND"}. Source inspection confirms status polling distinguishes
+non-OK responses, retains existing deposit state on refresh failure and warns
+against sending again when records become unavailable. Did not trigger a
+render crash, sign transactions or claim browser recovery was exercised.
+Raw responses and fetched chunks saved under /tmp/codex-second-*.
+
+No new substantiated small issue found in this bounded review. Only appended
+this entry; preserved the pre-existing log changes and untracked
+scripts/_tmp-check-kol-edge.mjs. No application edits, build, commit, push or
+redeploy warranted. No lib core changes or deposit records created.
+Codex review tick finished, exit code 0
+
+## QA cycle: 2026-10-04 (Claude, fresh session)
+
+### Fix: KOL disclosure banner mishandled case and malformed referral codes — found via unit-level test of formatKolName, not a screenshot
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md first. Found a
+leftover untracked script, scripts/_tmp-check-kol-edge.mjs, from an
+interrupted prior cycle: it drove the live site via CDP with edge-case
+`?ref=` values ("kol_", "kol", "KOL_ALEX", "kol-", "_", "kol__-_-") but had
+never been run to completion or logged. Rather than re-run the slow
+browser version, extracted the actual formatKolName logic from
+app/components/KolBanner.tsx and ran it directly in node with those same
+inputs to get a precise, fast answer (priority 4: KOL disclosure is one of
+the assignment's core differentiators, so this banner's correctness matters
+beyond cosmetics).
+
+Confirmed two real bugs before touching any code:
+1. `KOL_ALEX` (same KOL, different case) did NOT match the `KNOWN_KOLS`
+   lookup (`{ kol_alex: "KOL Alex" }`) because the lookup was case-sensitive.
+   It fell through to the generic formatter and rendered as "ALEX" — a
+   garbled, unprofessional result for exactly the one real KOL this demo
+   defines, and a realistic failure mode since link-sharing/email clients
+   often alter casing.
+2. Degenerate refs that reduce to an empty string after stripping the
+   "kol" prefix (`kol`, `kol_`, `kol-`, `_`, `kol__-_-`) fell back to
+   `|| ref`, displaying the raw technical slug verbatim inside the
+   trust/disclosure sentence (e.g. "You arrived via kol_'s content") —
+   directly contradicting the component's own comment, which states the
+   fallback exists "so the banner never surfaces 'kol_alex' verbatim to a
+   real user."
+
+Fixed both in app/components/KolBanner.tsx: lowercase the ref before the
+KNOWN_KOLS lookup (and lowercase the rest of each formatted word, so mixed
+case like "KOL_ALEX" also can't produce "ALEX" via the generic path either);
+and when the generic formatter produces zero words, fall back to the
+readable phrase "a partner" instead of the raw ref. Re-ran the extracted
+logic in node with the same six edge cases plus two known-good cases
+(`kol_alex`, `kol_sarah_chen`) to confirm: all six edge cases now produce
+"a partner" or the correct "KOL Alex" (no raw slug leaks), and the two
+good cases still format correctly ("KOL Alex", "Sarah Chen") — no
+regression to the working path.
+
+Deleted the leftover scripts/_tmp-check-kol-edge.mjs (superseded by the
+faster node-level check above; its job is done).
+
+Ran `npm run build` clean (no new type/lint errors, same pre-existing
+viem/ox third-party warning as before). No lib/*.ts reconciliation logic
+touched — this is UI-only copy/lookup logic in a client component, not the
+deposit state machine.
+
+Committed and pushed to GitHub, then redeployed with
+`vercel --token "$VERCEL_TOKEN" --yes --prod`.
+Build/deploy/live-verification results appended below.
+
+## Cron tick: 2026-10-04T09:03:34Z

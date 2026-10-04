@@ -12,13 +12,14 @@ const KNOWN_KOLS: Record<string, string> = {
 };
 
 function formatKolName(ref: string): string {
-  if (Object.prototype.hasOwnProperty.call(KNOWN_KOLS, ref)) return KNOWN_KOLS[ref];
-  return ref
+  const normalized = ref.toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(KNOWN_KOLS, normalized)) return KNOWN_KOLS[normalized];
+  const words = ref
     .replace(/^kol[_-]?/i, "")
     .split(/[_-]+/)
     .filter(Boolean)
-    .map((w) => w[0].toUpperCase() + w.slice(1))
-    .join(" ") || ref;
+    .map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+  return words.length ? words.join(" ") : "a partner";
 }
 
 // UX improvement #5: persistent compliance/trust disclosure, not a
