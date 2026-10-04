@@ -22,7 +22,13 @@ export default function DepositConfirmPage() {
 
   useEffect(() => {
     if (!hydrated || walletSettling) return;
-    if (!mockIdentity || !draftAmount || !address) router.replace("/deposit");
+    if (mockIdentity && draftAmount && address) return;
+    // A fresh load (refresh, deep link) races wagmi's async wallet
+    // reconnect: `address` can still be empty here even though reconnect
+    // is about to succeed. Give it a beat before concluding there's really
+    // no wallet, instead of bouncing the user back to step 2 mid-reconnect.
+    const timer = setTimeout(() => router.replace("/deposit"), 1500);
+    return () => clearTimeout(timer);
   }, [hydrated, walletSettling, mockIdentity, draftAmount, address, router]);
 
   if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address) return null;
