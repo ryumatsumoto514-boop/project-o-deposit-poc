@@ -16172,3 +16172,110 @@ the manual-workaround path (or worse, a future cycle not noticing the
 failure at all and reporting a deploy that never actually shipped).
 
 ## Cron tick: 2026-10-04T09:38:35Z
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-04T10:06:35Z
+
+### [Codex review] 2026-10-04 — Independent delivered disclosure and theme review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 150 lines of this log first, then
+SPEC.md; searched the log for prior metadata, accessibility, validation,
+and disclosure work to avoid re-reporting known fixes.
+
+Fetched https://projecto-blond.vercel.app/, /login, and /deposit with
+curl -sS --compressed --max-time 20. Saved raw responses in
+/tmp/codex-second-home.html, /tmp/codex-login.html, and
+/tmp/codex-second-deposit.html. Parsed them with Python HTMLParser,
+excluding script/style bodies, to inspect actual delivered copy and meta
+tags. Home explicitly labels illustrative telemetry, simulated bridging,
+and simulated credit (including no actual trading balance credited).
+Login clearly labels simulated identity and real testnet wallet usage.
+OG/Twitter image URLs use the production origin and the descriptions
+state the mock boundary. Deposit initially renders only the header;
+this raw HTML check does not establish hydrated wallet-flow behavior.
+
+Read app/globals.css, tailwind.config.ts, login/confirm pages,
+components/FlowChrome.tsx, layout.tsx, and the deposit creation/preflight
+and gas handlers. The repeated background and accent literals match the
+theme; radius differences distinguish controls, panels, and dots rather
+than substantiating accidental drift. Reduced-motion handling already
+exists. Creation and preflight already validate positive, capped decimal
+amounts and address shape. GET /api/gas returned {"gwei":0.056406}; its
+source returns null on RPC failure instead of fabricated telemetry.
+Read README.md and testnet-evidence.md for their explicit local-API versus
+Vercel and real-testnet versus mock-credit distinctions; no new mismatch
+established. Did not independently revalidate historical chain receipts.
+
+No new substantiated small issue found in this bounded review. Appended
+only this entry, preserving the pre-existing log modification. No code or
+lib core edits, no deposit creation or chain transactions, and no build,
+commit, push, or redeploy warranted for this no-fix result.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T10:13:35Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T10:41:41Z
+
+### [Codex review] 2026-10-04 — Independent error-recovery and malformed-request review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 160 log lines first, then SPEC.md.
+Reviewed app/error.tsx, app/global-error.tsx, app/not-found.tsx,
+app/flow-context.tsx, app/deposit/confirm/page.tsx, app/layout.tsx, and
+all deposit API handlers. Searched historical log entries for prior
+error-boundary, accessibility, and validation fixes to avoid repeating them.
+Read lib/store.ts and lib/idempotency.ts without modifying either: wallet
+matching already lowercases both sides, and numeric amount comparison
+already handles equivalent decimal strings. This is source inspection,
+not a live replay/duplicate-deposit test.
+
+Used curl -sS --compressed --max-time 20 against production:
+- /login: fetched HTML to /tmp/review-login.html and parsed visible text
+  with Python HTMLParser excluding script/style bodies; simulated sign-in
+  and testnet usage are explicitly disclosed.
+- /does-not-exist-review: HTTP 404, raw HTML saved to /tmp/review-404.html;
+  parsed visible text provides an explanatory message and home link.
+- /api/deposits/check?wallet=0x1111111111111111111111111111111111111111&amount=-1:
+  HTTP 400 INVALID_REQUEST with positive-decimal/cap guidance.
+- POST /api/deposits with Content-Type application/json and body null:
+  HTTP 400 INVALID_REQUEST, "Request body must be a JSON object."
+
+Both error boundaries already warn that status is unknown, instruct users
+who signed to check their wallet before sending again, and explain that
+retrying does not cancel a transaction. Stored flow restoration validates
+field types and defaults approval scope to exact. README explicitly limits
+local verification and Vercel persistence. No distinct small defect was
+established. No browser error injection, hydrated wallet interaction, or
+historical receipt verification was performed. No deposit records or chain
+transactions created. Appended only this entry, preserving the existing log
+modification; no code changes, build, commit, push, or redeploy needed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T10:48:43Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T11:16:49Z
+
+### [Codex review] 2026-10-04 — Announce approval progress during wallet and network waits
+
+Read OVERNIGHT_BRIEF.md, the last 160 log lines, and SPEC.md first. Inspected
+approval/status screens, login, WalletRoles, AppHeader, globals.css and
+Tailwind configuration. Searched prior announcement fixes: the status tracker
+and approval error banner were already fixed, but approval progress was not.
+Fetched production /login and /deposit/approve with curl -sS --compressed
+--max-time 20. Parsed the approval HTML's script URL and curled its actual
+page-710d7504b5c5c0fe.js: signature-wait copy was present but neither
+role:"status" nor aria-live appeared in that page chunk. Evidence saved in
+/tmp/codex-independent-approve.html and /tmp/codex-independent-approve-before.js.
+
+The approval screen updates only its disabled button during duplicate checks,
+wallet signature, receipt confirmation and transfer startup. These changes
+have no live announcement semantics. Added a persistent polite, atomic,
+screen-reader-only status region to app/deposit/approve/page.tsx, sharing
+progress strings with the visible button to keep the two synchronized.
+Existing errors retain their alert region. No lib core changes, deposit
+records, or chain transactions. Build and live verification follow below.
+
+npm run build passed, including lint and type checks (third-party MetaMask,
+pino and ox warnings remain). git diff --check passed. The commit preserves
+pre-existing uncommitted log entries alongside this review's entry.

@@ -29,6 +29,14 @@ type Step =
   | "error"
   | "blocked";
 
+const PROGRESS_COPY: Partial<Record<Step, string>> = {
+  checking: "Checking for existing deposits…",
+  "awaiting-signature": "Waiting for your signature…",
+  "confirming-approval": "Confirming approval on-chain…",
+  pulling: "Starting deposit transfer…",
+  done: "Done",
+};
+
 export default function DepositApprovePage() {
   useDocumentTitle("Approve");
   const router = useRouter();
@@ -221,6 +229,9 @@ export default function DepositApprovePage() {
       <KolBanner />
       <StepProgress step={4} />
       <h1 className="h1">Approve + deposit</h1>
+      <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {PROGRESS_COPY[step] ?? ""}
+      </p>
 
       <WalletRoles
         signingInAs={mockIdentity}
@@ -329,15 +340,7 @@ export default function DepositApprovePage() {
           ? lowGas
             ? "Add ETH to continue"
             : "Approve & deposit"
-          : step === "checking"
-          ? "Checking for existing deposits…"
-          : step === "awaiting-signature"
-          ? "Waiting for your signature…"
-          : step === "confirming-approval"
-          ? "Confirming approval on-chain…"
-          : step === "pulling"
-          ? "Starting deposit transfer…"
-          : "Done"}
+          : PROGRESS_COPY[step] ?? "Done"}
       </button>
       <FlowFooter />
     </main>
