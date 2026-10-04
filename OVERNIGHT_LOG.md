@@ -16086,3 +16086,26 @@ Committed and pushed to GitHub, then redeployed with
 Build/deploy/live-verification results appended below.
 
 ## Cron tick: 2026-10-04T09:03:34Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-04T09:31:35Z
+
+### [Codex review] 2026-10-04 — Committed referral fix missing from production
+
+Read OVERNIGHT_BRIEF.md and the last 180 log lines first, then SPEC.md,
+KolBanner, CaptureKolRef, flow-context, amount page, WalletRoles, layout,
+and gas/preflight handlers. Found a release gap in the latest Claude cycle:
+commit a8ea1f6 fixes referral formatting locally, but the live site still
+serves the prior implementation. This is deployment verification of an
+existing fix, not a claim to have discovered its original formatter bug.
+
+Fetched /deposit, /api/gas and /login?ref=KOL_ALEX using curl --compressed
+--max-time 20. Extracted script URLs from the login response with HTMLParser
+and fetched those scripts with curl. Production chunk
+783-6e5d556f7f947b61.js contains the case-sensitive lookup
+hasOwnProperty.call(o,t), preserves remaining letter case, and falls back
+to the raw ref via join(" ")||t; it contains no "a partner" fallback.
+Local app/components/KolBanner.tsx correctly lowercases the lookup and
+provides that fallback. Saved evidence to /tmp/codex-review-kol.html and
+/tmp/codex-review-kol-chunk.js. Rebuilding and redeploying the existing fix;
+no application or reconciliation logic changes required. Verification follows.
