@@ -16109,3 +16109,66 @@ Local app/components/KolBanner.tsx correctly lowercases the lookup and
 provides that fallback. Saved evidence to /tmp/codex-review-kol.html and
 /tmp/codex-review-kol-chunk.js. Rebuilding and redeploying the existing fix;
 no application or reconciliation logic changes required. Verification follows.
+
+Local npm run build passed (existing ox/viem dependency warning). Committed
+review evidence as c3d0093 and pushed origin main. Initial requested Vercel
+command failed with Request Entity Too Large (2.8 GB upload); the workspace
+contains a 2,977,435,648-byte ignored core dump. Stopped the archive retry
+and deployed a clean git archive of HEAD from /tmp/codex-projecto-release,
+copying only the Vercel project linkage alongside tracked files. This reduced
+the upload to 834.5 KB; Vercel accepted it and started the production build.
+Codex review tick finished, exit code 0
+
+## QA cycle: 2026-10-04 (Claude, fresh session)
+
+### Fix: deleted the 2.2GB stale core dump and added .vercelignore — the documented `vercel --prod` deploy command was silently broken
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md first. The
+immediately preceding Codex cycle noted in passing that its *requested*
+`vercel --token ... --yes --prod` deploy failed with "Request Entity Too
+Large" because a 2,977,435,648-byte OOM crash dump named `core` (dated
+2026-10-04 07:53, i.e. left over from a prior cycle's process getting
+killed by this environment's own time limit) sat in the project root and
+got swept into the upload — and it worked around this one time via a manual
+clean git-archive deploy rather than fixing the underlying cause. That
+workaround doesn't persist: the brief's documented deploy command
+(`vercel --token "$VERCEL_TOKEN" --yes --prod`, run directly in
+/opt/data/projecto) is what every future cycle will actually run, so the
+root cause was still live and would silently break the next cycle that hit
+an OOM kill. This is a functional/infra bug (priority 1) affecting the
+single most load-bearing command in the whole workflow, not a cosmetic issue.
+
+Verified before touching anything: `lsof core` and `fuser core` both
+returned nothing, confirming no running process still had the file open, so
+deleting it was safe. Checked `.gitignore` — `/core` was already listed
+there (as "crash dumps from OOM-killed processes"), confirming the file was
+never meant to ship; it was excluded from git but NOT excluded from the
+Vercel CLI's own upload step, which is a separate ignore mechanism
+(.vercelignore, which did not exist in this repo) — that gap is the actual
+bug, not just one bad file. Deleted the stale `core` file (freed 2.2GB) and
+added `.vercelignore` listing `core`/`core.*`, `node_modules`, `.next`,
+`.git`, `coverage`, `shots-out`, `.data`, and `*.tsbuildinfo`, so a future
+crash dump can reappear without ever breaking the standard deploy command
+again.
+
+Ran `npm run build` clean (same pre-existing third-party viem/ox warning
+as every prior cycle, no new errors). Committed (ac43e7e) and pushed to
+GitHub. Redeployed with the exact documented command,
+`vercel --token "$VERCEL_TOKEN" --yes --prod` (no git-archive workaround
+needed this time) — it completed normally, built in ~1 minute, and aliased
+cleanly to https://projecto-blond.vercel.app (deployment
+dpl_7uHUs53YPsL2XTsNG8Fv9Yr9D7F2, readyState READY). This is the direct,
+verifiable proof the fix works: the exact command that failed last cycle
+now succeeds with no special-casing.
+
+Re-verified live: curled https://projecto-blond.vercel.app/ (200, title
+"Exchange O — Deposit (PoC)") and /login (200) post-deploy.
+
+No lib/*.ts reconciliation logic touched. No deposit records or chain
+transactions created. This cycle did not look for new UI/UX flaws since the
+most impactful, verifiable thing found was this deploy-pipeline bug —
+leaving it unfixed risked silently reverting future cycles' work back to
+the manual-workaround path (or worse, a future cycle not noticing the
+failure at all and reporting a deploy that never actually shipped).
+
+## Cron tick: 2026-10-04T09:38:35Z
