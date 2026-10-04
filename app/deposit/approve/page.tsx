@@ -305,7 +305,16 @@ export default function DepositApprovePage() {
           <span>
             <strong>{FAILURE_COPY.NO_GAS.title}.</strong> Current balance:{" "}
             {ethBalance ? formatEther(ethBalance.value) : "0"} ETH.{" "}
-            {FAILURE_COPY.NO_GAS.detail}
+            {FAILURE_COPY.NO_GAS.detail}{" "}
+            <a
+              href="https://www.alchemy.com/faucets/arbitrum-sepolia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-amber-100"
+            >
+              Open a testnet faucet
+            </a>
+            .
           </span>
         </div>
       )}
@@ -352,6 +361,20 @@ export default function DepositApprovePage() {
           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />
           <span>
             <strong>{errorMessage.title}.</strong> {errorMessage.detail}
+            {errorMessage === FAILURE_COPY.NO_GAS && (
+              <>
+                {" "}
+                <a
+                  href="https://www.alchemy.com/faucets/arbitrum-sepolia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-200 underline hover:text-rose-100"
+                >
+                  Open a testnet faucet
+                </a>
+                .
+              </>
+            )}
             {orphanedDepositId && (
               <>
                 {" "}
