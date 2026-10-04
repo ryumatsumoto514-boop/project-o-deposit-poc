@@ -36,8 +36,10 @@ export default function GlobalError({
             Exchange O hit an error
           </h1>
           <p style={{ color: "#94A3B8", marginBottom: 20 }}>
-            No deposit or balance was affected — this is a display error in
-            the demo UI.
+            We couldn’t load this screen, so we can’t confirm your deposit status.
+            If you already signed a transaction, check its status in your wallet
+            before sending again. Retrying this screen does not cancel a submitted
+            transaction.
           </p>
           <button
             onClick={() => reset()}

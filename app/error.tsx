@@ -24,8 +24,10 @@ export default function ErrorBoundary({
         <p className="eyebrow">Something went wrong</p>
         <h1 className="h1">This screen hit an error</h1>
         <p className="body-text">
-          No deposit or balance was affected — this is a display error in the
-          demo UI. Try again, or head back and resume from the deposit flow.
+          We couldn’t load this screen, so we can’t confirm your deposit status.
+          If you already signed a transaction, check its status in your wallet
+          before sending again. Retrying this screen does not cancel a submitted
+          transaction.
         </p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
           <button onClick={() => reset()} className="btn-primary">

@@ -15937,3 +15937,23 @@ overclaiming a live exception test that wasn't actually done.
 
 No lib/*.ts reconciliation logic touched, no deposit records created, no
 chain transactions made. Cleaned up /tmp verification artifacts after use.
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-04T07:46:33Z
+
+### [Codex review] 2026-10-04 — Error fallbacks falsely guaranteed unchanged balances
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md,
+app/error.tsx, app/global-error.tsx, login, globals.css and Tailwind config.
+Found one copy defect in the newly shipped error boundaries: both asserted
+“No deposit or balance was affected” without checking transaction state.
+A render failure can occur after a real testnet transaction is submitted;
+resetting React cannot establish or reverse its on-chain outcome.
+
+Fetched production /login and /deposit with curl -sS --compressed --max-time 20,
+parsed their script URLs, and fetched both error boundary chunks with curl.
+Both live chunks contained the unsupported assurance. Replaced it in both
+fallbacks with uncertainty about deposit status, instructions to check the
+wallet before sending again, and clarification that retrying the screen does
+not cancel a submitted transaction. No reconciliation logic changed.
+Build and deployment verification results will be appended below.
