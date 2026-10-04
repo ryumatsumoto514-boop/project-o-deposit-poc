@@ -15517,3 +15517,188 @@ shell; no hydrated wallet interaction was tested. No deposit or chain write.
 
 Rebuilding and redeploying the existing commit to close this release gap.
 No application source or reconciliation core changed. Verification follows.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T03:13:18Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-04T03:41:18Z
+
+### [Codex review] 2026-10-04 — Independent social-image response audit; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md.
+Inspected app/layout.tsx, app/login/page.tsx, app/components/FlowChrome.tsx,
+app/globals.css, tailwind.config.ts, the deposit GET/PATCH and preflight API
+handlers, api/gas, README.md and testnet-evidence.md. Searched prior metadata,
+favicon and receipt findings to avoid relabeling existing work as a new defect.
+
+Fetched production /, /login and /deposit/approve with curl -sS --compressed
+--max-time 20 and parsed their actual HTML using Python HTMLParser. Raw bodies
+are /tmp/review-{home,login,approve}.html. Testnet/simulation disclosures and
+absolute production OG/Twitter image URLs are present. The approval response
+is a gated shell; this was not a hydrated wallet-interaction test.
+
+Went beyond checking meta-tag strings: extracted the exact OG image and icon
+URLs from delivered home HTML and fetched each with curl, recording status,
+MIME type and binary signatures/dimensions. OG image returned 200 image/png
+at 1200x630, matching its declared dimensions; the generated icon returned
+200 image/png at 32x32; apple-touch-icon returned 200 image/png at 180x180;
+favicon returned 200 image/x-icon with a valid ICO header and one image.
+Results saved to /tmp/review-image-results.json. No broken social/icon asset
+or new actionable source defect was established in this bounded pass.
+
+No application change warranted. Only appended this entry, preserving existing
+uncommitted log content. No build, commit, push or redeploy performed; no
+reconciliation-core edit, deposit write or chain transaction performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T03:48:18Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T04:16:18Z
+
+### [Codex review] 2026-10-04 — Independent delivered HTML association audit; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 180 log lines first, then SPEC.md.
+Inspected layout, login, AppHeader, FlowChrome, globals.css, Tailwind config,
+deposit GET/PATCH, reconcile, pull, preflight and gas route handlers. Read
+README.md and testnet-evidence.md and searched prior validation, storage,
+metadata and receipt findings to avoid repeating established work.
+
+Fetched https://projecto-blond.vercel.app/, /login and /deposit/confirm
+with curl -sS --compressed --max-time 20, saving headers and raw HTML to
+/tmp/codex-fresh-{home,login,confirm}.{headers,html}. All returned HTTP 200.
+Parsed those actual responses with Python HTMLParser, checking duplicate
+IDs, label-for targets, aria-labelledby/aria-describedby targets, image alt
+presence and same-page fragment targets. No broken associations, duplicate
+IDs, missing image alt attributes or broken local fragments were found in
+these delivered shells. Some checks have no applicable elements; this is
+not a full accessibility certification. Extracted readable copy separately
+from scripts/styles; testnet and simulated credit/sign-in disclosures remain
+present. Evidence: /tmp/codex-fresh-html-associations.json.
+
+Confirmation only delivers a gated shell without a restored client session;
+this does not validate its hydrated form or wallet interaction. Source
+inspection found no substantiated new small defect. No chain writes or
+successful deposit creation performed, and historical receipts were not
+revalidated in this pass. Only appended this entry, preserving pre-existing
+log edits. No application change, build, commit, push or redeploy warranted;
+reconciliation core untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T04:23:19Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T04:51:19Z
+
+### [Codex review] 2026-10-04 — Independent hydrated session-recovery review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log first, then SPEC.md. Inspected
+app/flow-context.tsx, login, deposit amount, confirmation and approval guards,
+FlowChrome, globals.css and tailwind.config.ts. Previous response-only reviews
+left hydrated recovery unverified, so this pass exercised the live browser.
+
+Fetched production /login and /deposit with curl -sS --compressed --max-time 20;
+both returned 200. Saved /tmp/codex-final-{login,deposit}.html and read their
+text and metadata using Python HTMLParser excluding script/style contents.
+Login discloses simulated sign-in; deposit initially supplies only its shell.
+
+Used the existing Chrome CDP endpoint at localhost:9333 with a new tab against
+https://projecto-blond.vercel.app. Injected malformed session JSON before
+navigating to /deposit/approve: hydrated app recovered to /login and reset
+storage to defaults. Injected object-valued identity, array-valued amount,
+string-valued confirmation and invalid approval mode before /deposit/confirm:
+again recovered to /login with exact approval and false confirmation. A valid
+saved mock identity and 10.50 draft restored on /deposit, presenting the wallet
+connection gate. Finally cleared flow storage, loaded /login, and clicked the
+actual Continue with Email button: navigated to /deposit with demo identity,
+correct document title and testnet disclosure. No Runtime.exceptionThrown
+events were observed in these cases. Test tab closed afterward.
+
+Script and full observed DOM text/storage evidence are respectively
+/tmp/codex-hydration-review.mjs and /tmp/codex-hydration-review.json. No wallet
+was connected, so this does not verify the amount input, signing, transactions,
+or backend reconciliation. No new substantiated defect found; did not fabricate
+a finding or repeat known-fixed issues. Only appended this entry, preserving
+existing log edits. No application edit, build, commit, push or redeploy needed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T04:58:19Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-04T05:26:19Z
+
+### [Codex review] 2026-10-04 — Independent live missing-record recovery check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md.
+Inspected app/deposit/status/[id]/page.tsx and its GET/PATCH and reconcile
+handlers, api/gas, referral components, globals.css and tailwind.config.ts.
+Searched historical findings to avoid repeating known fixes.
+
+Fetched https://projecto-blond.vercel.app/ and
+/deposit/status/nonexistent-review with curl -sS --compressed --max-time 20;
+read raw HTML text with Python HTMLParser excluding scripts/styles. The status
+response is only a loading shell. Also fetched the read-only
+/api/deposits/nonexistent-review: HTTP 404 with {"error":"NOT_FOUND"}.
+Bodies/headers saved under /tmp/codex-boundary-*.
+
+Went beyond the shell with a new Chrome CDP tab against the live status URL.
+At 1.8 seconds, observed the temporary refresh warning and automatic-retry
+copy. After another 8.5 seconds, observed the final "Deposit record unavailable"
+screen, updated document title and live-region text, explicit warning that a
+missing record does not prove transfer failure, temporary-storage/duplicate
+protection limitation, Arbiscan link and working-target /deposit recovery link.
+No Runtime.exceptionThrown events observed. Closed the test tab. Script and
+DOM evidence: /tmp/codex-missing-record-review.{mjs,json}. The page called
+reconcile for the nonexistent ID; no deposit was created or chain write made.
+
+No new substantiated issue in this bounded review. Only appended this entry,
+preserving prior log edits; no application change, build, commit, push or
+redeploy warranted. Reconciliation core untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-04T05:33:19Z
+
+## Cron tick: 2026-10-04T05:33:00Z (QA cycle, fresh session)
+
+### Fix: closed the release gap flagged by the prior Codex review — header tap-target fix was committed but never actually deployed
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md (15659 lines) first.
+The most recent entries showed a confirmed, specific problem: commit bb8e802
+(enlarging the header logo's tap target to 44px) was already merged into
+main as of several cron ticks ago, but an independent Codex review at
+03:06:17Z proved via curl that production was still serving the old
+`min-w-0 shrink` class without the padding — i.e. the fix existed in git but
+had never been pushed through `vercel --prod`. That review ended with
+"Rebuilding and redeploying the existing commit... Verification follows"
+but no subsequent log entry recorded that the redeploy actually completed,
+and `git status` here showed no new commits since 69f8069 (the doc entry
+recording the finding) — so the gap was still open.
+
+Verified the live gap myself first rather than trusting the log: curled
+https://projecto-blond.vercel.app/ and grepped the home link's `<a>` tag —
+before the redeploy it read `class="inline-flex min-w-0 shrink items-center"`
+with no padding classes, confirming the gap was real and still live.
+
+Ran `npm run build` clean (no type/lint errors), then redeployed the
+existing, already-committed working tree with
+`vercel --token "$VERCEL_TOKEN" --yes --prod` (no source change needed —
+this was purely a missing-deploy-step problem, not a code problem). Vercel
+returned `readyState: "READY"` for deployment dpl_DKe4EotR7q2MYDQ5HsEm6uvbV8ZJ
+promoted to production.
+
+Re-verified against the live aliased URL (not just the deployment URL) two
+ways: (1) curl https://projecto-blond.vercel.app/ now shows
+`class="inline-flex min-w-0 shrink items-center px-1.5 py-1.5"` on the home
+link — padding classes present; (2) ran the existing
+scripts/check-tap-targets.mjs via CDP (chrome-headless-shell on :9333)
+against the live production URL across /, /login, /deposit,
+/deposit/confirm, /deposit/approve — the "Exchange O" header link now
+measures 147x44 on every route (meets the 44px minimum), matching the
+local verification from the original fix cycle. All other interactive
+elements on those routes also pass (ok 116x46 / 335x46 buttons).
+
+No source code changed this cycle — this was purely closing a deploy gap
+between git and the live site. No lib/*.ts reconciliation logic touched,
+no new deposit records or chain transactions created. OVERNIGHT_LOG.md is
+the only file with pending changes (this entry); committing it now.
