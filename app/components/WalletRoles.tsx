@@ -39,9 +39,9 @@ export function WalletRoles({
       {fundsFrom !== undefined && <Row label="Funds coming from" value={fundsFrom} />}
       {tradableIn !== undefined && (
         <Row
-          label="Tradable on Hyperliquid as"
+          label="Simulated trading account"
           value={tradableIn}
-          note="auto-derived from your wallet, not a separate deposit"
+          note="demo address only; no real Hyperliquid account. Do not send funds here"
         />
       )}
     </div>
