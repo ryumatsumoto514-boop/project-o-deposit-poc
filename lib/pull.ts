@@ -60,7 +60,7 @@ export async function attemptPull(deposit: DepositRecord): Promise<PullOutcome> 
       ? {
           status: "STALLED_NO_GAS",
           failureReason:
-            "Our deposit relayer couldn't submit the transfer right now. This is an infrastructure issue on our side, not your wallet — we'll keep retrying automatically.",
+            "Our deposit relayer doesn't have enough testnet ETH to pay the transfer fee right now. This is an infrastructure issue on our side, not your wallet — we'll keep retrying automatically once it's topped up.",
         }
       : {
           status: "STALLED_TIMEOUT",
