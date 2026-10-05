@@ -17254,3 +17254,17 @@ text, so social clients receive a textual alternative. No engine changes.
 Also inspected globals.css, tailwind.config.ts, login, flow context, header,
 referral disclosure, gas and deposit PATCH routes, and documentation's
 mock/testnet boundary. Build and live deployment verification follow below.
+
+Verification: npm run build exited 0; existing MetaMask async-storage,
+pino-pretty and ox dependency warnings remain (already recorded in prior
+cycles). Parsed built index.html and login.html: both generated the two
+expected alt metadata tags. Code commit 4fa8e67 pushed to origin/main;
+vercel --token "$VERCEL_TOKEN" --yes --prod completed successfully, deployment
+dpl_82ftpPj2r9WAUu8PDd1Hvvik2jey aliased to the production domain. Then
+curl -fsS --compressed --max-time 20 fetched / and /login again, saving
+/tmp/codex-fresh-{home,login}-after.html. Python HTMLParser assertions passed
+for both og:image:alt and twitter:image:alt on both live pages, exactly:
+"Exchange O — Deposit tracking, in plain language — testnet demo".
+This verifies delivered metadata, not a third-party social client's rendering.
+Preserved existing log entries and left unrelated scripts/check-overflow.mjs
+and scripts/qa-shots.mjs edits uncommitted.
