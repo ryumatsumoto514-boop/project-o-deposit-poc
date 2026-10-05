@@ -17475,3 +17475,19 @@ and review wallet history. No reconciliation or transfer logic changed.
 
 npm run build passed (14 generated pages; existing optional-dependency
 warnings). git diff --check passed. Production verification follows below.
+
+Verification complete: commit ff6c462 pushed to origin/main; Vercel deployment
+dpl_J6y124rh8qzsHCokQGgAbCv2urf2 READY and aliased to the production URL.
+Repeated npm run build after the final wording refinement; exit 0, and both
+compiled pull/reconcile routes contain the final text.
+
+Used curl POST on https://projecto-blond.vercel.app/api/deposits to create
+record 295e756d-c113-4d74-ade2-7970367e1696, amount 0.000001, funding and
+destination zero address, identity codex-error-copy-review. Referenced the
+historical successful approval receipt solely to reach the relayer error
+branch; it is not an approval from this test address. MockUSDC requires
+allowance before transfer, so the zero address cannot authorize this pull.
+Curl POST to /api/deposits/295e756d-c113-4d74-ade2-7970367e1696/pull returned
+RELAYER_FAILED / STALLED_TIMEOUT with the exact new failureReason and null
+txHash. This directly verifies live server error copy, not just deployment
+metadata. One ephemeral diagnostic record created; no transfer hash returned.
