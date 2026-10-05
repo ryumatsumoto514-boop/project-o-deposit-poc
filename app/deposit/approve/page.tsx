@@ -290,7 +290,7 @@ export default function DepositApprovePage() {
             <button
               type="button"
               onClick={() => refetchGasCheck()}
-              className="underline hover:text-amber-100"
+              className="inline-block -my-3 py-3 underline hover:text-amber-100"
             >
               Try again
             </button>
@@ -310,7 +310,7 @@ export default function DepositApprovePage() {
               href="https://www.alchemy.com/faucets/arbitrum-sepolia"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-amber-100"
+              className="inline-block -my-3 py-3 underline hover:text-amber-100"
             >
               Open a testnet faucet
             </a>

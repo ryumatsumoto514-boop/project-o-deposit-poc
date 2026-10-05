@@ -1,18 +1,10 @@
-// Measures real rendered bounding-box size of every interactive element
-// (button, a, input, select, textarea, [role=button]) at mobile viewport
-// width, to check against the 44x44 CSS px minimum tap-target guideline
-// (WCAG 2.5.5 / Apple HIG). Uses chrome-headless-shell over CDP on 9333.
-const CDP = "http://127.0.0.1:9333";
-const BASE = process.argv[2] || "https://projecto-blond.vercel.app";
-const ROUTES = ["/", "/login", "/deposit", "/deposit/confirm", "/deposit/approve"];
+import { newTab, closeTab } from "./screenshot.mjs";
 
-async function newTab() {
-  const res = await fetch(`${CDP}/json/new`, { method: "PUT" });
-  return res.json();
-}
-async function closeTab(id) {
-  await fetch(`${CDP}/json/close/${id}`);
-}
+const CDP = "http://127.0.0.1:9333";
+const BASE_URL = "https://projecto-blond.vercel.app";
+const WALLET = "0x9a11f5B6D8c2A7e4C1d3F0b8E6a9C4d7F2b1A3e5";
+const CHAIN_ID_HEX = "0x66eee";
+
 function connect(wsUrl) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(wsUrl);
@@ -36,54 +28,62 @@ function send(ws, method, params = {}) {
   });
 }
 
-const SEED_FLOW = {
-  step: "confirm",
-  userWallet: "0x1e9d508D55eCE8D36Ec3Aa94299EC943c4f4Eb37",
-  amount: "25",
-  destinationAccount: "0xCEfAe626B7CFfC6Ab72f7df4F9609018Ee5a09a6",
-  approvalMode: "exact",
-};
+const INJECT_WALLET = `
+(function() {
+  const ADDR = ${JSON.stringify(WALLET)};
+  const CHAIN_ID = ${JSON.stringify(CHAIN_ID_HEX)};
+  window.ethereum = {
+    isMetaMask: true,
+    request: async ({ method }) => {
+      if (method === "eth_requestAccounts" || method === "eth_accounts") return [ADDR];
+      if (method === "eth_chainId") return CHAIN_ID;
+      if (method === "net_version") return String(parseInt(CHAIN_ID, 16));
+      return null;
+    },
+    on: () => {},
+    removeListener: () => {},
+  };
+})();
+`;
 
-for (const route of ROUTES) {
+const jobs = [
+  { url: `${BASE_URL}/`, seedFlow: null },
+  { url: `${BASE_URL}/login`, seedFlow: null },
+  { url: `${BASE_URL}/deposit`, seedFlow: { kolRef: null, mockIdentity: WALLET } },
+  { url: `${BASE_URL}/deposit/confirm`, seedFlow: { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0" } },
+  { url: `${BASE_URL}/deposit/approve`, seedFlow: { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0", addressConfirmed: true } },
+];
+
+for (const job of jobs) {
   const page = await newTab();
   const ws = await connect(page.webSocketDebuggerUrl);
   await send(ws, "Page.enable");
   await send(ws, "Runtime.enable");
-  await send(ws, "Emulation.setDeviceMetricsOverride", {
-    width: 375, height: 812, deviceScaleFactor: 2, mobile: true,
-  });
-  if (route.startsWith("/deposit/confirm") || route.startsWith("/deposit/approve")) {
+  await send(ws, "Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 2, mobile: true });
+  await send(ws, "Page.addScriptToEvaluateOnNewDocument", { source: INJECT_WALLET });
+  if (job.seedFlow) {
     await send(ws, "Page.addScriptToEvaluateOnNewDocument", {
-      source: `sessionStorage.setItem("exo_flow_state", ${JSON.stringify(JSON.stringify(SEED_FLOW))});`,
+      source: `sessionStorage.setItem("exo_flow_state", ${JSON.stringify(JSON.stringify(job.seedFlow))});`,
     });
   }
-  await send(ws, "Page.navigate", { url: BASE + route });
-  await new Promise((r) => setTimeout(r, 1400));
-
+  await send(ws, "Page.navigate", { url: job.url });
+  await new Promise((r) => setTimeout(r, 1800));
   const { result } = await send(ws, "Runtime.evaluate", {
-    expression: `
-      JSON.stringify(Array.from(document.querySelectorAll('button, a, input, select, textarea, [role=button]'))
-        .filter(el => {
-          const cs = getComputedStyle(el);
-          return cs.display !== 'none' && cs.visibility !== 'hidden' && el.offsetParent !== null;
-        })
-        .map(el => {
-          const r = el.getBoundingClientRect();
-          return {
-            tag: el.tagName.toLowerCase(),
-            text: (el.textContent || el.getAttribute('aria-label') || el.getAttribute('placeholder') || '').trim().slice(0, 40),
-            w: Math.round(r.width),
-            h: Math.round(r.height),
-          };
-        }))
-    `,
+    expression: `(function(){
+      const els = Array.from(document.querySelectorAll("button, a, input, [role=button]"));
+      return JSON.stringify(els.map(el => {
+        const r = el.getBoundingClientRect();
+        const cs = getComputedStyle(el);
+        return {
+          tag: el.tagName,
+          text: (el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 30),
+          w: Math.round(r.width), h: Math.round(r.height),
+          visible: r.width > 0 && r.height > 0 && cs.visibility !== "hidden" && cs.display !== "none",
+        };
+      }).filter(e => e.visible && (e.w < 44 || e.h < 44)));
+    })()`,
     returnByValue: true,
   });
-  const els = JSON.parse(result.value || "[]");
-  console.log(`\n=== ${route} (${els.length} interactive elements) ===`);
-  for (const el of els) {
-    const small = el.w < 44 || el.h < 44;
-    console.log(`${small ? "SMALL" : "ok   "} ${el.w}x${el.h}  <${el.tag}> "${el.text}"`);
-  }
+  console.log(job.url, "-> small targets:", result.value);
   await closeTab(page.id);
 }

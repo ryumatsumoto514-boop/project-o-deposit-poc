@@ -1,17 +1,10 @@
-// One-off QA: capture browser console errors / uncaught exceptions across the
-// live flow (curl-based reviews can't see these — they only see server HTML).
+import { newTab, closeTab } from "./screenshot.mjs";
+
 const CDP = "http://127.0.0.1:9333";
 const BASE_URL = "https://projecto-blond.vercel.app";
 const WALLET = "0x9a11f5B6D8c2A7e4C1d3F0b8E6a9C4d7F2b1A3e5";
 const CHAIN_ID_HEX = "0x66eee";
 
-async function newTab() {
-  const res = await fetch(`${CDP}/json/new`, { method: "PUT" });
-  return res.json();
-}
-async function closeTab(id) {
-  await fetch(`${CDP}/json/close/${id}`);
-}
 function connect(wsUrl) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(wsUrl);
@@ -39,7 +32,6 @@ const INJECT_WALLET = `
 (function() {
   const ADDR = ${JSON.stringify(WALLET)};
   const CHAIN_ID = ${JSON.stringify(CHAIN_ID_HEX)};
-  const listeners = {};
   window.ethereum = {
     isMetaMask: true,
     request: async ({ method }) => {
@@ -48,56 +40,49 @@ const INJECT_WALLET = `
       if (method === "net_version") return String(parseInt(CHAIN_ID, 16));
       return null;
     },
-    on: (ev, cb) => { (listeners[ev] ||= []).push(cb); },
+    on: () => {},
     removeListener: () => {},
   };
 })();
 `;
 
-async function check(url, seedFlow) {
+const jobs = [
+  { url: `${BASE_URL}/`, seedFlow: null },
+  { url: `${BASE_URL}/login`, seedFlow: null },
+  { url: `${BASE_URL}/deposit`, seedFlow: { kolRef: null, mockIdentity: WALLET } },
+  { url: `${BASE_URL}/deposit/confirm`, seedFlow: { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0" } },
+  { url: `${BASE_URL}/deposit/approve`, seedFlow: { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0", addressConfirmed: true } },
+  { url: `${BASE_URL}/deposit/status/does-not-exist-console-check`, seedFlow: null },
+];
+
+for (const job of jobs) {
   const page = await newTab();
   const ws = await connect(page.webSocketDebuggerUrl);
   const messages = [];
   ws.addEventListener("message", (ev) => {
     const msg = JSON.parse(ev.data);
-    if (msg.method === "Runtime.consoleAPICalled" && (msg.params.type === "error" || msg.params.type === "warning")) {
-      messages.push({ type: msg.params.type, text: msg.params.args.map(a => a.value ?? a.description ?? "").join(" ") });
-    }
     if (msg.method === "Runtime.exceptionThrown") {
-      messages.push({ type: "exception", text: msg.params.exceptionDetails.text + " " + (msg.params.exceptionDetails.exception?.description ?? "") });
+      messages.push({ type: "exception", detail: msg.params.exceptionDetails.text || msg.params.exceptionDetails.exception?.description });
+    }
+    if (msg.method === "Runtime.consoleAPICalled" && (msg.params.type === "error" || msg.params.type === "warning")) {
+      messages.push({ type: msg.params.type, detail: (msg.params.args || []).map(a => a.value || a.description).join(" ") });
+    }
+    if (msg.method === "Network.responseReceived" && msg.params.response.status >= 400) {
+      messages.push({ type: "http", detail: `${msg.params.response.status} ${msg.params.response.url}` });
     }
   });
   await send(ws, "Page.enable");
   await send(ws, "Runtime.enable");
+  await send(ws, "Network.enable");
+  await send(ws, "Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 2, mobile: true });
   await send(ws, "Page.addScriptToEvaluateOnNewDocument", { source: INJECT_WALLET });
-  if (seedFlow) {
+  if (job.seedFlow) {
     await send(ws, "Page.addScriptToEvaluateOnNewDocument", {
-      source: `sessionStorage.setItem("exo_flow_state", ${JSON.stringify(JSON.stringify(seedFlow))});`,
+      source: `sessionStorage.setItem("exo_flow_state", ${JSON.stringify(JSON.stringify(job.seedFlow))});`,
     });
   }
-  await send(ws, "Page.navigate", { url });
+  await send(ws, "Page.navigate", { url: job.url });
   await new Promise((r) => setTimeout(r, 2500));
-  console.log(`\n=== ${url} ===`);
-  if (messages.length === 0) console.log("  (no console errors/warnings/exceptions)");
-  for (const m of messages) console.log(`  [${m.type}] ${m.text.slice(0, 300)}`);
-  ws.close();
+  console.log(job.url, "->", messages.length ? JSON.stringify(messages) : "clean");
   await closeTab(page.id);
-}
-
-const jobs = [
-  [`${BASE_URL}/`, null],
-  [`${BASE_URL}/?ref=kol_alex`, null],
-  [`${BASE_URL}/login`, null],
-  [`${BASE_URL}/deposit`, { kolRef: null, mockIdentity: WALLET }],
-  [`${BASE_URL}/deposit/confirm`, { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0" }],
-  [`${BASE_URL}/deposit/approve`, { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0", addressConfirmed: true }],
-  [`${BASE_URL}/deposit/status/does-not-exist-123`, null],
-];
-
-for (const [url, seedFlow] of jobs) {
-  try {
-    await check(url, seedFlow);
-  } catch (e) {
-    console.error(`  [error] ${url}:`, e.message);
-  }
 }
