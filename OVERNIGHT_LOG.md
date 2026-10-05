@@ -17779,3 +17779,15 @@ untracked scripts/shots-out/ screenshots from this commit.
 Validation: npm run build exited 0, including lint/type checking and static
 page generation. Only previously logged MetaMask async-storage, pino-pretty
 and ox dependency warnings appeared; git diff --check passed.
+
+Deployment/live verification: code commit 5ba2aa0 pushed to origin/main;
+`vercel --token "$VERCEL_TOKEN" --yes --prod` succeeded, deployment
+projecto-oilwiyc1d, aliased to https://projecto-blond.vercel.app.
+Fetched /deposit/status/codex-copy-review again using curl and followed its
+new script /_next/static/chunks/app/deposit/status/%5Bid%5D/page-a9e0a6adc4cdce24.js.
+Assertions passed: new simulated-credit/bridge labels and explicit no-actual-
+balance/no-Hyperliquid-transfer copy are present; old "tradable now", "your
+funds are tradable" and "on-chain and credited to your trading account"
+claims are absent. Saved raw responses to /tmp/codex-copy-after.{html,js}.
+This verifies delivered production code, not a hydrated wallet transaction
+or manual screen-reader session. No deposit or on-chain transaction created.
