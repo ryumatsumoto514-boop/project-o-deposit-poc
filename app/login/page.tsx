@@ -8,6 +8,7 @@ import { MockedBadge } from "../components/KolBanner";
 import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
 import { useDocumentTitle } from "../useDocumentTitle";
+import { truncateAddress } from "@/lib/format";
 
 export default function LoginPage() {
   useDocumentTitle("Sign in");
@@ -69,7 +70,9 @@ export default function LoginPage() {
           {isConnected && address ? (
             <button onClick={() => continueTo(address)} className="btn-secondary min-w-0">
               <WalletIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-              <span className="min-w-0 truncate">Continue with connected wallet — {address}</span>
+              <span className="min-w-0 truncate">
+                Continue with connected wallet — {truncateAddress(address)}
+              </span>
             </button>
           ) : (
             connectors.map((connector) => (
