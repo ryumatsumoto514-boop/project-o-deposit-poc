@@ -32,14 +32,14 @@ const STATE_COPY: Record<
     description: "The deposit transaction is confirmed on Arbitrum Sepolia.",
   },
   BRIDGING: {
-    label: "Moving to your trading account",
+    label: "Simulating bridge progress",
     description:
-      "Your funds are confirmed on-chain and are being credited as tradable collateral. This mock step usually takes 15–30 seconds.",
+      "The testnet transfer is confirmed. A simulated bridge delay usually takes 15–30 seconds; no funds move to Hyperliquid.",
   },
   CREDITED: {
-    label: "Credited — tradable now",
+    label: "Simulated credit complete",
     description:
-      "Both the on-chain transaction and the (mocked) Hyperliquid balance check agree: your funds are tradable.",
+      "The testnet transfer and simulated balance check agree. No actual trading balance is credited.",
   },
   STALLED_NO_GAS: {
     label: "Paused — deposit service needs ETH",
@@ -301,10 +301,10 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
             <CheckIcon className="h-8 w-8 text-white" />
           </div>
-          <h1 className="h1">Credited — tradable now</h1>
+          <h1 className="h1">Simulated credit complete</h1>
           <p className="body-text max-w-xs">
             <strong className="text-emerald-300">{deposit.amount} USDC</strong> is confirmed
-            on-chain and credited to your trading account.
+            on Arbitrum Sepolia. The demo credit is simulated; no actual trading balance is credited.
           </p>
         </div>
 
