@@ -70,9 +70,8 @@ export default function LoginPage() {
           {isConnected && address ? (
             <button onClick={() => continueTo(address)} className="btn-secondary min-w-0">
               <WalletIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-              <span className="min-w-0 truncate">
-                Continue with connected wallet — {truncateAddress(address)}
-              </span>
+              <span className="min-w-0 truncate">Continue with connected wallet —</span>
+              <span className="shrink-0 font-mono text-slate-100">{truncateAddress(address)}</span>
             </button>
           ) : (
             connectors.map((connector) => (
