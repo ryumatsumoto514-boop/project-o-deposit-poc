@@ -140,9 +140,9 @@ function Stepper({ deposit }: { deposit: DepositRecord }) {
               >
                 {stuck ? STATE_COPY[status].label : STATE_COPY[s].label}
               </p>
-              {(active || stuck) && (
+              {active && !stuck && (
                 <p className="mt-1 text-xs text-slate-400">
-                  {stuck ? STATE_COPY[status].description : STATE_COPY[s].description}
+                  {STATE_COPY[s].description}
                 </p>
               )}
             </div>
