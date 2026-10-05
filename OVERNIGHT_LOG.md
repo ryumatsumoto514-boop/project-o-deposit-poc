@@ -18050,3 +18050,12 @@ Build/deployment/live verification results follow below.
 Validation: npm run build exited 0, including lint/type checks and all 14
 static pages. Existing dependency warnings remain (MetaMask async storage,
 pino-pretty and ox dynamic import); no new build error.
+
+Deployment/live verification: commit 359a2b2 pushed to origin/main;
+vercel --token "$VERCEL_TOKEN" --yes --prod succeeded (READY), aliased to
+https://projecto-blond.vercel.app. Fetched /deposit/confirm again with curl
+and fetched all its linked scripts with curl. New label and full demo-address
+disclaimer confirmed in /_next/static/chunks/707-3d309f1e41efcaad.js.
+Old “Tradable on Hyperliquid as” label absent from all linked scripts.
+This verifies delivered production code, not a hydrated wallet session.
+Preserved the pre-existing log additions when committing as requested.
