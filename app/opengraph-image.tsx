@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const alt = "Exchange O — Deposit tracking, in plain language — testnet demo";
 
 // Shared with app/icon.tsx: the LogoMark's segmented-ring motif, so a link
 // a KOL shares (the app's actual distribution channel per SPEC.md) previews
