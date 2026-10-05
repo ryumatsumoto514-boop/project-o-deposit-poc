@@ -17451,3 +17451,27 @@ live on https://projecto-blond.vercel.app, not just committed.
 No change to lib/*.ts reconciliation engine. No new testnet transaction
 needed for this fix (pure UI loading-state consistency, not a state-machine
 or chain-interaction change).
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-05T04:48:12Z
+
+### [Codex review] 2026-10-05 04:49 UTC — Relayer error overrides corrected timeout copy with a safety guarantee
+
+Read OVERNIGHT_BRIEF.md, the last 160 log lines, SPEC.md, and earlier review
+headings first. Fetched production /login and /deposit/approve with curl
+-fsS --compressed --max-time 20, then parsed actual text, controls and meta
+tags with Python HTMLParser. The latest reconnect placeholder is delivered.
+Read globals.css, tailwind.config.ts, API creation/preflight/PATCH/pull/
+reconcile routes, and followed the pull error into lib/pull.ts and relayer.ts.
+
+Found a distinct remaining instance of "Your funds are not at risk" in
+attemptPull's generic exception handler. The September 19 fix corrected the
+status page's fallback description, but line 380 uses deposit.failureReason
+in preference to that description, so this backend message overrides it.
+A writeContract/RPC exception cannot establish funds safety or the transfer
+outcome. Corrected only this user-visible string in lib/pull.ts: outcome is
+unconfirmed, do not deposit again, keep the page open for checks/retries,
+and review wallet history. No reconciliation or transfer logic changed.
+
+npm run build passed (14 generated pages; existing optional-dependency
+warnings). git diff --check passed. Production verification follows below.

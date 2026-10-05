@@ -65,7 +65,7 @@ export async function attemptPull(deposit: DepositRecord): Promise<PullOutcome> 
       : {
           status: "STALLED_TIMEOUT",
           failureReason:
-            "Our deposit relayer hit an unexpected error trying to submit the transfer. Your funds are not at risk — we'll keep retrying automatically.",
+            "Our deposit relayer hit an unexpected error trying to submit the transfer. We haven't confirmed the transfer outcome yet. Don't send another deposit. Keep this page open while we check and retry, and review your wallet history before trying again.",
         });
     return { ok: false, reason: "RELAYER_FAILED", deposit: updated };
   }
