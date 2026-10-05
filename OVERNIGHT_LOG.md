@@ -18059,3 +18059,119 @@ disclaimer confirmed in /_next/static/chunks/707-3d309f1e41efcaad.js.
 Old “Tradable on Hyperliquid as” label absent from all linked scripts.
 This verifies delivered production code, not a hydrated wallet session.
 Preserved the pre-existing log additions when committing as requested.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-05T13:40:49Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-05T14:08:49Z
+
+### [Codex review] 2026-10-05 — Independent error-screen, theme and delivered login review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md and
+prior review headings to avoid repeating fixed issues. Inspected
+app/{error,global-error,not-found}.tsx, app/components/{AppHeader,FlowChrome}.tsx,
+app/login/page.tsx, app/flow-context.tsx, app/layout.tsx, app/api/gas/route.ts,
+app/globals.css and tailwind.config.ts. Error copy preserves uncertainty about
+submitted transactions; gas refresh failures clear the displayed value;
+restored flow fields are type-checked. Different panel/control/dot radii and
+semantic warning colors do not by themselves establish design drift.
+
+Fetched https://projecto-blond.vercel.app/login and
+/independent-review-missing using curl --compressed --max-time 20, saving
+raw responses to /tmp/review-login.html and /tmp/review-missing.html.
+Read visible text, button attributes and metadata with Python HTMLParser:
+login controls have text names and explicit simulated-auth disclosures;
+the missing route returns HTTP 404 with robots=noindex and a home link.
+Both have lang=en, one main landmark, one h1 and production social-image
+URLs with alt descriptions. A read-only curl to /api/gas returned
+{"gwei":0.060254}, consistent with the endpoint's numeric display contract.
+These checks do not establish hydrated wallet behavior, rendered contrast,
+or screen-reader interaction.
+
+No distinct small, substantiated issue found in this bounded pass. Appended
+only this entry, preserving the existing log changes and untracked
+scripts/qa-sweep-fresh.mjs. No code change, build, commit, push, deployment,
+API mutation or on-chain transaction; no finding fabricated to justify one.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-05T14:15:49Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-05T14:43:53Z
+
+### [Codex review] 2026-10-05 — Independent amount-form, referral and raw-page review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 180 log lines first, then SPEC.md and
+recent review headings. Inspected app/deposit/page.tsx, the create and
+preflight deposit API handlers, components/{CaptureKolRef,KolBanner,
+FlowChrome,PipelineStepper}.tsx, app/globals.css and tailwind.config.ts.
+Amount validation in the form and API agrees on positive decimal input,
+six-place precision and the demo cap. The form associates its error with
+the input and exposes an alert. Referral capture caps input at 64 characters;
+name lookup uses an own-property check and renders through React text.
+Reduced-motion CSS covers decorative animations. No distinct small,
+substantiated defect found; did not relabel existing fixes as new findings.
+
+Fetched https://projecto-blond.vercel.app/?ref=%3Cscript%3Ereview%3C%2Fscript%3E
+and /deposit with curl -fsS --compressed --max-time 20. Saved raw responses
+to /tmp/review-fresh-home.html and /tmp/review-fresh-deposit.html and read
+visible text, metadata and landmark counts using Python HTMLParser.
+Home delivers one main and h1, testnet social metadata with a production
+image URL and alt description, and explicit simulated bridge/credit copy.
+Deposit delivers the wallet-reconnection shell with one main. Referral
+capture happens after hydration, so these raw responses do not establish
+runtime referral behavior, wallet interaction or rendered accessibility.
+
+Appended only this entry. Preserved pre-existing modifications to
+app/login/page.tsx and OVERNIGHT_LOG.md and untracked
+scripts/qa-sweep-fresh.mjs. No code change, build, commit, push, deployment,
+API mutation or on-chain transaction. No finding fabricated to justify a fix.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-05T14:50:56Z
+
+## Cron tick: 2026-10-05T15:xx — Claude Code (resumed autonomous QA)
+
+### Finished a prior cycle's unfinished fix: raw wallet address on login button
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first, then checked
+`git status` / `git diff` for in-progress work before starting a fresh
+search. Found app/login/page.tsx already modified on disk (uncommitted,
+left over from a cycle that was killed — "Cron tick 2026-10-05T14:15:49Z,
+Claude Code tick finished, exit code 143"): it imported `truncateAddress`
+from lib/format.ts and wrapped the connected-wallet address, but the
+change had never been committed, built, or deployed.
+
+Confirmed this was a real, correctly-scoped fix rather than stale junk:
+grepped for `truncateAddress` usage across the repo and found both
+AppHeader.tsx and WalletRoles.tsx already truncate wallet addresses to
+`0x1234…abcd` form; app/login/page.tsx was the one remaining screen
+rendering the full 42-character address inline inside a button
+(`Continue with connected wallet — {address}`), a design-system
+inconsistency and a mobile-overflow risk inside a `btn-secondary`
+flex row sized for short text.
+
+Ran `npm run build`: exited 0, lint/type-check clean, all 14 routes
+generated, only the pre-existing MetaMask/pino-pretty/ox dependency
+warnings (already logged in prior cycles, not new).
+
+Committed as 6909ae0 ("fix: truncate wallet address on login continue
+button"), pushed to origin/main, then ran
+`vercel --token "$VERCEL_TOKEN" --yes --prod` — deployment
+dpl_8xqRuGuFU9MiWKmsckubediss8XS went READY and aliased to
+https://projecto-blond.vercel.app.
+
+Verified live (not just committed): fetched production `/login` with
+curl, followed its actual delivered script
+`/_next/static/chunks/app/login/page-466a5a0598ea494c.js`, and confirmed
+the connected-wallet label now calls a formatting function on the
+address (`children:["Continue with connected wallet — ",(0,h.F)(m)]`)
+instead of interpolating the raw address string directly as in the
+previous bundle. This is a delivered-bundle check, not a hydrated-wallet
+screenshot; a real MetaMask connection was not exercised this cycle.
+
+Left scripts/qa-sweep-fresh.mjs untracked (pre-existing screenshot helper
+from an earlier cycle, unrelated to this fix) and did not modify
+lib/*.ts reconciliation logic. No new transactions, no API mutations.
+Claude Code tick finished, exit code 0
