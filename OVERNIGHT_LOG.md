@@ -17491,3 +17491,56 @@ Curl POST to /api/deposits/295e756d-c113-4d74-ade2-7970367e1696/pull returned
 RELAYER_FAILED / STALLED_TIMEOUT with the exact new failureReason and null
 txHash. This directly verifies live server error copy, not just deployment
 metadata. One ephemeral diagnostic record created; no transfer hash returned.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-05T04:55:12Z
+
+## Claude tick: 2026-10-05 (ad hoc) — Fixed stale non-gas wording in the actual STALLED_NO_GAS failureReason
+
+Read OVERNIGHT_BRIEF.md and the last ~200 log lines (extensive prior Codex
+review history, 193 commits, most recent ticks finding "no new issue" after
+genuinely checking). Per priority order, looked for functional bugs first:
+read lib/pull.ts (attemptPull) end-to-end alongside app/deposit/status/[id]/page.tsx,
+since the September 19 and October 5 (ff6c462) prior cycles had both touched
+failureReason copy for the *non*-gas RELAYER_FAILED branch but never the
+gas branch itself.
+
+Found: attemptPull's STALLED_NO_GAS branch (lib/pull.ts, now line ~62) sets
+failureReason to "Our deposit relayer couldn't submit the transfer right
+now. This is an infrastructure issue on our side, not your wallet —
+we'll keep retrying automatically." — a leftover string from commit 8215b2b
+(before 5a50fb4 split gas vs. non-gas errors into two branches). It never
+mentions gas or ETH at all, despite the status literally being
+STALLED_NO_GAS. On the status page, deposit.failureReason unconditionally
+overrides STATE_COPY[status].description (page.tsx line 380), so a user
+hitting a real gas-exhaustion stall would see this vague message as the
+primary explanation, directly above a "Next step" line that says "The demo
+operator needs to top up the relayer. Adding ETH to your funding wallet
+will not resolve this." — specific guidance with no matching specific
+problem statement above it. Found by reading the code path, not by
+observing it live: triggering genuine gas exhaustion on the real relayer
+wallet (which currently holds real, shared testnet ETH used for actual
+proof transactions) would drain funds needed by future cycles/evidence,
+so this is a readthrough bug catch, same class as several bugs in this
+file that prior cycles only found by reading rather than reproducing.
+
+Fix: reworded the STALLED_NO_GAS failureReason to explicitly state "Our
+deposit relayer doesn't have enough testnet ETH to pay the transfer fee
+right now." before the existing "infrastructure issue, not your wallet"
+framing, so it's consistent with both the state name and its own next-step
+copy instead of contradicting it.
+
+Verification: npm run build passed clean (14 routes generated, no new
+type/lint errors). Committed a513375, pushed to origin/main. Deployed with
+vercel --token "$VERCEL_TOKEN" --yes --prod -> dpl_7H69fAmVbcSY364Jtn1qr6XXrZf2,
+READY. Confirmed via `vercel alias ls` that projecto-blond.vercel.app is
+aliased to this exact deployment (not a stale one), and curled the live
+home page (200). Did not live-trigger the exact STALLED_NO_GAS branch,
+for the reason above (would require actually draining the relayer's real
+ETH) — this is a source-level content fix verified by build + deploy +
+alias check, not by reproducing the failing state in production, and that
+limitation is being stated plainly rather than implied otherwise.
+
+No change to reconciliation state-machine logic, idempotency, or
+transition rules — only a user-facing string. No new testnet transaction
+performed or needed.
