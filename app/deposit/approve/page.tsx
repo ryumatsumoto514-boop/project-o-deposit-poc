@@ -9,7 +9,7 @@ import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
 import { AlertIcon, SpinnerIcon } from "../../components/icons";
-import { StepProgress, FlowFooter } from "../../components/FlowChrome";
+import { StepProgress, FlowFooter, FlowLoading } from "../../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, USDC_ADDRESS, USDC_DECIMALS } from "@/lib/chain";
 import { wagmiConfig } from "@/lib/wagmiConfig";
@@ -71,7 +71,7 @@ export default function DepositApprovePage() {
     return () => clearTimeout(timer);
   }, [hydrated, walletSettling, mockIdentity, draftAmount, address, addressConfirmed, router]);
 
-  if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address || !addressConfirmed) return null;
+  if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address || !addressConfirmed) return <FlowLoading />;
 
   const lowGas = ethBalance !== undefined && ethBalance.value < MIN_GAS_WEI;
   const wrongNetwork = chainId !== undefined && chainId !== CHAIN.id;

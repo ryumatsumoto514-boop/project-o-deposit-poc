@@ -1,6 +1,21 @@
-import { ShieldIcon } from "./icons";
+import { ShieldIcon, SpinnerIcon } from "./icons";
 
 const STEPS = ["Sign in", "Amount", "Confirm", "Approve"] as const;
+
+// Deep-linking straight to /deposit, /deposit/confirm or /deposit/approve
+// (a refresh, bookmark, or shared link) races wagmi's async wallet
+// reconnect — each of those pages blocks on `hydrated`/`walletSettling` and
+// previously rendered nothing at all for that window (bare header on an
+// otherwise empty black screen, up to a few seconds on a cold reconnect).
+// This gives that wait a visible, on-brand placeholder instead.
+export function FlowLoading() {
+  return (
+    <main className="page-shell items-center justify-center text-slate-400">
+      <SpinnerIcon className="h-5 w-5" />
+      <span className="text-sm">Reconnecting your wallet…</span>
+    </main>
+  );
+}
 
 // Real screenshots at 375px showed short single-card screens (login, amount,
 // confirm, approve/blocked) leaving 50-65% of the viewport as dead empty

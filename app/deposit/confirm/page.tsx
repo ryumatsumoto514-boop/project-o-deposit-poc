@@ -7,7 +7,7 @@ import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
 import { AlertIcon } from "../../components/icons";
-import { StepProgress, FlowFooter } from "../../components/FlowChrome";
+import { StepProgress, FlowFooter, FlowLoading } from "../../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { DEPOSIT_ADDRESS } from "@/lib/chain";
 import { useDocumentTitle } from "../../useDocumentTitle";
@@ -31,7 +31,7 @@ export default function DepositConfirmPage() {
     return () => clearTimeout(timer);
   }, [hydrated, walletSettling, mockIdentity, draftAmount, address, router]);
 
-  if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address) return null;
+  if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address) return <FlowLoading />;
 
   return (
     <main className="page-shell">

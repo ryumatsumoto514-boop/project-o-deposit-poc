@@ -6,7 +6,7 @@ import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
 import { KolBanner } from "../components/KolBanner";
 import { WalletRoles } from "../components/WalletRoles";
-import { StepProgress, FlowFooter } from "../components/FlowChrome";
+import { StepProgress, FlowFooter, FlowLoading } from "../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
 import { useDocumentTitle } from "../useDocumentTitle";
@@ -34,7 +34,7 @@ export default function DepositAmountPage() {
     if (hydrated && draftAmount) setAmount(draftAmount);
   }, [hydrated, draftAmount]);
 
-  if (!hydrated || !mockIdentity) return null;
+  if (!hydrated || !mockIdentity) return <FlowLoading />;
 
   const tradableIn = address ? deriveMockTradingAccount(address) : null;
 
