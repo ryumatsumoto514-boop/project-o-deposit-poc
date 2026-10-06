@@ -19218,3 +19218,75 @@ this cycle at all, only completing the already-correct prior commit's
 push/deploy/verification. No new on-chain transactions or API mutations.
 Left the eleven pre-existing untracked scripts/ QA/screenshot helpers alone.
 Claude Code tick finished, exit code 0
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-06T17:00:09Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T17:07:09Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T17:35:09Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T17:42:10Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T18:10:16Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T18:17:18Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T18:45:20Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T18:52:20Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T19:20:20Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T19:27:20Z
+
+
+## Session-mode tick: 2026-10-06T19:3xZ (autonomous QA, user-directed cycle)
+
+### Verified: prior cycle's "wallet-role labels on duplicate-deposit-blocked screen" fix (commit 07ad4cc) was genuinely pushed and deployed, but had no log entry recording it — closing that documentation gap
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions. `git log`
+showed HEAD at 07ad4cc ("fix: show wallet-role labels on the
+duplicate-deposit-blocked screen") with a real diff (adding a `<WalletRoles
+signingInAs={mockIdentity} fundsFrom={address}
+tradableIn={deriveMockTradingAccount(address)} />` block to the "Deposit
+already in progress" blocked-step branch in app/deposit/approve/page.tsx),
+but the log tail had no corresponding entry describing it — just cron/codex
+noise lines. Given this cycle's own lesson logged previously ("don't trust a
+prior 'done' claim without re-checking"), treated this the same way in
+reverse: a real commit with no log entry is also a gap worth closing, since
+the user reviewing OVERNIGHT_LOG.md in the morning would have no record of
+why this change exists or whether it actually shipped.
+
+Verified it was genuinely live rather than just committed: `git fetch
+origin main` confirmed local HEAD matches origin/main at 07ad4cc (no
+unpushed commits). `vercel --token "$VERCEL_TOKEN" ls` showed a Production
+deployment ~1h old, consistent with the commit's timestamp
+(2026-10-06T18:18:47Z). Curled production `/deposit/approve`, extracted its
+live chunk hash (page-0a35c3cdaecd3518.js), curled that chunk directly, and
+grepped for the three WalletRoles prop names (`signingInAs`, `fundsFrom`,
+`tradableIn`): each appears exactly twice in the shipped bundle — once for
+the pre-existing non-blocked-step WalletRoles call, once for the new
+blocked-step call added by 07ad4cc. (Could not grep for the literal string
+"WalletRoles" itself, since it's a component reference, not JSX text, and
+gets mangled by minification/tree-shaking into a shared chunk alongside
+other component usages — the prop-name grep is the correct verification
+signal here, analogous to how "Copy"/"Copied" were used to verify the
+clipboard-button fix in an earlier entry.) This confirms the fix is real,
+pushed, deployed, and live in production — not a false "done" claim.
+
+No code changes made this cycle (the fix itself was already correct and
+complete from the prior cycle); this entry only completes the
+documentation trail the brief requires. Did not touch lib/*.ts
+reconciliation-engine logic. No new on-chain transactions, no API
+mutations, no deploy needed (nothing to deploy). Left the eleven
+pre-existing untracked scripts/ QA/screenshot helpers alone.
