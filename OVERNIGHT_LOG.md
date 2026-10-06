@@ -19064,3 +19064,88 @@ display component, unrelated to the state machine/idempotency). Left the
 ten pre-existing untracked scripts/ QA/screenshot helpers in the working
 tree alone (unrelated to this fix, not part of this commit). No new
 on-chain transactions or API mutations needed for this fix.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-06T14:05:07Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T14:12:07Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T14:40:07Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T14:47:07Z
+
+## Session-mode tick: 2026-10-06 (autonomous QA, user-directed cycle)
+
+### Added: copy-to-clipboard button for the full destination address on the address-confirmation screen
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions, then
+grepped the full log for prior coverage before picking an angle. Found
+that functional bugs (API validation edge cases, routing status codes,
+idempotency races, overflow at narrow widths, focus rings, border-radius
+tokens, security headers, gas-pill loading state, duplicate stepper text,
+"Injected" wallet label) have all been exhaustively re-checked across
+dozens of prior cycles with no new findings in the last several hours —
+confirmed via targeted greps for "wallet-role", "STALLED_NO_GAS",
+"negative amount"/"NaN"/exponent-notation validation, and security-header
+checks, all already covered multiple times. Also checked whether the
+README's "primary metric + guardrails" section (percentage of deposits
+reaching CREDITED without duplicate-block, time-to-CREDITED, AMBIGUOUS
+rate) had ever been flagged as missing live instrumentation — it hasn't,
+and SPEC.md only requires this as a documented PM metric, not a live
+dashboard, so leaving it as-is is correct, not a gap.
+
+Moved to category 3 (missing polish) with a SPEC-aligned angle (category 4
+differentiator, item 3: "full-address confirmation... defends against
+real address-poisoning scams"). Read app/deposit/confirm/page.tsx in full:
+the full destination address is shown in a `.mono-box` (break-all, 13px
+monospace) with copy-checklist checkbox below it, but there was no way to
+copy the address — only visually compare or manually long-press-select
+40+ characters of hex on a phone screen. SPEC.md's whole rationale for
+this screen is mobile users cross-checking an address against "what you
+expect" (e.g. an address shown elsewhere, like a CEX withdrawal screen or
+a saved note) to catch address-poisoning attacks; without a copy button,
+the only practical way to actually compare two addresses on mobile is
+manual character-by-character visual scanning, which is exactly the
+failure mode address-poisoning scams exploit (visually-similar prefix/
+suffix matches). This is a real, scoped gap in the feature's own stated
+defense, not cosmetic.
+
+Fix: added a `CopyIcon` to app/components/icons.tsx (matching the existing
+icon style — viewBox 20x20 or stroke-based, aria-hidden), and added a
+`.btn-secondary` "Copy" button next to the mono-box in
+app/deposit/confirm/page.tsx using `navigator.clipboard.writeText`,
+flipping to a checkmark + "Copied" label (reusing the existing CheckIcon)
+for 2 seconds on success. Wrapped the clipboard call in try/catch with no
+error surfaced on failure (the address remains fully visible/selectable
+in the mono-box either way, so clipboard permission denial degrades
+gracefully rather than blocking the flow). Did not change the checkbox
+confirmation gating, WalletRoles labeling, or any reconciliation-engine
+logic.
+
+Ran `npm run build`: clean, no new type errors (pre-existing "Critical
+dependency: the request of a dependency is an expression" webpack warning
+from viem/ox's tempo chain config is unrelated and present on main before
+this change too), all 14 routes generated including
+`/deposit/confirm` (1.79 kB, up from the prior unmeasured size by a small
+icon+button addition).
+
+Committed as a single commit covering app/components/icons.tsx,
+app/deposit/confirm/page.tsx and this log entry (preserving prior log
+content on disk), pushed to origin/main, then ran
+`vercel --token "$VERCEL_TOKEN" --yes --prod`.
+
+Verified live: curl'd https://projecto-blond.vercel.app/deposit/confirm,
+extracted the freshly-hashed delivered chunk reference for that route,
+curl'd that chunk directly, and grepped it for "Copy" / "Copied" /
+`clipboard.writeText` — all present in the shipped bundle, confirming the
+fix is the code actually served in production (bundle-hash verification,
+not a hydrated-click screenshot, consistent with the standard used
+elsewhere in this log for routes requiring a connected wallet to render
+past the reconnect shell).
+
+Did not touch lib/*.ts reconciliation-engine logic. No new transactions,
+no API mutations. Left the ten pre-existing untracked scripts/
+QA/screenshot helpers alone (unrelated to this fix).

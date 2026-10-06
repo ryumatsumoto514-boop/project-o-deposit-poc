@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
-import { AlertIcon } from "../../components/icons";
+import { AlertIcon, CheckIcon, CopyIcon } from "../../components/icons";
 import { StepProgress, FlowFooter, FlowLoading } from "../../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { DEPOSIT_ADDRESS } from "@/lib/chain";
@@ -18,7 +18,20 @@ export default function DepositConfirmPage() {
   const { mockIdentity, draftAmount, setAddressConfirmed, hydrated } = useFlow();
   const { address, status: accountStatus } = useAccount();
   const [confirmed, setConfirmed] = useState(false);
+  const [copied, setCopied] = useState(false);
   const walletSettling = accountStatus === "connecting" || accountStatus === "reconnecting";
+
+  async function handleCopyAddress() {
+    try {
+      await navigator.clipboard.writeText(DEPOSIT_ADDRESS);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard permission denied or unavailable — the address is still
+      // fully visible and selectable in the mono-box above, so this is a
+      // convenience fallback, not the only way to get the address.
+    }
+  }
 
   useEffect(() => {
     if (!hydrated || walletSettling) return;
@@ -50,7 +63,27 @@ export default function DepositConfirmPage() {
           You&apos;re about to send <strong className="text-slate-200">{draftAmount} USDC</strong> on
           Arbitrum Sepolia to this address:
         </p>
-        <p className="mono-box">{DEPOSIT_ADDRESS}</p>
+        <div className="flex items-start gap-2">
+          <p className="mono-box flex-1">{DEPOSIT_ADDRESS}</p>
+          <button
+            type="button"
+            onClick={handleCopyAddress}
+            className="btn-secondary flex shrink-0 items-center gap-1.5 self-start"
+            aria-label="Copy destination address"
+          >
+            {copied ? (
+              <>
+                <CheckIcon className="h-3.5 w-3.5" />
+                Copied
+              </>
+            ) : (
+              <>
+                <CopyIcon className="h-3.5 w-3.5" />
+                Copy
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="banner-amber flex items-start gap-2.5">
