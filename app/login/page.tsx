@@ -8,7 +8,7 @@ import { MockedBadge } from "../components/KolBanner";
 import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
 import { useDocumentTitle } from "../useDocumentTitle";
-import { truncateAddress } from "@/lib/format";
+import { truncateAddress, connectorLabel } from "@/lib/format";
 
 export default function LoginPage() {
   useDocumentTitle("Sign in");
@@ -83,7 +83,7 @@ export default function LoginPage() {
                 className="btn-secondary"
               >
                 <WalletIcon className="h-[18px] w-[18px] shrink-0 text-slate-400" />
-                {isPending ? "Connecting…" : `Sign in with ${connector.name}`}
+                {isPending ? "Connecting…" : `Sign in with ${connectorLabel(connector.name)}`}
               </button>
             ))
           )}

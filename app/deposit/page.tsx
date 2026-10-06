@@ -9,6 +9,7 @@ import { WalletRoles } from "../components/WalletRoles";
 import { StepProgress, FlowFooter, FlowLoading } from "../components/FlowChrome";
 import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
+import { connectorLabel } from "@/lib/format";
 import { useDocumentTitle } from "../useDocumentTitle";
 
 export default function DepositAmountPage() {
@@ -83,7 +84,7 @@ export default function DepositAmountPage() {
               aria-busy={isPending}
               className="btn-primary w-fit"
             >
-              {isPending ? "Connecting…" : `Connect ${connector.name}`}
+              {isPending ? "Connecting…" : `Connect ${connectorLabel(connector.name)}`}
             </button>
           ))}
           {connectionError && (
