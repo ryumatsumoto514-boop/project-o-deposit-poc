@@ -11,8 +11,11 @@ import { truncateAddress } from "@/lib/format";
 // below `sm` so it never competes with the network/wallet pills for space
 // on the 375px viewport this app's mobile KOL-referred audience actually
 // uses (that exact 3-pill crowding was a real bug fixed in an earlier cycle).
+// undefined = not yet fetched (first load), null = fetch attempted and failed,
+// number = last known good value. Distinguishing "loading" from "failed" stops
+// the pill from claiming a refresh failed before it has even run once.
 function useGasPriceGwei() {
-  const [gwei, setGwei] = useState<number | null>(null);
+  const [gwei, setGwei] = useState<number | null | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,19 +59,21 @@ export function AppHeader() {
           <span
             className="pill hidden sm:inline-flex"
             title={
-              gwei !== null
+              typeof gwei === "number"
                 ? "Live Arbitrum Sepolia gas price, read from RPC"
-                : "Gas price refresh failed — showing no data instead of a stale or fabricated number"
+                : gwei === null
+                  ? "Gas price refresh failed — showing no data instead of a stale or fabricated number"
+                  : "Loading live Arbitrum Sepolia gas price…"
             }
           >
             <span
               className={
-                gwei !== null
+                typeof gwei === "number"
                   ? "led-dot led-live bg-accent-400 text-accent-400"
                   : "led-dot bg-slate-600 text-slate-600"
               }
             />
-            {gwei !== null ? `${gwei.toFixed(3)} GWEI` : "GAS —"}
+            {typeof gwei === "number" ? `${gwei.toFixed(3)} GWEI` : gwei === null ? "GAS —" : "GAS …"}
           </span>
           <span className="pill">
             <span className="led-dot led-live bg-emerald-400 text-emerald-400" />
