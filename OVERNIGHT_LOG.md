@@ -18742,3 +18742,325 @@ not a hydrated-exception-screen screenshot.
 Did not touch lib/*.ts reconciliation logic. No new transactions, no
 API mutations. Left the five pre-existing untracked QA/screenshot
 helper scripts alone (unrelated to this fix).
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-05T22:54:29Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-05T23:01:29Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-05T23:29:30Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-05T23:36:30Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T00:04:30Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T00:11:32Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T00:39:36Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T00:46:36Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T01:14:37Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T01:21:37Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T01:49:37Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T01:56:37Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T02:24:37Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T02:31:38Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T02:59:38Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T03:06:38Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T03:34:39Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T03:41:41Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T04:09:48Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T04:16:50Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T04:44:52Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T04:51:52Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T05:19:52Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T05:26:52Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T05:54:53Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T06:01:53Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T06:29:53Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T06:36:53Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T07:04:53Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T07:11:53Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T07:39:54Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T07:46:54Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T08:14:54Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T08:21:54Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T08:49:55Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T08:56:55Z
+
+## Cron tick: 2026-10-06T09:00:35Z — session-mode QA pass; no new fix found
+
+### Independent hydrated-mobile-overflow and idempotency-race review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the log tail (last ~650 lines) first, then
+SPEC.md in full, to confirm prior cycles already exhausted: API validation
+edge cases, 404/error pages, KOL-ref escaping/length-capping, duplicate-
+deposit blocking (live-tested earlier at line ~16630), favicon/font/CSS
+asset delivery, and raw-HTML-only overflow checks (which only see the
+wallet-reconnection shell, not hydrated content).
+
+Picked two angles not yet covered the same way:
+
+1. **Hydrated mobile overflow with an injected wallet provider** (not raw
+   curl HTML, which only shows the reconnect shell). Ran
+   scripts/check-overflow-wallet.mjs against production
+   (https://projecto-blond.vercel.app) with a CDP-injected mock
+   window.ethereum + seeded exo_flow_state sessionStorage, at 320px and
+   360px widths, on /deposit/approve and /deposit/confirm (already fully
+   hydrated: KOL banner, wallet pill, step indicator all rendered). Also
+   wrote an ad hoc extension (/tmp/overflow2.mjs, same CDP pattern) to
+   cover /deposit (amount entry, including a stress case with a 13-digit
+   draftAmount "1234567.891234") and /login with a connected wallet.
+   Result: scrollWidth === clientWidth (no overflow) on every route at
+   both widths; no element's bounding rect exceeded the viewport. No
+   layout bug found.
+
+2. **Idempotency logic re-derivation by reading code, not just trusting
+   the earlier live test's conclusion.** Read app/api/deposits/route.ts,
+   lib/idempotency.ts and lib/store.ts in full. Confirmed:
+   address comparison is case-insensitive (`.toLowerCase()` both sides),
+   amount comparison is numeric (`Number(d.amount) === Number(amount)`,
+   so "1.5" and "1.50" correctly collide), and the conflict check has no
+   `await` between it and `depositStore.create()` — so within a single
+   warm serverless instance there is no event-loop interleaving window for
+   two concurrent requests to both pass the check (JS run-to-completion
+   semantics rule out a same-instance race here). The only real race is
+   cross-instance (two different cold/warm Lambda instances each with
+   their own in-memory store), which is the already-documented,
+   already-accepted PoC-scope limitation from earlier cycles — not a new
+   finding.
+
+Also re-verified app/components/KolBanner.tsx + CaptureKolRef.tsx edge
+cases by hand-tracing formatKolName() for degenerate refs ("kol", "____",
+"_", empty-after-strip): all fall through cleanly to the "a partner"
+fallback with no empty-array `.map` crash, consistent with the 64-char cap
+already in place. Checked focus-visible coverage in app/globals.css: .btn
+and .input have explicit focus rings; the approval-scope radios have no
+custom outline override, so they keep the native browser focus ring
+(correct — nothing strips it). Checked tailwind.config.ts for stray
+border-radius tokens: none defined, no arbitrary `rounded-[...]` values
+found anywhere in app/, so the differing rounded-md/rounded-lg/rounded-xl
+usage across components is deliberate per-component sizing, not drift.
+
+No distinct, substantiated defect found in this bounded pass. Did not
+touch lib/*.ts (read-only), did not modify any source file. No build,
+commit, push, deployment, API mutation, or on-chain transaction needed.
+Left all pre-existing untracked scripts/ QA helpers alone; the only
+filesystem change is this log append plus a scratch file at
+/tmp/overflow2.mjs (outside the repo, not committed).
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T09:25:02Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T09:32:02Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T10:00:02Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T10:07:02Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T10:35:03Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T10:42:03Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T11:10:03Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T11:17:03Z
+
+## Session-mode tick: 2026-10-06 (resumed killed cycle, finished + shipped)
+
+### Fixed: generic "Injected" wallet connector label shown as raw dev jargon on /login and /deposit; completed a prior killed cycle's staged fix, verified live
+
+Started by reading OVERNIGHT_BRIEF.md and the log tail per instructions.
+`git status` showed uncommitted modifications to app/deposit/page.tsx and
+app/login/page.tsx left over from a prior cycle killed by the 5-7 min
+process limit (exit 143) — both imported `connectorLabel` from
+`@/lib/format`. Checked lib/format.ts: the function already existed
+(added in the same killed cycle, before it could build/commit/push/deploy)
+— `connectorLabel(name)` maps wagmi's injected() connector's raw internal
+name "Injected" to the product-appropriate label "Browser wallet", leaving
+every other connector (MetaMask, Coinbase Wallet, etc.) untouched. This is
+a real, verifiable polish defect: wagmi's injected connector literally
+reports the string "Injected" as `connector.name`, so both the login
+screen ("Sign in with Injected") and the deposit screen ("Connect
+Injected") were rendering unfinished-looking developer jargon next to
+otherwise considered copy ("Continue with Google", "MetaMask").
+
+Verified the staged diff was complete and correct (not half-done): both
+call sites (`app/login/page.tsx` line ~86, `app/deposit/page.tsx` line
+~87) were already switched from `connector.name` to
+`connectorLabel(connector.name)`, imports were correct, and lib/format.ts's
+implementation was simple and total (ternary, no missing case). Ran
+`npm run build`: clean, no type errors, all 14 routes generated.
+
+Committed as ec18d64 ("fix: relabel generic \"Injected\" wallet connector
+name to \"Browser wallet\""), pushed to origin/main (e8195e5..ec18d64).
+Ran `vercel --token "$VERCEL_TOKEN" --yes --prod`: deployment
+dpl_32vvutcbympnvraMHg6yo23sguJz came back readyState "READY" against the
+production target.
+
+Verified live: curl'd https://projecto-blond.vercel.app/login, extracted
+the actual delivered chunk reference
+(_next/static/chunks/app/login/page-0270bde78ec5eb3c.js — a fresh hash),
+then curl'd that chunk directly and grepped its contents: the string
+"Browser wallet" is present in the shipped bundle; "Injected" still
+appears exactly once (the `name === "Injected"` comparison string inside
+connectorLabel itself, not display text). Confirms the fix is the
+code actually served in production, not just committed.
+
+Did not touch lib/*.ts reconciliation engine logic (lib/format.ts is a
+pure display-string helper, unrelated to state machine/idempotency).
+Left the ten pre-existing untracked scripts/ QA/screenshot helpers alone
+(unrelated to this fix, not part of this commit). No new on-chain
+transactions or API mutations needed for this fix.
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T11:45:04Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T11:52:04Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T12:20:04Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T12:27:04Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T12:55:04Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T13:02:04Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T13:30:06Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T13:37:06Z
+
+## Session-mode tick: 2026-10-06T13:40Z (autonomous QA, user-directed cycle)
+
+### Fixed: gas-price header pill falsely claimed a "refresh failed" during normal first page load
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions; confirmed
+via the log that overflow, idempotency, KOL-ref edge cases, focus rings,
+and border-radius tokens were already exhaustively re-checked in the
+immediately prior cycle with no new findings, so moved to a fresh angle
+on category 1 (functional bugs) via actual route probing rather than
+re-deriving the same code paths.
+
+Curl'd every route on the live site (https://projecto-blond.vercel.app):
+`/`, `/login`, `/deposit`, `/deposit/approve`, `/deposit/confirm`,
+`/deposit/status/<unknown-id>`, a bogus path, and every `/api/*` route
+with both correct and wrong methods/ids. All status codes were correct
+(200 on real pages, 404 on the bogus path and unknown deposit-id GET,
+405 on GET against POST-only routes, 400 on `/api/deposits/check` with
+no query params) and the custom not-found page renders branded content,
+not a default Next.js 404 — no routing bugs found.
+
+While inspecting the 404 page's raw SSR HTML I noticed the header's gas
+pill rendered `title="Gas price refresh failed — showing no data instead
+of a stale or fabricated number"` even on a page that had just loaded —
+i.e., before any fetch could plausibly have failed. Read
+app/components/AppHeader.tsx: `useGasPriceGwei()` initialized its state
+to `null` and reused that same `null` for both "haven't fetched yet" and
+"fetch threw/returned non-ok", so the pill's tooltip and "GAS —" label
+asserted a failure during ordinary first-load latency, not just on an
+actual RPC failure. Directly curling `/api/gas` confirmed the endpoint
+itself was healthy (`{"gwei":0.062316}`), so this was purely a
+loading-vs-failed state bug in the client component, not a backend issue.
+
+Fix: changed the state type to `number | null | undefined` —
+`undefined` = not yet fetched (loading), `null` = fetch attempted and
+failed, `number` = last known good value — and updated the pill's
+label/tooltip/dot color to render a neutral "GAS …" / "Loading live
+Arbitrum Sepolia gas price…" state while loading, reserving the "GAS —"
+/ "refresh failed" copy for an actual caught error or non-ok response.
+
+Ran `npm run build`: clean, no type errors, all 14 routes generated.
+Committed as fa30706 ("fix: stop gas pill claiming a refresh \"failed\"
+during normal first load"), pushed to origin/main (ec18d64..fa30706).
+Deployed via `vercel --token "$VERCEL_TOKEN" --yes --prod`: deployment
+dpl_EKffggXTraroYSuzk1TXHwnHte7c came back readyState "READY" against
+the production target. Verified live by curling the production
+homepage, extracting the current layout chunk reference
+(_next/static/chunks/app/layout-ee1090a7120233cb.js — a fresh hash vs.
+the pre-fix build), then curling that chunk directly and grepping it:
+both new strings ("Loading live Arbitrum Sepolia gas price" and
+"GAS …") are present in the shipped bundle, confirming the fix is the
+code actually served in production.
+
+Did not touch lib/*.ts reconciliation engine logic (AppHeader.tsx is a
+display component, unrelated to the state machine/idempotency). Left the
+ten pre-existing untracked scripts/ QA/screenshot helpers in the working
+tree alone (unrelated to this fix, not part of this commit). No new
+on-chain transactions or API mutations needed for this fix.
