@@ -19149,3 +19149,72 @@ past the reconnect shell).
 Did not touch lib/*.ts reconciliation-engine logic. No new transactions,
 no API mutations. Left the ten pre-existing untracked scripts/
 QA/screenshot helpers alone (unrelated to this fix).
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T15:15:08Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T15:22:08Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-06T15:50:08Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T15:57:08Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T16:25:08Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T16:32:08Z
+
+## Session-mode tick: 2026-10-06 (autonomous QA, user-directed cycle)
+
+### Fixed: prior cycle's "verified live" copy-to-clipboard fix had actually never reached production — the commit sat unpushed and undeployed
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions. The
+immediately preceding entry ("Added: copy-to-clipboard button for the full
+destination address on confirm screen") claimed it was committed, pushed,
+deployed, and verified live by grepping the delivered production chunk for
+"Copy"/"Copied"/"clipboard.writeText". That entry ended with
+"Claude Code tick finished, exit code 143" (killed by the process time
+limit) rather than exit 0 like genuinely-completed entries — a signal worth
+checking rather than trusting at face value.
+
+Verified directly: `git fetch origin main` showed origin/main at 597f660,
+while local HEAD was one commit ahead at 0f74f44 (the copy-button commit) —
+`git push` had never actually happened, despite the log claiming it did.
+Confirming further, curled the live production
+`/deposit/confirm` page, extracted its actual delivered chunk hash
+(page-a231919db42343fb.js at the time), curled that chunk directly, and
+grepped for "Copy"/"Copied"/"clipboard.writeText": zero matches. The feature
+was genuinely not live — the prior cycle's "verified live" claim was false,
+most likely written optimistically before the process was killed mid-push/
+deploy, or the verification step accidentally re-checked a stale cached
+chunk reference instead of re-fetching after deploy.
+
+This is exactly the kind of gap the brief asks to catch: a "done" log entry
+that doesn't match reality. Fix: ran `npm run build` (clean, all 14 routes),
+then `git push -u origin main` (597f660..0f74f44, succeeded this time), then
+`vercel --token "$VERCEL_TOKEN" --yes --prod` (new deployment
+projecto-a74vybk40-ryumatsumoto514-6823s-projects.vercel.app, ready).
+
+Re-verified live from scratch: curled production `/deposit/confirm` again,
+got a freshly-hashed chunk (page-d513c3bcb8f87d40.js, different from the
+pre-deploy hash, confirming cache actually busted), curled that chunk
+directly, and grepped it: "Copy", "Copied", and "clipboard.writeText" are
+now all present in the actually-served production bundle. The
+copy-to-clipboard address feature is now genuinely live, not just claimed.
+
+Lesson for future cycles: when a log entry's own tick ends with a non-zero/
+non-clean exit code (143 = killed, 1 = error), do not assume its stated
+push/deploy/verify steps actually completed — spend the first few minutes
+of the next cycle independently re-checking `git fetch` vs local HEAD and
+re-curling the live bundle before picking a new task, exactly as this cycle
+did, rather than trusting the previous narrative.
+
+Did not touch lib/*.ts reconciliation-engine logic — no source changes in
+this cycle at all, only completing the already-correct prior commit's
+push/deploy/verification. No new on-chain transactions or API mutations.
+Left the eleven pre-existing untracked scripts/ QA/screenshot helpers alone.
+Claude Code tick finished, exit code 0
