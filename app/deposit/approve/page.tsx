@@ -215,6 +215,13 @@ export default function DepositApprovePage() {
         <KolBanner />
         <StepProgress step={4} />
         <h1 className="h1">Deposit already in progress</h1>
+
+        <WalletRoles
+          signingInAs={mockIdentity}
+          fundsFrom={address}
+          tradableIn={deriveMockTradingAccount(address)}
+        />
+
         <div className="banner-amber flex items-start gap-2.5">
           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
           <span>
