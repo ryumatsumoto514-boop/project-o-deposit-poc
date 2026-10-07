@@ -19529,3 +19529,22 @@ lib/*.ts reconciliation-engine logic. No new on-chain transactions or API
 mutations. Left the fourteen pre-existing untracked scripts/ QA/screenshot
 helpers alone (reused two for this cycle's investigation, wrote one
 throwaway script to /tmp, not committed to the repo).
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-07T04:05:37Z
+
+### [Codex review] 2026-10-07 — Report clipboard success and failure accessibly
+
+Read OVERNIGHT_BRIEF.md, SPEC.md and the recent log, including the newly
+added destination-copy feature and its deployment correction. Fetched live
+/login and /deposit/confirm with curl -sSL --max-time 20 (saved raw HTML in
+/tmp/codex-review-{login,confirm}.html). Read app/deposit/confirm/page.tsx:
+handleCopyAddress silently swallowed clipboard rejection, and its visible
+Copied label was masked by a constant aria-label with no live announcement.
+This is a feedback gap in the recent copy feature, not a repeat of its
+previous deployment issue.
+
+Added a persistent polite, atomic status region to announce success and
+show a manual-selection fallback on failure. Kept the full address and
+button accessible name intact. No lib/*.ts changes or transactions.
+Validation/release results follow below once completed.

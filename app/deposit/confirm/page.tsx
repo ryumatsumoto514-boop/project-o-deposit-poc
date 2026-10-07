@@ -19,17 +19,19 @@ export default function DepositConfirmPage() {
   const { address, status: accountStatus } = useAccount();
   const [confirmed, setConfirmed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState("");
   const walletSettling = accountStatus === "connecting" || accountStatus === "reconnecting";
 
   async function handleCopyAddress() {
+    setCopyStatus("");
     try {
       await navigator.clipboard.writeText(DEPOSIT_ADDRESS);
       setCopied(true);
+      setCopyStatus("Destination address copied.");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard permission denied or unavailable — the address is still
-      // fully visible and selectable in the mono-box above, so this is a
-      // convenience fallback, not the only way to get the address.
+      setCopied(false);
+      setCopyStatus("Could not copy the address. Select the full address above and copy it manually.");
     }
   }
 
@@ -84,6 +86,9 @@ export default function DepositConfirmPage() {
             )}
           </button>
         </div>
+        <p role="status" aria-live="polite" aria-atomic="true" className="text-xs text-slate-300">
+          {copyStatus}
+        </p>
       </div>
 
       <div className="banner-amber flex items-start gap-2.5">
