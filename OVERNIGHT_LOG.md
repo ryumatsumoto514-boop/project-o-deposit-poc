@@ -19982,3 +19982,107 @@ no build or Vercel redeploy is required by the code-change condition.
 Live curl checks establish availability/markup only, not publication of
 this repository-only evidence document. No lib/*.ts changes. Existing
 untracked QA scripts are left untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-07T10:37:49Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T11:05:50Z
+
+### [Codex review] 2026-10-07 — Independent live decimal-boundary check; no new fix
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log tail and prior review/fix
+headings first. No substantiated new small issue worth fixing emerged from
+this bounded pass; did not repeat known-fixed issues.
+
+Fetched https://projecto-blond.vercel.app and /deposit/confirm with
+curl -sS --max-time 20, saving raw HTML and headers to
+/tmp/codex-second-{home,confirm}.{html,headers}. Parsed actual meta and
+image attributes with Python HTMLParser: both return HTTP 200, each has
+one main landmark, and social metadata discloses simulated stages and
+uses the production image host. The confirmation response is only the
+server-delivered shell; this does not verify wallet hydration.
+
+Checked live GET /api/deposits/check with curl using URL-encoded wallet
+0xCEfAe626B7CFfC6Ab72f7df4F9609018Ee5a09a6 and twelve amount strings.
+0.000001, 1.000000, 1000 and 0001000.000000 returned 200/conflict:null.
+0.0000001, 1000.000001, 1000000, 1000000.000001, 1e3, -0.1, a leading
+space before 1, and a trailing newline after 1 returned 400/INVALID_REQUEST.
+This specifically checked the six-decimal lower boundary, the exact
+1000-unit cap and equivalent leading-zero spelling. No records were
+created; these reads do not establish cross-instance duplicate protection.
+Compared results against app/api/deposits/check/route.ts,
+app/api/deposits/route.ts and lib/constants.ts. Also read the record,
+pull and reconcile API handlers, status page, globals.css,
+tailwind.config.ts and next.config.mjs. No concrete new defect established.
+
+Only appended this entry. No code change, build, commit/push or redeploy.
+Preserved pre-existing changes in WalletRoles.tsx, login/page.tsx,
+lib/format.ts and this log, plus untracked QA scripts. No lib/*.ts edits,
+API mutations or transactions. This limited negative result is not a
+claim that the product is defect-free.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-07T11:12:50Z
+
+## Session-mode tick: 2026-10-07T11:2xZ (autonomous QA, user-directed cycle)
+
+### Finished a prior killed cycle's staged fix: raw "google:demo.user" mock-identity string leaked into "Signing in as" UI instead of a readable label
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions. `git status`
+showed uncommitted modifications to app/components/WalletRoles.tsx,
+app/login/page.tsx and lib/format.ts, with no corresponding log entry — the
+same "killed mid-cycle before build/commit/push/deploy" pattern this log has
+repeatedly flagged (e.g. the FlowLoading and copy-to-clipboard fixes). Read
+the diff in full before trusting it, rather than assuming it was finished work.
+
+The diff: `lib/format.ts` added a new `displayIdentity()` helper with a
+comment explaining the mock Google sign-in path stores its identity
+internally as the raw string "google:<username>" (confirmed via
+`grep -n "google:" app/login/page.tsx` — `continueTo("google:demo.user")`
+on the mock Google button). `WalletRoles.tsx`'s `Row` component and
+`login/page.tsx`'s own "Signing in as" line were both updated to run
+`mockIdentity`/`signingInAs` through `displayIdentity()` before rendering,
+formatting it as "Google (demo.user)" instead of the raw technical slug.
+
+This is a real, user-visible bug: `mockIdentity` is passed as `signingInAs`
+into `WalletRoles` from five call sites (`app/deposit/page.tsx`,
+`app/deposit/confirm/page.tsx`, `app/deposit/approve/page.tsx` x2, and
+`app/deposit/status/[id]/page.tsx` x2), so every one of those screens would
+have shown "google:demo.user" verbatim in the "Signing in as" row for any
+user who picked the mock Google sign-in option — the same class of bug as
+the earlier "Injected" wallet-connector-label fix and the KOL-ref
+case-sensitivity fix, both already fixed in prior cycles. Verified the fix's
+logic is correct and complete: `WalletRoles.tsx`'s `Row` only applies
+`truncateAddress` to `0x`-prefixed values and now applies `displayIdentity`
+to every other truthy value (falls through to the original value unchanged
+for email-style or already-readable identities, so no regression to the
+working "demo@exchangeo.test" or wallet-address paths). Confirmed via grep
+that `WalletRoles.tsx` is the single call site shared by all five pages
+needing the fix, so one component-level change covers the whole flow; only
+`login/page.tsx`'s standalone, non-`WalletRoles` "Signing in as" line needed
+its own direct fix, which the staged diff already included.
+
+Ran `npm run build`: clean, no type errors, all 14 routes generated (no
+reconciliation-engine files touched — `lib/format.ts` is a pure display
+helper, unrelated to the state machine/idempotency logic in `lib/store.ts`
+and `lib/idempotency.ts`).
+
+Committed as 524dfd5 ("fix: show readable \"Google (demo.user)\" instead of
+raw \"google:demo.user\" identity string"), pushed to origin/main
+(9e58f12..524dfd5). Deployed via `vercel --token "$VERCEL_TOKEN" --yes --prod`:
+deployment dpl_DsFKzEuTrfZHDxVStiTAKdocqAmu reached readyState "READY"
+against the production target.
+
+Verified live rather than trusting the deploy response: curled
+https://projecto-blond.vercel.app/login, extracted its actual delivered
+chunk reference (page-44c92bb9626378a4.js — a fresh hash), curled that
+chunk directly, and grepped it for the literal template-string fragment
+"Google (" — present in the shipped bundle, confirming the fix is the code
+actually served in production, not just sitting in git. Also confirmed `/`
+and `/login` both still return HTTP 200 post-deploy.
+
+Did not touch lib/*.ts reconciliation-engine logic. No new on-chain
+transactions or API mutations needed for this fix. Left the eighteen
+pre-existing untracked scripts/ QA/screenshot helpers in the working tree
+alone (unrelated to this fix, not part of this commit).
