@@ -7,10 +7,10 @@
 // /deposit/confirm, where showing the untruncated address actually matters
 // for security review.
 
-import { truncateAddress } from "@/lib/format";
+import { truncateAddress, displayIdentity } from "@/lib/format";
 
 function Row({ label, value, note }: { label: string; value: string | null; note?: string }) {
-  const display = value && value.startsWith("0x") ? truncateAddress(value) : value;
+  const display = value && value.startsWith("0x") ? truncateAddress(value) : value ? displayIdentity(value) : value;
   return (
     <div className="flex flex-col gap-0.5 border-b border-white/[0.06] py-2.5 last:border-b-0">
       <span className="label-caps">

@@ -11,3 +11,17 @@ export function truncateAddress(address: string): string {
 export function connectorLabel(name: string): string {
   return name === "Injected" ? "Browser wallet" : name;
 }
+
+// The mock Google sign-in path stores its identity as the raw internal
+// string "google:<username>" (see app/login/page.tsx's continueTo call) so
+// the rest of the flow has a stable, typed identifier to persist/display.
+// That internal format must never reach the UI verbatim — it reads as
+// unfinished developer output next to considered copy like "demo@exchangeo.test"
+// or a wallet address. Every other mockIdentity shape (email, wallet address)
+// is already human-readable as-is.
+export function displayIdentity(identity: string): string {
+  if (identity.startsWith("google:")) {
+    return `Google (${identity.slice("google:".length)})`;
+  }
+  return identity;
+}

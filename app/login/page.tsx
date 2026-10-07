@@ -8,7 +8,7 @@ import { MockedBadge } from "../components/KolBanner";
 import { GoogleIcon, MailIcon, WalletIcon } from "../components/icons";
 import { StepProgress, FlowFooter } from "../components/FlowChrome";
 import { useDocumentTitle } from "../useDocumentTitle";
-import { truncateAddress, connectorLabel } from "@/lib/format";
+import { truncateAddress, connectorLabel, displayIdentity } from "@/lib/format";
 
 export default function LoginPage() {
   useDocumentTitle("Sign in");
@@ -35,7 +35,7 @@ export default function LoginPage() {
       {mockIdentity ? (
         <div className="card flex flex-col gap-3">
           <p className="text-sm text-slate-300">
-            Signing in as <strong className="text-slate-100">{mockIdentity}</strong>
+            Signing in as <strong className="text-slate-100">{displayIdentity(mockIdentity)}</strong>
           </p>
           <button
             onClick={() => router.push("/deposit")}
