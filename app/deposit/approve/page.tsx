@@ -294,13 +294,15 @@ export default function DepositApprovePage() {
             <strong>Couldn&apos;t check your gas balance.</strong> We can&apos;t
             confirm you have enough ETH for network fees right now, so approval
             is paused.{" "}
-            <button
-              type="button"
-              onClick={() => refetchGasCheck()}
-              className="inline-block -my-3 py-3 underline hover:text-amber-100"
-            >
-              Try again
-            </button>.
+            <span className="whitespace-nowrap">
+              <button
+                type="button"
+                onClick={() => refetchGasCheck()}
+                className="inline-block -my-3 py-3 underline hover:text-amber-100"
+              >
+                Try again
+              </button>.
+            </span>
           </span>
         </div>
       )}
@@ -312,14 +314,16 @@ export default function DepositApprovePage() {
             <strong>{FAILURE_COPY.NO_GAS.title}.</strong> Current balance:{" "}
             {ethBalance ? formatEther(ethBalance.value) : "0"} ETH.{" "}
             {FAILURE_COPY.NO_GAS.detail}{" "}
-            <a
-              href="https://www.alchemy.com/faucets/arbitrum-sepolia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block -my-3 py-3 underline hover:text-amber-100"
-            >
-              Open a testnet faucet
-            </a>.
+            <span className="whitespace-nowrap">
+              <a
+                href="https://www.alchemy.com/faucets/arbitrum-sepolia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block -my-3 py-3 underline hover:text-amber-100"
+              >
+                Open a testnet faucet
+              </a>.
+            </span>
           </span>
         </div>
       )}
