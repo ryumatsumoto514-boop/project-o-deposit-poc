@@ -19406,3 +19406,126 @@ in a display component). Left the untracked scripts/ QA helpers in the
 working tree alone (reused two of them for this cycle's investigation but
 did not commit them, consistent with how prior cycles have treated this
 same set of files). No new on-chain transactions or API mutations needed.
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-07T00:35:35Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-07T00:42:35Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T01:10:35Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-07T01:17:35Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T01:45:36Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-07T01:52:36Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-07T02:20:36Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-07T02:27:36Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T02:55:36Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-07T03:02:37Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T03:30:37Z
+
+### [Codex review] 2026-10-07 — Independent raw HTML, shared CSS and invalid-input review; no new fix
+
+Read OVERNIGHT_BRIEF.md, the recent OVERNIGHT_LOG.md tail, SPEC.md and prior
+review/fix headings before investigating. No new issue worth fixing emerged
+from this bounded review; did not repeat earlier metadata or validation fixes.
+
+Fetched https://projecto-blond.vercel.app and /login with curl -sSL into
+/tmp/projecto-home.html and /tmp/projecto-login.html. Parsed the delivered
+HTML with Python HTMLParser: lang=en, responsive viewport, explicit testnet
+and simulated-sign-in/bridge/credit social descriptions, absolute production
+OG/Twitter image URLs and image alt metadata are present. Read app/layout.tsx,
+app/globals.css, tailwind.config.ts and app/components/AppHeader.tsx directly.
+The shared background values agree, component radii consistently distinguish
+cards from controls, reduced-motion overrides exist, and the initial gas
+indicator correctly says loading rather than refresh failed. Did not find
+concrete style drift warranting a change.
+
+Read app/api/deposits/route.ts, app/api/deposits/check/route.ts,
+app/api/deposits/[id]/route.ts and app/api/gas/route.ts. Verified production
+with curl --max-time 15/20: GET /api/deposits/check rejects amount=-1,
+a 42-digit amount, wallet=0x123, and a 40-hex-digit wallet suffixed with
+URL-encoded newline; each returned HTTP 400 and INVALID_REQUEST. POST
+/api/deposits with JSON null, [], and malformed JSON { each returned HTTP
+400 with a clear object/JSON validation error. These invalid requests did
+not create deposits or trigger transactions. A curl of
+/review-nonexistent-page returned HTTP 404; parsed response contains
+robots=noindex, one main, a Page not found heading and a home recovery link.
+
+No code changed, so no build, commit/push or redeployment was necessary.
+Appended only this entry, preserving existing log edits and untracked QA
+scripts. No lib/*.ts edits, new transactions, or claims of wallet/browser
+end-to-end verification. These checks are a limited negative result, not a
+claim that every possible product issue has been ruled out.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-07T03:37:37Z
+
+## Session-mode tick: 2026-10-07T03:4xZ (autonomous QA, user-directed cycle)
+
+### Checked: apparent tap-target violation on confirm/approve checkbox+radio inputs — verified false positive, no fix needed
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions, then grepped
+the full log for prior coverage before picking an angle. Functional bugs,
+consistency gaps, and most polish items (hover contrast, header logo tap
+target, focus rings, duplicate stepper text, wallet-role labeling, KOL
+case-sensitivity, clipboard copy, orphaned punctuation) were all already
+found and fixed in prior cycles with no new signal on repeat passes. Grepped
+specifically for "back button"/"popstate"/"bfcache"/"localStorage"/"multiple
+tab" (browser-navigation and multi-tab state desync) — genuinely untested
+territory, so read app/flow-context.tsx: flow state is per-tab sessionStorage
+(not localStorage), so multi-tab desync isn't possible, and client-side route
+changes within the SPA don't reset context state, so browser back/forward
+within the flow doesn't lose progress either — read confirmed no bug here,
+nothing to fix.
+
+Ran the existing scripts/check-tap-targets.mjs against the live site fresh
+(real CDP session on port 9333, 375x812 mobile viewport, injected mock
+wallet + seeded flow state) rather than trusting it was clean from a past
+run. It flagged real `<input>` elements under the 44px minimum: one
+13x16 checkbox on /deposit/confirm (the address-match confirmation) and two
+13x16 radio buttons on /deposit/approve (the exact/unlimited approval-scope
+toggle) — this exact check hadn't been reported as flagging these before in
+the log, so treated it as a possible new finding worth verifying rather than
+dismissing.
+
+Investigated whether this is a real accessibility bug or a measurement
+artifact: read the markup (app/deposit/confirm/page.tsx:99-105,
+app/deposit/approve/page.tsx:332-353) — each `<input>` is nested inside a
+`<label className="card flex items-start gap-2.5 ...">` (confirm) or
+`<label className="flex items-start gap-2.5 rounded-xl border ... p-3">`
+(approve) that wraps the entire text content alongside it, meaning a click
+anywhere on the full label row toggles the input, not just the visually
+small 13x16 box. Wrote a one-off CDP script (same injection pattern as
+check-tap-targets.mjs) to measure `input.closest("label")`'s bounding rect
+on the live site in the same seeded state: the confirm checkbox's label
+measures 335x74, and the approve page's two radio labels measure 301x126 and
+301x106 — all far above the 44x44 minimum. Confirmed this is a false
+positive in the existing check script (it only measures the native `<input>`
+element itself, not its actual clickable region) rather than a real
+tap-target bug — the actual tappable area is the full card row, which is
+correct, accessible mobile UI. No code change made.
+
+No build, commit, push, or deploy needed since nothing in the source changed
+(a verified negative result, consistent with the brief's allowance to "say
+so plainly" when a genuine look turns up nothing to fix). Did not touch
+lib/*.ts reconciliation-engine logic. No new on-chain transactions or API
+mutations. Left the fourteen pre-existing untracked scripts/ QA/screenshot
+helpers alone (reused two for this cycle's investigation, wrote one
+throwaway script to /tmp, not committed to the repo).
