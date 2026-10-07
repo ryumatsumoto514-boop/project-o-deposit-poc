@@ -388,8 +388,7 @@ export default function DepositApprovePage() {
                   className="text-rose-200 underline hover:text-rose-100"
                 >
                   check its status
-                </a>
-                .
+                </a>.
               </>
             )}
           </span>
