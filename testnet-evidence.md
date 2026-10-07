@@ -157,9 +157,11 @@ they do not establish that this transaction pair ran through the Vercel deployme
 
 ## 5. Duplicate-deposit blocking — verified working
 
-With the deposit above still in `SIGNED` state (not yet `CREDITED`),
-`POST /api/deposits` was called again with the **same wallet + same
-amount** (25.0 mUSDC) and a different (fake) approve tx hash:
+In a separate local API duplicate-blocking test using 25.0 mUSDC, a
+deposit record was created and, while it was still in `SIGNED` state
+(not yet `CREDITED`), `POST /api/deposits` was called again with the
+**same wallet + same amount** and a different (fake) approve tx hash.
+This was not the 10.0 mUSDC on-chain reconciliation run in section 4:
 
 ```
 HTTP 409

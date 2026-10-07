@@ -19548,3 +19548,38 @@ Added a persistent polite, atomic status region to announce success and
 show a manual-selection fallback on failure. Kept the full address and
 button accessible name intact. No lib/*.ts changes or transactions.
 Validation/release results follow below once completed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-07T04:12:37Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T04:40:38Z
+
+### [Codex review] 2026-10-07 — Distinguish duplicate-test evidence from the on-chain run
+
+Read OVERNIGHT_BRIEF.md, SPEC.md, the recent log tail and earlier fix headings
+first. Found one concrete evidence inconsistency by reading README.md and
+all of testnet-evidence.md: section 5 called its 25.0 mUSDC duplicate test
+"the deposit above", but section 4 explicitly records a 10.0 mUSDC real
+approve/reconciliation run. Cross-checked the original log's item 8
+(lines 64–83), which lists the duplicate API test separately before the
+second real 10.0 mUSDC approve. Updated only section 5's introductory
+paragraph to distinguish these tests; preserved all hashes, amounts and
+recorded responses. No new transaction evidence is claimed.
+
+Also fetched production /login and /deposit/confirm using curl -sSL
+--max-time 20 into /tmp/review-login.html and /tmp/review-confirm.html.
+Parsed raw HTML with Python HTMLParser: English language, testnet metadata,
+and main landmarks are present; confirm correctly initially renders the
+loading shell, so this does not verify its hydrated wallet UI. Read
+app/globals.css, tailwind.config.ts, app/login/page.tsx, the confirm page,
+the create/pull/reconcile API routes, and relevant chain/mock/pull modules.
+POSTs to /api/deposits/codex-review-missing-record/pull and /reconcile
+both returned HTTP 404 with JSON {"error":"NOT_FOUND"}; these missing-ID
+checks created no records or transactions.
+
+Verification: reviewed the documentation diff against the original log and
+section 4. This is a documentation-only correction, with no live UI or API
+change to verify after deployment; no build or redeploy required. Production
+checks above describe the existing live application, not a newly deployed
+change. Left lib/*.ts and pre-existing untracked QA scripts untouched.
