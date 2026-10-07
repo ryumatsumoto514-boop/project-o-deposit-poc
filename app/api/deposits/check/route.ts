@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
   const parsedAmount = Number(amount);
   if (
-    !/^\d+(?:\.\d{1,6})?$/.test(amount) ||
+    !/^(?:\d+(?:\.\d{1,6})?|\.\d{1,6})$/.test(amount) ||
     !Number.isFinite(parsedAmount) ||
     parsedAmount <= 0 ||
     parsedAmount > MAX_DEMO_AMOUNT

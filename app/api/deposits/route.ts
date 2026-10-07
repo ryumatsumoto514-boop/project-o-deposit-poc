@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
 
   // USDC has six decimal places. Number() also accepts hex and exponent
   // notation, which are not valid decimal token amounts for parseUnits().
-  if (!/^\d+(?:\.\d{1,6})?$/.test(body.amount)) {
+  if (!/^(?:\d+(?:\.\d{1,6})?|\.\d{1,6})$/.test(body.amount)) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "amount must be a decimal string with at most 6 decimal places." },
       { status: 400 }

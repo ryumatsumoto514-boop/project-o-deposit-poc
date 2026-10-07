@@ -41,8 +41,8 @@ export default function DepositAmountPage() {
 
   function handleContinue() {
     // Match the creation API before the user spends gas on an approval.
-    if (!/^\d+(?:\.\d{1,6})?$/.test(amount)) {
-      setError("Enter a decimal amount with at most 6 decimal places (for example, 10.50).");
+    if (!/^(?:\d+(?:\.\d{1,6})?|\.\d{1,6})$/.test(amount)) {
+      setError("Enter a decimal amount with at most 6 decimal places (for example, 10.50 or .5).");
       return;
     }
     const parsed = Number(amount);
