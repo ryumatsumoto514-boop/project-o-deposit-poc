@@ -19290,3 +19290,119 @@ documentation trail the brief requires. Did not touch lib/*.ts
 reconciliation-engine logic. No new on-chain transactions, no API
 mutations, no deploy needed (nothing to deploy). Left the eleven
 pre-existing untracked scripts/ QA/screenshot helpers alone.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-06T19:55:21Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T20:02:21Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T20:30:21Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T20:37:21Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T21:05:21Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T21:12:21Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T21:40:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T21:47:22Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T22:15:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T22:22:22Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T22:50:22Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T22:57:22Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-06T23:25:23Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-06T23:32:24Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-07T00:00:29Z
+Codex review tick finished, exit code 1
+
+## Cron tick: 2026-10-07T00:07:31Z
+
+## Session-mode tick: 2026-10-07T00:1xZ (autonomous QA, user-directed cycle)
+
+### Fixed: orphaned "." punctuation wrapping onto its own line after the STALLED_NO_GAS "Open a testnet faucet" / "Try again" links on /deposit/approve
+
+Read OVERNIGHT_BRIEF.md and the log tail first per instructions, then grepped
+for prior "### Fixed/Added/Verified" headings across the whole log — functional
+bugs (routing status codes, idempotency races, overflow at mobile widths,
+focus rings, border-radius tokens, security headers, gas-pill loading state,
+duplicate stepper text, "Injected" wallet label), the clipboard-copy polish
+item, and wallet-role labeling on the blocked screen were all already found
+and fixed in prior cycles. Confirmed local HEAD matched origin/main (no
+undeployed work left over from a killed cycle this time).
+
+Noticed several untracked, never-committed QA scripts in scripts/ left by
+killed cycles (check-radio-toggle.mjs, check-tablet-widths.mjs, etc.) with
+comments describing unfinished investigations. Ran check-tablet-widths.mjs
+against the live site at 768px/1024px across all 5 core routes with a mocked
+wallet + seeded flow state: no overflow found (clean negative result, no fix
+needed). Ran check-radio-toggle.mjs against /deposit/approve live (mocked
+wallet with 0 ETH balance, seeded flow state) to verify the approval-scope
+radio buttons actually toggle, independent of the async gas-check banner's
+insertion timing — before-click state {checked:[true,false]}, after clicking
+the "unlimited" radio {checked:[false,true]}: toggle itself works correctly,
+no bug there.
+
+While reviewing the before/after screenshots
+(radio-0-settled.png / radio-1-after-click.png) of the real STALLED_NO_GAS
+banner (0 ETH balance on Arbitrum Sepolia, a state the mocked wallet
+naturally triggers), spotted a genuine visual defect: the sentence "...Get a
+small amount of free testnet ETH from a faucet, then try again. Open a
+testnet faucet ." renders with the trailing period orphaned alone on its own
+line, separated from the link by a visible gap. Read
+app/deposit/approve/page.tsx: the JSX pattern was `</a>` followed by a
+newline-indented `.` as a separate text node — JSX collapses that
+intervening whitespace/newline into a single space, giving the browser a
+valid line-break opportunity directly in front of the period. Because the
+link itself is styled `inline-block` (intentionally, for a larger tap
+target via negative-margin trick), the renderer treats the link and the
+following "." as separately wrappable inline content, and when the link text
+runs close to the container's right edge, the lone period gets pushed to
+the next line by itself — a sloppy, unintentional-looking artifact on a
+banner that's supposed to read as reassuring, careful UI copy (SPEC.md
+explicitly asks exception screens to look intentional, not like raw
+error dumps). Grepped and found the exact same pattern repeated 3x in the
+same file: the STALLED_NO_GAS banner's "Open a testnet faucet" link (line
+~322), the gas-check-failed banner's "Try again" button (line ~302), and
+the inline error-banner's "Open a testnet faucet" link (line ~380) — all
+three had the identical orphaned-period risk.
+
+Fix: in all three spots, removed the newline/indentation between the
+closing `</a>`/`</button>` tag and the following `.`, placing the period
+directly on the same source line (`</a>.`) so JSX emits no intervening
+whitespace text node and the browser has no break opportunity between the
+link and its trailing punctuation. Purely a whitespace/JSX-structure fix —
+no copy, logic, or styling changed.
+
+Ran `npm run build`: clean, no type errors, all 14 routes generated
+(/deposit/approve unchanged at 12.1 kB). Committed as a single commit
+covering app/deposit/approve/page.tsx and this log entry, pushed to
+origin/main, then deployed via
+`vercel --token "$VERCEL_TOKEN" --yes --prod`.
+
+Did not touch lib/*.ts reconciliation-engine logic (pure JSX whitespace fix
+in a display component). Left the untracked scripts/ QA helpers in the
+working tree alone (reused two of them for this cycle's investigation but
+did not commit them, consistent with how prior cycles have treated this
+same set of files). No new on-chain transactions or API mutations needed.

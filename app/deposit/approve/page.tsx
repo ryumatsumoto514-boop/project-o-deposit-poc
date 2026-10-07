@@ -300,8 +300,7 @@ export default function DepositApprovePage() {
               className="inline-block -my-3 py-3 underline hover:text-amber-100"
             >
               Try again
-            </button>
-            .
+            </button>.
           </span>
         </div>
       )}
@@ -320,8 +319,7 @@ export default function DepositApprovePage() {
               className="inline-block -my-3 py-3 underline hover:text-amber-100"
             >
               Open a testnet faucet
-            </a>
-            .
+            </a>.
           </span>
         </div>
       )}
@@ -378,8 +376,7 @@ export default function DepositApprovePage() {
                   className="text-rose-200 underline hover:text-rose-100"
                 >
                   Open a testnet faucet
-                </a>
-                .
+                </a>.
               </>
             )}
             {orphanedDepositId && (
