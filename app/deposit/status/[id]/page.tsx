@@ -296,7 +296,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     return (
       <main className="page-shell">
         {statusAnnouncement}
-        <KolBanner />
+        <KolBanner kolRef={deposit.kolRef} />
         <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_0_8px_rgba(16,185,129,0.1),0_12px_28px_-8px_rgba(16,185,129,0.6)]">
             <CheckIcon className="h-8 w-8 text-white" />
@@ -353,7 +353,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   return (
     <main className="page-shell">
         {statusAnnouncement}
-      <KolBanner />
+      <KolBanner kolRef={deposit.kolRef} />
       <h1 className="h1">Deposit status</h1>
       {connectionWarning}
 

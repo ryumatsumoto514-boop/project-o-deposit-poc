@@ -24,9 +24,13 @@ function formatKolName(ref: string): string {
 
 // UX improvement #5: persistent compliance/trust disclosure, not a
 // marketing widget. Reads from flow state so it survives navigation even
-// once the ?ref= param is gone from the URL.
-export function KolBanner() {
-  const { kolRef } = useFlow();
+// once the ?ref= param is gone from the URL. A deposit's own `kolRef` is
+// the durable, server-persisted source of truth (sessionStorage flow state
+// is per-tab and can be gone by the time someone opens a status link in a
+// new tab or after it's reloaded) — pass it in explicitly to prefer it.
+export function KolBanner({ kolRef: kolRefProp }: { kolRef?: string | null } = {}) {
+  const { kolRef: flowKolRef } = useFlow();
+  const kolRef = kolRefProp ?? flowKolRef;
   if (!kolRef) return null;
 
   return (
