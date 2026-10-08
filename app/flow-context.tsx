@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 // Ephemeral, client-only state carried between the routed steps of the
 // deposit flow (mock login identity, draft amount, KOL attribution).
@@ -74,6 +75,24 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
   }, [state, hydrated]);
+
+  // "Signing in as" was captured once at login time. If the identity is a
+  // wallet address and the user switches accounts in their wallet extension
+  // mid-flow, the connected signer (used for "funds coming from" and the
+  // actual approve/transfer calls) would silently drift from the displayed
+  // identity — exactly the confusion wallet-role labeling exists to prevent.
+  // Keep a wallet-based identity pinned to whichever wallet is actually
+  // connected; re-confirming the destination address if it changes under them.
+  const { address } = useAccount();
+  useEffect(() => {
+    if (!hydrated || !address) return;
+    setState((s) => {
+      if (s.mockIdentity && s.mockIdentity.startsWith("0x") && s.mockIdentity.toLowerCase() !== address.toLowerCase()) {
+        return { ...s, mockIdentity: address, addressConfirmed: false };
+      }
+      return s;
+    });
+  }, [address, hydrated]);
 
   const value: FlowContextValue = {
     ...state,
