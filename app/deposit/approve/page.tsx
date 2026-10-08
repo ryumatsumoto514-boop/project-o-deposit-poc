@@ -373,26 +373,30 @@ export default function DepositApprovePage() {
             {errorMessage === FAILURE_COPY.NO_GAS && (
               <>
                 {" "}
-                <a
-                  href="https://www.alchemy.com/faucets/arbitrum-sepolia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-rose-200 underline hover:text-rose-100"
-                >
-                  Open a testnet faucet
-                </a>.
+                <span className="whitespace-nowrap">
+                  <a
+                    href="https://www.alchemy.com/faucets/arbitrum-sepolia"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-rose-200 underline hover:text-rose-100"
+                  >
+                    Open a testnet faucet
+                  </a>.
+                </span>
               </>
             )}
             {orphanedDepositId && (
               <>
                 {" "}
                 A deposit record was already created before this failed —{" "}
-                <a
-                  href={`/deposit/status/${orphanedDepositId}`}
-                  className="text-rose-200 underline hover:text-rose-100"
-                >
-                  check its status
-                </a>.
+                <span className="whitespace-nowrap">
+                  <a
+                    href={`/deposit/status/${orphanedDepositId}`}
+                    className="text-rose-200 underline hover:text-rose-100"
+                  >
+                    check its status
+                  </a>.
+                </span>
               </>
             )}
           </span>
