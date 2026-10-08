@@ -16,12 +16,18 @@ export function connectorLabel(name: string): string {
 // string "google:<username>" (see app/login/page.tsx's continueTo call) so
 // the rest of the flow has a stable, typed identifier to persist/display.
 // That internal format must never reach the UI verbatim — it reads as
-// unfinished developer output next to considered copy like "demo@exchangeo.test"
-// or a wallet address. Every other mockIdentity shape (email, wallet address)
-// is already human-readable as-is.
+// unfinished developer output next to considered copy like "demo@exchangeo.test".
+// A wallet-address identity (from "Continue with connected wallet") also
+// needs truncating here, same as every other address shown in the app —
+// otherwise the login page's own "Signing in as" line prints the full
+// 42-character address right under the truncated version shown in the
+// button that produced it.
 export function displayIdentity(identity: string): string {
   if (identity.startsWith("google:")) {
     return `Google (${identity.slice("google:".length)})`;
+  }
+  if (identity.startsWith("0x")) {
+    return truncateAddress(identity);
   }
   return identity;
 }
