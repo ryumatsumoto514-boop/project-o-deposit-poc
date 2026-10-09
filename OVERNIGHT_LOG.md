@@ -23818,3 +23818,12 @@ No core/API logic changed. Build and production verification follow below.
 Validation: npm run build passed (exit 0), including lint/type checks and
 static generation. Existing dependency warnings remain. Staged all changes,
 then excluded pre-existing untracked QA scripts to keep this review scoped.
+
+Live verification: code commit ba14084 pushed to origin/main; vercel --token
+"$VERCEL_TOKEN" --yes --prod exited 0. Fresh curl -fsS --max-time 20 requests
+to https://projecto-blond.vercel.app/ and /deposit/approve both returned 200.
+HTMLParser extracted each actual noscript element and asserted both the
+JavaScript requirement and "do not send it again" warning; both passed.
+Evidence: /tmp/codex99-live-{home,approve}.{html,headers}; build/deploy logs:
+/tmp/codex99-{build,deploy}.log. This checks delivered fallback markup;
+no wallet transactions or API mutations were performed.
