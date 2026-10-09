@@ -49,7 +49,7 @@ export default function DepositConfirmPage() {
   if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address) return <FlowLoading />;
 
   return (
-    <main className="page-shell">
+    <main id="main-content" className="page-shell">
       <KolBanner />
       <StepProgress step={3} />
       <h1 className="h1">Confirm destination address</h1>

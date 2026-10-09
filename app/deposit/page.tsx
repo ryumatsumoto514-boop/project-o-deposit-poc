@@ -59,7 +59,7 @@ export default function DepositAmountPage() {
   }
 
   return (
-    <main className="page-shell">
+    <main id="main-content" className="page-shell">
       <KolBanner />
       <StepProgress step={2} />
       <h1 className="h1">Deposit amount</h1>

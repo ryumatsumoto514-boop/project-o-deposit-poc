@@ -10,7 +10,7 @@ const STEPS = ["Sign in", "Amount", "Confirm", "Approve"] as const;
 // This gives that wait a visible, on-brand placeholder instead.
 export function FlowLoading() {
   return (
-    <main className="page-shell items-center justify-center text-slate-400">
+    <main id="main-content" className="page-shell items-center justify-center text-slate-400">
       <SpinnerIcon className="h-5 w-5" />
       <span className="text-sm">Reconnecting your wallet…</span>
     </main>

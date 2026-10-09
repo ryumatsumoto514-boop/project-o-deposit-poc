@@ -23,7 +23,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="page-shell">
+    <main id="main-content" className="page-shell">
       <KolBanner />
       <StepProgress step={1} />
       <h1 className="h1">Sign in</h1>

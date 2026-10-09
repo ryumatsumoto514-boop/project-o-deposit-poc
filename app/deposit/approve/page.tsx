@@ -211,7 +211,7 @@ export default function DepositApprovePage() {
 
   if (step === "blocked" && blockedDeposit) {
     return (
-      <main className="page-shell">
+      <main id="main-content" className="page-shell">
         <KolBanner />
         <StepProgress step={4} />
         <h1 className="h1">Deposit already in progress</h1>
@@ -242,7 +242,7 @@ export default function DepositApprovePage() {
   }
 
   return (
-    <main className="page-shell">
+    <main id="main-content" className="page-shell">
       <KolBanner />
       <StepProgress step={4} />
       <h1 className="h1">Approve + deposit</h1>

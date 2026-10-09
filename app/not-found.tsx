@@ -3,7 +3,7 @@ import { AlertIcon } from "./components/icons";
 
 export default function NotFound() {
   return (
-    <main className="page-shell items-center justify-center text-center">
+    <main id="main-content" className="page-shell items-center justify-center text-center">
       <div className="card flex flex-col items-center gap-3">
         <span className="flex h-11 w-11 items-center justify-center rounded-full border border-amber-400/25 bg-amber-400/[0.08] text-amber-300">
           <AlertIcon className="h-5 w-5" />

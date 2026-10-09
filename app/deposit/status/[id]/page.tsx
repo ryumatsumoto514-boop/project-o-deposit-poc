@@ -245,7 +245,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (notFound) {
     return (
-      <main className="page-shell">
+      <main id="main-content" className="page-shell">
         {statusAnnouncement}
         <div className="flex flex-col items-center gap-3 py-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-400/30">
@@ -280,7 +280,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (!deposit) {
     return (
-      <main className="page-shell">
+      <main id="main-content" className="page-shell">
         {statusAnnouncement}
         {connectionWarning}
         <p className="flex items-center gap-2 text-sm text-slate-400">
@@ -294,7 +294,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
 
   if (deposit.status === "CREDITED") {
     return (
-      <main className="page-shell">
+      <main id="main-content" className="page-shell">
         {statusAnnouncement}
         <KolBanner kolRef={deposit.kolRef} />
         <div className="success-pop flex flex-col items-center gap-3 py-4 text-center">
@@ -351,7 +351,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
   }
 
   return (
-    <main className="page-shell">
+    <main id="main-content" className="page-shell">
         {statusAnnouncement}
       <KolBanner kolRef={deposit.kolRef} />
       <h1 className="h1">Deposit status</h1>

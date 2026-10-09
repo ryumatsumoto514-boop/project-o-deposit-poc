@@ -23,7 +23,7 @@ function StatusTag({
 
 export default function Home() {
   return (
-    <main className="page-shell-wide">
+    <main id="main-content" className="page-shell-wide">
       <KolBanner />
 
       {/* Asymmetric hero: high-impact copy + live ticker on the left,
