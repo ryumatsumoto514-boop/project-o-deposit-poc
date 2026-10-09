@@ -206,10 +206,14 @@ mocked Hyperliquid balance agree.
   identical either way, but a manual UI click-through has not yet been
   performed by a human and is recommended before relying on this as final
   proof of the UI's wallet-signing path.
-- **Single relayer wallet, single-threaded.** No queueing, retry, or nonce
-  management beyond what viem does by default. Would need real
-  infrastructure (a proper relayer service, monitoring, alerting) before
-  this pattern could be trusted with real user funds.
+- **Single relayer wallet, without a serialized submission queue.**
+  Reconciliation automatically retries a pull while no transfer hash is
+  recorded and an approval hash is present; the pull API can also trigger
+  an attempt. These paths have no shared lock to serialize concurrent
+  submissions, and nonce management relies on viem defaults. Automatic
+  retry is not an exactly-once transfer guarantee. A proper relayer service
+  with durable submission tracking, concurrency control, monitoring, and
+  alerting is needed before trusting this pattern with real user funds.
 - **No rate limiting or auth on the API routes.** Anyone who can reach the
   deployed app can call the deposit APIs directly.
 - **Demo deposit cap** of 1000 USDC in the UI, arbitrary, just to keep test
