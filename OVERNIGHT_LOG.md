@@ -23671,3 +23671,35 @@ just committed.
 No application/core (lib/*.ts) logic touched, no blockchain transactions,
 no mutating API calls. Only app/robots.ts added and this log entry
 appended.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-09T13:17:13Z
+
+### [Codex review] 2026-10-09 — Fix crawl-block versus search-index exclusion
+
+Read OVERNIGHT_BRIEF.md, the recent log tail, SPEC.md, app/robots.ts,
+app/layout.tsx and next.config.mjs. Searched historical robots/noindex
+entries. Found one gap in the immediately preceding robots.txt change:
+its stated goal is to keep this demo out of search, but Disallow: / only
+blocks crawling. Externally linked URLs can still be indexed, and that
+rule prevents crawlers from seeing a page-level noindex directive.
+This is distinct from the previously fixed missing robots.txt endpoint.
+
+Confirmed with curl -sS --max-time 20 against the live homepage, /login
+and /robots.txt; saved raw responses/headers under /tmp/codex96-*.
+Python HTMLParser found no robots meta tag on either HTML page, while
+robots.txt returned User-Agent: * and Disallow: /. Checked the behavior
+against Google's primary documentation:
+https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
+
+Changed only app/layout.tsx and app/robots.ts: inherited noindex,nofollow
+metadata now expresses the demo's search policy, and Allow: / lets
+crawlers fetch and honor it. This is an indexing directive for cooperating
+crawlers, not access control. No reconciliation logic or API mutations.
+Build and deployment verification results will be appended below.
+
+Validation: npm run build exited 0 (type/lint checks and static generation
+passed). It emitted dependency warnings for MetaMask async-storage,
+pino-pretty and ox dynamic imports, plus Node's localStorage warning.
+Preserved pre-existing untracked QA scripts; staging is limited to the
+two changed app files and the append-only overnight log.

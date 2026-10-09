@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   // actual distribution channels (Twitter/Discord/Slack) would silently
   // show no image at all.
   metadataBase: new URL("https://projecto-blond.vercel.app"),
+  // Keep this testnet demo out of search results. Crawlers must be allowed
+  // to fetch the page (see robots.ts) to discover this directive.
+  robots: { index: false, follow: false },
   title: "Exchange O — Deposit (PoC)",
   description: "Deposit Reconciliation Engine PoC — Arbitrum Sepolia testnet",
   openGraph: {
