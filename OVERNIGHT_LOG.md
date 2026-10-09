@@ -23167,3 +23167,210 @@ script.
 
 No application/core changes, build, commit of app code, redeploy, or
 mutating API/blockchain calls. Only this log entry was added.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-09T08:37:10Z
+
+### [Codex review] 2026-10-09 — Independent referral redirect and raw response inspection; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md and
+recent review headings to avoid reporting known-fixed issues. This bounded
+pass did not establish a new, small defect worth changing.
+
+Fetched production with curl -sS --max-time 20, saving raw bodies and
+headers under /tmp/codex88-*: homepage, /deposit/status/review-nonexistent,
+/api/deposits/review-nonexistent, and /login/?ref=kol_alex. The last request
+specifically tested whether trailing-slash normalization loses KOL
+attribution: it returned 308 with Location: /login?ref=kol_alex, preserving
+the referral. The missing-record API returned JSON NOT_FOUND with HTTP
+404 and cache-control max-age=0, must-revalidate. Parsed home and status
+HTML with Python HTMLParser; both returned 200, English language,
+zoomable viewport and absolute OG image metadata. Homepage visible text
+explicitly describes simulated bridging and crediting. The status response
+is only a loading shell, not evidence of hydrated recovery behavior.
+
+Read app/api/deposits/route.ts, check/route.ts, [id]/route.ts,
+[id]/pull/route.ts and [id]/reconcile/route.ts; inspected status polling
+and live-region source plus app/error.tsx, global-error.tsx and
+not-found.tsx. Existing guards reject malformed creation inputs; recovery
+copy warns against sending again when a signed transaction is unresolved.
+No new verified issue emerged from these reads.
+
+Only appended this entry. No application/core edits, build, commit/push,
+deployment, mutating API calls or blockchain transactions. Preserved the
+pre-existing modified log and untracked QA scripts.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-09T08:44:10Z
+
+## Cron tick: 2026-10-09 (Claude session) — tablet-width overflow sweep + visual screenshot review, no new fix
+
+### Ran the previously-untested tablet-breakpoint overflow check; reviewed real screenshots; found nothing to fix
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first. Dozens of recent
+Codex review ticks had already exhausted curl/HTML-parsing-based checks
+(assets, alt text, focus-visible, redirects, validation boundaries) with no
+new findings, and the most recent Claude cycle had just cleared a false-
+positive click-walk bug. To avoid repeating either pattern, this cycle used
+a genuinely different, previously-unexecuted check already staged in the
+repo: scripts/check-tablet-widths.mjs, which drives real chrome-headless-shell
+tabs via CDP at the md/lg Tailwind breakpoints (768px, 1024px) — a gap prior
+cycles explicitly left (they covered mobile 320-390px and desktop 1280px,
+never tablet).
+
+Ran it live against https://projecto-blond.vercel.app across /, /login?ref=
+kol_alex, /deposit, /deposit/approve, /deposit/confirm (seeded via
+sessionStorage exo_flow_state with a mock wallet/KOL ref, same pattern as
+scripts/screenshot.mjs) at both 768px and 1024px: document.documentElement.
+scrollWidth matched clientWidth exactly on every route/width combination —
+zero horizontal overflow.
+
+To go beyond a pure layout-metrics check, also captured real PNG screenshots
+(scripts/screenshot.mjs over CDP, not just computed metrics) of home@768,
+/deposit@768, and /deposit/approve@1024 (the latter seeded into the
+gas-insufficient exception state to check the warning banner + approval-scope
+radios at a wider viewport) and visually reviewed them. Layout is correctly
+centered at both widths (apparent left/right margin asymmetry, e.g. 301px vs
+316px at 1024px, is fully explained by the ~15px scrollbar width, not a
+centering bug); spacing, border-radius, type scale and color usage are
+consistent with globals.css tokens; the KOL disclosure banner, wallet-role
+labels (Signing in as / Funds coming from / Simulated trading account), and
+gas-insufficient exception banner all render cleanly with no cramping or
+overlap at tablet width.
+
+Conclusion: genuinely checked a previously-untested surface (tablet
+breakpoints, both by layout metrics and real visual screenshot) and found no
+defect. Did not force a fix. No application/core code was changed.
+
+No build, commit, deploy, mutating API calls, or blockchain transactions.
+Only this log entry was added; screenshots saved to shots-out/tablet-home-768.png,
+shots-out/tablet-deposit-768.png, shots-out/tablet-approve-1024.png for review.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-09T09:12:11Z
+
+### [Codex review] 2026-10-09 — Independent saved-flow approval boundary review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md and
+recent review headings. No new, verified small defect emerged from this pass.
+
+Fetched https://projecto-blond.vercel.app and /login?ref=kol_alex with
+curl -sS --max-time 20, saving headers and raw HTML to /tmp/codex89-*.
+Both returned HTTP 200. Parsed the actual response bodies with Python
+HTMLParser: English language, zoomable viewport, absolute OG/Twitter image
+URLs and image alt metadata are present; visible entry/sign-in copy labels
+testnet funds, simulated login, bridging and crediting. This checks delivered
+HTML, not hydrated wallet behavior.
+
+Specifically traced persisted draft recovery in app/flow-context.tsx into
+app/deposit/confirm/page.tsx and app/deposit/approve/page.tsx, comparing the
+approval preflight with app/api/deposits/check/route.ts. Saved identities and
+amounts restore only as strings; confirmation requires literal true; an
+unknown stored approval mode falls back to exact. An invalid numeric string
+can survive restoration, but the approval handler checks the server response
+before parseUnits or requesting a wallet signature and aborts on non-OK.
+Verified two non-finite string cases against the live read-only check endpoint
+with the documented relayer wallet: amount=NaN and amount=Infinity each returned
+HTTP 400 INVALID_REQUEST with the decimal precision/cap explanation. Did not
+establish a signing bypass. Also read app/layout.tsx, next.config.mjs and
+README.md; did not re-report their already documented storage/relayer limits.
+
+Only appended this entry. No application/core changes, build, commit/push,
+deployment, mutating API requests or blockchain transactions. Preserved the
+pre-existing modified log and untracked QA scripts.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-09T09:19:11Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-09T09:47:11Z
+
+### [Codex review] 2026-10-09 — Independent repeated-query validation and delivered-copy inspection; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent OVERNIGHT_LOG.md tail first, then
+SPEC.md and recent review headings to avoid repeating known fixes. Read
+app/globals.css, tailwind.config.ts, app/layout.tsx, and the read-only
+app/api/deposits/check/route.ts and app/api/gas/route.ts implementations.
+No new, verified small defect emerged from this bounded pass.
+
+Specifically tested repeated amount parameters against production with
+curl -sS --max-time 20 and the documented relayer wallet: amount=1&amount=-1
+returned HTTP 200 with {"conflict":null}; reversing to amount=-1&amount=1
+returned HTTP 400 INVALID_REQUEST. This agrees with the route's explicit
+searchParams.get("amount") first-value semantics; did not establish a
+validation bypass or treat repeated parameters alone as a bug. These were
+read-only requests, not deposit creation or blockchain transactions.
+
+Also fetched https://projecto-blond.vercel.app and
+/login?ref=kol_alex&ref=unknown, saving raw headers/HTML under
+/tmp/codex90-{home,login}.*. Both returned HTTP 200. Parsed response HTML
+with Python HTMLParser and read visible copy: testnet and mocked-service
+disclosures are present, viewport permits zoom, and OG image URLs use the
+production origin. The login response alone does not prove hydrated
+referral selection. CSS tokens, distinct severity colors, component radii,
+and reduced-motion overrides did not reveal a defensible new inconsistency.
+
+Only appended this entry. No application/core edits, build, commit/push,
+or redeployment; preserved pre-existing log changes and untracked QA scripts.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-09T09:54:11Z
+
+## Cron tick: 2026-10-09 (Claude session) — landscape/banner/identity/focus sweep, no new fix
+
+### Ran four genuinely untested checks against production; all passed clean
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first. By this point dozens
+of Codex review ticks had exhausted curl/HTML-parsing checks (metadata, assets,
+redirects, validation boundaries, contrast-from-source-color) with no new
+findings, so this cycle looked specifically for checks that had NEVER been run
+in the log (grepped for "landscape", "kol-banner-all-pages", "wallet-identity-
+match", "mock-identity-label" — zero hits on all four) and found four
+already-written-but-never-executed scripts sitting untracked in scripts/.
+
+1. scripts/check-landscape-mobile.mjs — real CDP check at iPhone SE/12
+   landscape (667x375, 812x375) across /, /login, /deposit, /deposit/confirm,
+   /deposit/approve. Checked both horizontal overflow (scrollWidth vs
+   clientWidth) and any `position: fixed` element that could cover content in
+   a short viewport. Zero overflow on any route/size; zero fixed-position
+   elements found at all, so no sticky-header/footer coverage risk exists.
+
+2. scripts/check-kol-banner-all-pages.mjs — seeded flow state via CDP and
+   read document.body.innerText for "arrived via" on /, /login, /deposit,
+   /deposit/confirm, /deposit/approve. Banner text present on all five,
+   confirming SPEC.md's "disclosure banner carries attribution through the
+   whole deposit flow" requirement actually holds on live production, not
+   just in source. Also wrote and ran an extra check against
+   /deposit/status/[id] for a nonexistent id — banner correctly does NOT
+   render in that case because the record never loads; read
+   app/deposit/status/[id]/page.tsx and confirmed KolBanner is correctly
+   keyed to deposit.kolRef on the loaded record (lines 299, 356), so this is
+   correct behavior, not a bug, for an unloaded/missing record.
+
+3. scripts/check-wallet-identity-match.mjs — used a deliberately
+   non-checksummed lowercase wallet address (how a raw eth_accounts response
+   would actually look) and captured real screenshots of /login and /deposit.
+   The header chip, "Signing in as", and "Funds coming from" all display the
+   identical EIP-55-checksummed 0x9A11…A3E5 — no casing mismatch between the
+   three places the address is shown.
+
+4. scripts/check-radio-focus.mjs — real Tab-key walks (Input.dispatchKeyEvent)
+   through /deposit/confirm and /deposit/approve, reading
+   document.activeElement and its computed outline/box-shadow after each tab.
+   Both the confirm checkbox and the approve radio group show a visible focus
+   ring (solid 2px outline / cyan box-shadow ring). Tab stopped at the radio
+   group and moved to body afterward rather than reaching the "Approve &
+   deposit" button — initially looked like a dead-end in the tab sequence,
+   but reading app/deposit/approve/page.tsx:406-408 showed the submit button
+   is correctly disabled whenever `lowGas` is true (the seeded test state),
+   and disabled buttons are legitimately unfocusable — confirmed this is
+   correct, not a bug.
+
+Conclusion: four previously-unexecuted, genuinely different checks (viewport
+geometry, cross-page content assertion, visual screenshot comparison, and
+keyboard interaction) all passed. No application/core code was changed.
+
+No build, commit, deploy, mutating API calls, or blockchain transactions.
+Only this log entry was added; screenshots saved to
+shots-out/identity-1-connect.png and shots-out/identity-2-deposit.png for
+review.
