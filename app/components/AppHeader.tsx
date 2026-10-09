@@ -51,11 +51,11 @@ export function AppHeader() {
         <Link
           href="/"
           aria-label="Exchange O home"
-          className="inline-flex min-w-0 shrink items-center px-1.5 py-1.5"
+          className="inline-flex shrink-0 items-center px-1.5 py-1.5"
         >
           <Brand compact={isConnected && !!address} />
         </Link>
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-1.5">
           <span
             className="pill hidden sm:inline-flex"
             title={
@@ -75,8 +75,8 @@ export function AppHeader() {
             />
             {typeof gwei === "number" ? `${gwei.toFixed(3)} GWEI` : gwei === null ? "GAS —" : "GAS …"}
           </span>
-          <span className="pill">
-            <span className="led-dot led-live bg-emerald-400 text-emerald-400" />
+          <span className="pill min-w-0 shrink truncate">
+            <span className="led-dot led-live bg-emerald-400 text-emerald-400 shrink-0" />
             Sepolia
           </span>
           {isConnected && address && (
