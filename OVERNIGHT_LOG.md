@@ -23703,3 +23703,15 @@ passed). It emitted dependency warnings for MetaMask async-storage,
 pino-pretty and ox dynamic imports, plus Node's localStorage warning.
 Preserved pre-existing untracked QA scripts; staging is limited to the
 two changed app files and the append-only overnight log.
+
+Live verification completed: code commit b485813 pushed to origin/main,
+then vercel --token "$VERCEL_TOKEN" --yes --prod succeeded with deployment
+dpl_Bywc9cHrAnoGry7vAK75xgNTmufC aliased to
+https://projecto-blond.vercel.app. Fresh curl requests returned HTTP 200
+for /, /login, /deposit/approve and /robots.txt. Parsed each HTML response
+with Python HTMLParser and asserted robots content includes both noindex
+and nofollow; all three passed. Asserted robots.txt contains Allow: / and
+no Disallow: /; passed. Raw bodies and headers are saved at
+/tmp/codex96-live-{home,login,approve,robots}.{body,headers}.
+This verifies delivered directives, not actual search-engine removal
+(which depends on future recrawls). No core files changed.
