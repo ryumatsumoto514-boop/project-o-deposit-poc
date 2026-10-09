@@ -23715,3 +23715,106 @@ no Disallow: /; passed. Raw bodies and headers are saved at
 /tmp/codex96-live-{home,login,approve,robots}.{body,headers}.
 This verifies delivered directives, not actual search-engine removal
 (which depends on future recrawls). No core files changed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-09T13:24:13Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-09T13:52:15Z
+
+### [Codex review] 2026-10-09 — Independent live response and input-boundary review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent OVERNIGHT_LOG.md tail first, then
+SPEC.md. Inspected app/layout.tsx, next.config.mjs, all of app/globals.css
+and tailwind.config.ts, AppHeader.tsx and FlowChrome.tsx, plus the creation,
+preflight, gas and record GET/PATCH API handlers. Read lib/idempotency.ts
+and lib/store.ts without modifying them. Searched historical gas-cache,
+reduced-motion, casing and numeric-format findings to avoid claiming old
+fixes as new issues. No substantiated new issue worth fixing emerged.
+
+Fetched production with curl -sS --max-time 20: homepage,
+/deposit/status/not-a-record and /api/gas?chainId=1; raw bodies and headers
+are saved as /tmp/codex97-{home,status,gas}.*. Parsed both HTML bodies with
+Python HTMLParser: inherited noindex,nofollow, viewport and description
+are present, with absolute production OG image URL and alt metadata.
+The gas endpoint returned HTTP 200, numeric gwei, age 0 and cache MISS.
+Its implementation always reads configured Arbitrum Sepolia; the extra
+chainId query does not select another chain or substantiate a bug.
+
+Made six read-only curl requests to /api/deposits/check: uppercase/lowercase
+versions of the same test address with 0001.000000 and 1 each returned
+200/conflict:null; negative amount, seven fractional digits, huge decimal
+amount and malformed wallet each returned 400/INVALID_REQUEST. Responses
+are saved as /tmp/codex97-check-*.txt. These requests establish validation
+and representation acceptance, NOT replay protection against an existing
+record. Source inspection confirms wallet lowercasing and numeric amount
+comparison; no deposit was created and no blockchain transaction was sent.
+
+Only appended this log entry. Preserved the pre-existing AppHeader.tsx edit,
+log changes and untracked QA scripts. No application changes, build,
+commit/push or deployment. This bounded raw-response/source review does
+not establish hydrated browser accessibility or wallet-extension behavior.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-09T13:59:15Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-09T14:27:15Z
+
+### [Codex review] 2026-10-09 — Independent error-screen and delivered dependency review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Read app/error.tsx, app/global-error.tsx, app/not-found.tsx, app/layout.tsx,
+AppHeader.tsx, FlowChrome.tsx, all of globals.css and tailwind.config.ts,
+and README.md/testnet-evidence.md. Searched historical error-boundary,
+asset, font and documentation entries to exclude already-fixed findings.
+No substantiated new small issue worth fixing emerged from this pass.
+
+Fetched https://projecto-blond.vercel.app/ and /not-a-page using curl -sS
+--max-time 20, saving raw HTML/headers to /tmp/codex98-{home,missing}.*.
+Responses were HTTP 200 and 404 respectively. Python HTMLParser confirmed
+English document language, zoom-permitting viewport, noindex directives,
+absolute production social-image URLs and social-image alt metadata.
+Error-boundary source retains the warning that retrying a screen does not
+cancel a submitted transaction; the missing page offers a named home link.
+
+Expanded the dependency check beyond metadata assets: extracted every
+script src and stylesheet/preload URL from both delivered HTML bodies and
+fetched all 20 distinct dependencies with curl. All 17 JavaScript chunks
+(including error, global-error and not-found chunks), one stylesheet and
+two preloaded fonts returned HTTP 200 with appropriate content types.
+Results are in /tmp/codex98-assets.txt; response bodies are saved as
+/tmp/codex98-asset-*.body. This establishes dependency availability, not
+successful JavaScript execution or hydrated browser accessibility.
+
+Only appended this entry. No code/core edits, API mutations, blockchain
+transactions, build, commit/push or deployment. Preserved the existing log
+changes and untracked QA scripts. No new defect was fabricated to justify
+a change; existing documented storage and relayer limitations remain.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-09T14:34:15Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-09T15:02:15Z
+
+### [Codex review] 2026-10-09 — Explain disabled-JavaScript wallet reconnection shell
+
+Read OVERNIGHT_BRIEF.md and recent log tail first, then SPEC.md, layout,
+flow-context, confirmation screen, referral components, CSS/Tailwind and
+API handlers. Fetched / and /deposit/approve using curl -sS --max-time 20;
+raw HTML/headers are in /tmp/codex99-{home,approve}.{html,headers}.
+Python HTMLParser excluding script/style content confirmed that approval
+only delivers the header and "Reconnecting your wallet…". With JavaScript
+disabled that message never resolves and no recovery instruction appears.
+The earlier log around line 8493 noted missing noscript on home/login but
+did not fix it or establish this misleading approval recovery state.
+
+Added a shared noscript notice in app/layout.tsx explaining JavaScript is
+required, how to reload after enabling it, and that an already-submitted
+transaction must not be sent again just because status cannot be checked.
+No core/API logic changed. Build and production verification follow below.
+
+Validation: npm run build passed (exit 0), including lint/type checks and
+static generation. Existing dependency warnings remain. Staged all changes,
+then excluded pre-existing untracked QA scripts to keep this review scoped.

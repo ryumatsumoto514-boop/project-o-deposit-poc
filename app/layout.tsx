@@ -61,6 +61,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
+        <noscript>
+          <div className="banner-amber mx-auto my-4 max-w-md" role="alert">
+            JavaScript is required to connect your wallet and track deposits.
+            Enable JavaScript in your browser, then reload this page. If you
+            already submitted a transaction, do not send it again — this page
+            cannot check its status while JavaScript is disabled.
+          </div>
+        </noscript>
         <Providers>
           <AppHeader />
           {children}
