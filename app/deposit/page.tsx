@@ -54,7 +54,11 @@ export default function DepositAmountPage() {
       setError(`This demo caps deposits at ${MAX_DEMO_AMOUNT} USDC.`);
       return;
     }
-    setDraftAmount(amount);
+    // Strip leading zero padding ("010.5" -> "10.5") so the confirm,
+    // approve, and status screens never echo back a malformed-looking
+    // amount — this value is displayed verbatim in several places.
+    const normalized = amount.replace(/^0+(?=\d)/, "");
+    setDraftAmount(normalized);
     router.push("/deposit/confirm");
   }
 
