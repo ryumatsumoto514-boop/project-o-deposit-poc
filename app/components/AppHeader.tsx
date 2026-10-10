@@ -75,13 +75,13 @@ export function AppHeader() {
             />
             {typeof gwei === "number" ? `${gwei.toFixed(3)} GWEI` : gwei === null ? "GAS —" : "GAS …"}
           </span>
-          <span className="pill min-w-0 shrink truncate">
+          <span className="pill shrink-0">
             <span className="led-dot led-live bg-emerald-400 text-emerald-400 shrink-0" />
             Sepolia
           </span>
           {isConnected && address && (
             <span
-              className="pill normal-case font-mono text-slate-300"
+              className="pill min-w-0 shrink truncate normal-case font-mono text-slate-300"
               role="group"
               aria-label={`Funding wallet: ${address}`}
               title={`Funding wallet: ${address}`}
