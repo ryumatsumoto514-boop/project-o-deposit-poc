@@ -44,12 +44,12 @@ export default function Home() {
             className="ticker w-fit flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2"
             title="Matches the mocked bridging delay in the reconciliation engine — not a live measurement"
           >
-            <span className="flex items-center gap-2 whitespace-nowrap">
-              <span className="led-dot led-live bg-accent-400 text-accent-400" />
+            <span className="flex items-center gap-2 sm:whitespace-nowrap">
+              <span className="led-dot led-live bg-accent-400 text-accent-400 shrink-0" />
               ARBITRUM SEPOLIA &rarr; HYPERLIQUID
             </span>
             <span className="hidden text-slate-400 sm:inline">|</span>
-            <span className="whitespace-nowrap">
+            <span className="sm:whitespace-nowrap">
               BRIDGING WINDOW: ~15&ndash;30s <span className="text-slate-400">(simulated)</span>
             </span>
           </div>
