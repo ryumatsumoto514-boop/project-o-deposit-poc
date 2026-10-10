@@ -71,6 +71,22 @@ export default function DepositApprovePage() {
     return () => clearTimeout(timer);
   }, [hydrated, walletSettling, mockIdentity, draftAmount, address, addressConfirmed, router]);
 
+  // The gas-insufficient banner above this fieldset only knows to render
+  // once the balance fetch resolves — so the fieldset would otherwise go
+  // disabled->enabled in the exact same tick the banner pushes it down,
+  // letting a click already in flight land on the wrong approval-scope
+  // radio right as the layout shifts. Hold it disabled for one more paint
+  // so it only becomes interactive once the shifted layout is on screen.
+  const [gasLayoutSettled, setGasLayoutSettled] = useState(false);
+  useEffect(() => {
+    if (gasCheckLoading) {
+      setGasLayoutSettled(false);
+      return;
+    }
+    const raf = requestAnimationFrame(() => setGasLayoutSettled(true));
+    return () => cancelAnimationFrame(raf);
+  }, [gasCheckLoading]);
+
   if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address || !addressConfirmed) return <FlowLoading />;
 
   const lowGas = ethBalance !== undefined && ethBalance.value < MIN_GAS_WEI;
@@ -329,7 +345,7 @@ export default function DepositApprovePage() {
       )}
 
       <fieldset
-        disabled={isBusy || gasCheckLoading || gasCheckFailed}
+        disabled={isBusy || gasCheckLoading || gasCheckFailed || !gasLayoutSettled}
         className="card flex flex-col gap-3 disabled:opacity-60"
       >
         <legend className="label-caps px-1">Approval scope</legend>
