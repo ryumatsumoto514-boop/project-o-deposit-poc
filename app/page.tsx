@@ -29,7 +29,7 @@ export default function Home() {
       {/* Asymmetric hero: high-impact copy + live ticker on the left,
           the O Engine telemetry visual on the right. */}
       <section className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14">
-        <div className="fade-up flex flex-col gap-5">
+        <div className="fade-up flex min-w-0 flex-col gap-5">
           <span className="eyebrow">Deposit reconciliation engine</span>
           <h1 className="h1-hero text-balance">
             Deposit with full visibility, every step of the way.
