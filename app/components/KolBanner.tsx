@@ -11,6 +11,14 @@ const KNOWN_KOLS: Record<string, string> = {
   kol_alex: "KOL Alex",
 };
 
+// The capture-time MAX_REF_LENGTH (64 raw chars) still lets a single long
+// garbage word wrap to 3 lines on a 320-390px viewport, dominating the hero
+// above real content — found live via scripts/check-long-kol-ref.mjs against
+// a 300-char ?ref= value. Cap the *formatted* display name too so the
+// banner stays a one-line trust element regardless of what the raw ref
+// contains; legitimate short KOL names (e.g. "KOL Alex") are unaffected.
+const MAX_DISPLAY_NAME_LENGTH = 24;
+
 function formatKolName(ref: string): string {
   const normalized = ref.toLowerCase();
   if (Object.prototype.hasOwnProperty.call(KNOWN_KOLS, normalized)) return KNOWN_KOLS[normalized];
@@ -19,7 +27,10 @@ function formatKolName(ref: string): string {
     .split(/[_-]+/)
     .filter(Boolean)
     .map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
-  return words.length ? words.join(" ") : "a partner";
+  const name = words.length ? words.join(" ") : "a partner";
+  return name.length > MAX_DISPLAY_NAME_LENGTH
+    ? `${name.slice(0, MAX_DISPLAY_NAME_LENGTH).trimEnd()}…`
+    : name;
 }
 
 // UX improvement #5: persistent compliance/trust disclosure, not a
