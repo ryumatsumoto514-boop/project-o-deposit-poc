@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useConnect } from "wagmi";
 import { useFlow } from "../flow-context";
@@ -20,10 +20,27 @@ export default function DepositAmountPage() {
   const { connectors, connect, isPending, error: connectionError } = useConnect();
   const [amount, setAmount] = useState(draftAmount || "");
   const [error, setError] = useState<string | null>(null);
+  const continueBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (hydrated && !mockIdentity) router.replace("/login");
   }, [hydrated, mockIdentity, router]);
+
+  // On iOS the decimal keypad has no "Go"/"Done" key, so Continue is the
+  // only way to submit — if the keyboard covers it, the user is stuck. Keep
+  // it in view as the on-screen keyboard opens/closes (visualViewport
+  // resizes) while the amount input is focused.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      if (document.activeElement?.id === "deposit-amount") {
+        continueBtnRef.current?.scrollIntoView({ block: "nearest" });
+      }
+    };
+    vv.addEventListener("resize", onResize);
+    return () => vv.removeEventListener("resize", onResize);
+  }, []);
 
   // `draftAmount` only becomes available after FlowProvider's async
   // sessionStorage read resolves (see flow-context.tsx), which happens after
@@ -132,7 +149,7 @@ export default function DepositAmountPage() {
             </span>
           </div>
           {error && <p id="deposit-amount-error" role="alert" className="text-sm text-rose-400">{error}</p>}
-          <button type="submit" className="btn-primary mt-2 w-fit">
+          <button ref={continueBtnRef} type="submit" className="btn-primary mt-2 w-fit">
             Continue
           </button>
         </form>
