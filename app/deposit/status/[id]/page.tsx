@@ -173,6 +173,22 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
 
+    // Backgrounded tabs must not keep hitting the reconcile endpoint every
+    // few seconds — pause the chain and resume (with an immediate tick) once
+    // the tab is visible again, instead of burning RPC/relayer calls for a
+    // user who switched away mid-deposit.
+    function scheduleTick(delay: number) {
+      if (document.hidden) {
+        document.addEventListener("visibilitychange", onVisible, { once: true });
+        return;
+      }
+      timer = setTimeout(tick, delay);
+    }
+
+    function onVisible() {
+      if (!cancelled && !document.hidden) tick();
+    }
+
     async function tick() {
       try {
         const res = await fetch(`/api/deposits/${params.id}/reconcile`, {
@@ -186,7 +202,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           }
           if (!cancelled) {
             setPollFailed(true);
-            timer = setTimeout(tick, pollDelay.current);
+            scheduleTick(pollDelay.current);
           }
           return;
         }
@@ -203,12 +219,12 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           : 3000;
 
         if (body.deposit.status !== "CREDITED") {
-          timer = setTimeout(tick, pollDelay.current);
+          scheduleTick(pollDelay.current);
         }
       } catch {
         if (!cancelled) {
           setPollFailed(true);
-          timer = setTimeout(tick, pollDelay.current);
+          scheduleTick(pollDelay.current);
         }
       }
     }
@@ -217,6 +233,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     return () => {
       cancelled = true;
       clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [params.id]);
 
