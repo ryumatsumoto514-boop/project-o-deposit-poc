@@ -14,6 +14,17 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // This app never uses camera/mic/geolocation/payment/USB — the
+          // wallet connector talks to window.ethereum, not these browser
+          // APIs, and the confirm screen's copy-address button only uses
+          // clipboard-write (left out of this list, so it stays allowed).
+          // Denying the rest closes off any embedding site from invoking
+          // them through this origin's context.
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()",
+          },
         ],
       },
     ];
