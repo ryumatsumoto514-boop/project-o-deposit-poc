@@ -123,6 +123,7 @@ export default function DepositAmountPage() {
                 setAmount(e.target.value);
                 setError(null);
               }}
+              onWheel={(e) => e.currentTarget.blur()}
               placeholder="10.00"
               className="input pr-16 font-mono text-lg [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
