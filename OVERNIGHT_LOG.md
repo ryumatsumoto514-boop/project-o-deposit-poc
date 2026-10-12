@@ -28335,3 +28335,199 @@ records or transactions created. This re-confirms existing behavior at a
 viewport width not previously screenshotted, rather than extending coverage
 into a genuinely new area — the live site remains stable across both
 curl-level and hydrated-browser-level checks this cycle.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-12T15:59:22Z
+
+### [Codex review] 2026-10-12 — Independent CSS-referenced font delivery audit; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 170 log lines first, then SPEC.md.
+Inspected app/globals.css, tailwind.config.ts, app/layout.tsx,
+next.config.mjs, package.json, and the deposit record GET/PATCH, duplicate
+preflight and gas API handlers. Searched historical font, stylesheet,
+cache, motion and contrast entries to avoid presenting known fixes as new.
+No distinct small defect established in these source checks.
+
+Focused live hypothesis: HTML preload checks can miss broken font subsets
+referenced only inside CSS. Fetched https://projecto-blond.vercel.app/ and
+/login with curl -fsS --max-time 20, saving bodies to
+/tmp/codex-assets-{home,login}.html. Parsed their stylesheet links, fetched
+the actual shared deployed CSS, then extracted and fetched all 13 distinct
+WOFF2 URLs inside it (11 beyond the two HTML-preloaded fonts). Every font
+returned HTTP 200, Content-Type font/woff2, a wOF2 signature and a header
+length matching the delivered byte count. Results are recorded locally in
+/tmp/codex-font-audit.json; fetched CSS and font bodies share that prefix.
+This is a delivery/header check, not full font decoding or browser rendering.
+
+No substantiated issue worth fixing found in this bounded review. Appended
+only this entry, preserving existing log edits and untracked QA scripts.
+No application change, build, commit, push or redeployment; no deposit
+records or transactions created. Hydrated wallet behavior and historical
+on-chain evidence were not tested.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T16:06:22Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-12T16:34:23Z
+
+### [Codex review] 2026-10-12 — Independent form-label and recovery-source check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 180 log lines first, then SPEC.md.
+Inspected app/globals.css, tailwind.config.ts, app/layout.tsx,
+next.config.mjs, the deposit GET/PATCH handler, duplicate preflight and gas
+handlers. Searched historical entries for validation, caching, duplicate IDs
+and ARIA reference checks to avoid treating existing fixes as new findings.
+
+Fetched https://projecto-blond.vercel.app/ plus /login, /deposit and
+/deposit/approve with curl -fsS --max-time 20, saving raw bodies to
+/tmp/codex-semantics-{home,login,deposit,approve}.html. All fetches succeeded.
+Parsed actual elements with Python HTMLParser: no duplicate IDs or unresolved
+for/aria-labelledby/aria-describedby references. These raw responses have
+no form controls, so this alone does not validate hydrated form accessibility.
+Followed up by reading the actual form source in app/deposit/page.tsx,
+app/deposit/confirm/page.tsx and app/deposit/approve/page.tsx: amount has a
+matching explicit label and conditionally mounted error description; checkbox
+and radios have wrapping labels; approval radios share a name and a fieldset
+with a legend. Read app/error.tsx and app/global-error.tsx: both caution that
+status is unknown and retrying the screen does not cancel a transaction.
+
+No distinct, substantiated small issue worth fixing found in this bounded
+review. Only appended this entry, preserving pre-existing log changes and
+untracked QA scripts. No application change, build, commit, push or deployment;
+no records or transactions created. No hydrated accessibility-tree check or
+wallet signing performed. This reconfirms existing behavior, not a new fix.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T16:41:23Z
+
+## Cron tick: 2026-10-12T16:45:27Z (Claude Code, live QA)
+
+### [Live QA] 2026-10-12 — Real mouse-hover rendering check on /login; no new flaw found
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first. Given the saturated
+coverage (dozens of consecutive Codex curl-only passes plus Claude
+hydrated-click passes), looked for a genuinely untested angle: every prior
+polish check exercised clicks, focus-visible, keyboard nav, and tap targets,
+but none actually drove a real CDP mouse-hover event and screenshotted the
+:hover CSS (btn-secondary's border/background hover, globals.css:78) — a
+category-3 "hover/focus states" item the brief explicitly names.
+
+Wrote scripts/check-hover-states.mjs (new, untracked, follows the existing
+scripts/screenshot.mjs CDP pattern): navigated to the live
+https://projecto-blond.vercel.app/login at a 1280x900 desktop viewport,
+located the "Continue with Google" button's real bounding-box center, and
+dispatched an actual Input.dispatchMouseEvent mouseMoved to it (not a CSS
+class toggle). Captured before/after screenshots
+(shots-out/hover-before.png, hover-after.png) and read the button's live
+getComputedStyle().backgroundColor plus :hover match. Result: the button
+visibly lightens (border and background brighten, matching
+.btn-secondary's hover:border-white/25 hover:bg-white/[0.06] tokens) and
+getComputedStyle confirmed backgroundColor rgba(255,255,255,0.06) with
+.matches(":hover") true — the hover state renders correctly on the live
+deployment, not just in CSS source.
+
+No distinct, substantiated flaw found in this bounded pass — this closes a
+real coverage gap (hover states had never been exercised with an actual
+hover event, only inferred from source) rather than finding a bug. No
+application code changed, so no build/commit/deploy this cycle. No deposit
+records or transactions created.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-12T17:09:23Z
+
+### [Codex review] 2026-10-12 — Independent receipt-to-document cross-check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 170 log lines first, then SPEC.md.
+Inspected README.md, testnet-evidence.md, lib/chain.ts (read only), the
+create-deposit API validation, app/layout.tsx, app/robots.ts,
+next.config.mjs, globals.css and tailwind.config.ts. Searched previous
+metadata and historical-receipt checks to avoid claiming a known fix.
+
+Fetched https://projecto-blond.vercel.app/ and /deposit/approve with
+curl -fsS --max-time 20; parsed their raw HTML with Python HTMLParser.
+Home explicitly labels bridging and destination credit as simulated and
+says no actual trading balance is credited. Approval returns the expected
+wallet-reconnection shell; this does not establish hydrated behavior.
+Saved bodies to /tmp/codex-evidence-{home,approve}.html.
+
+Specific documentation hypothesis: successful transaction hashes might
+still refer to a different token, recipient or amount than the proof claims.
+Extracted all seven distinct hashes from testnet-evidence.md and used curl
+to POST a read-only eth_getTransactionReceipt JSON-RPC batch to
+https://sepolia-rollup.arbitrum.io/rpc. All seven receipts report status 0x1.
+Deployment address matches lib/chain.ts and both documents. Documented
+blocks 309872783, 309873172 and 309873206 match. Decoded receipt event
+accounts/values: funding transfers 100000000 base units to the documented
+test user; approval/transfer pairs are exactly 25000000 and 10000000 base
+units, on the documented MockUSDC contract, with the documented test user
+and relayer roles. Raw batch request/response retained in
+/tmp/codex-evidence-request.json and /tmp/codex-evidence-all-receipts.json.
+Receipts alone do not prove historical balance/allowance snapshots or which
+API host submitted a transaction; did not claim to verify those. Previous
+log entries already report archive-state unavailability, so did not repeat
+that failed check.
+
+No distinct, substantiated small issue worth fixing found. This revalidates
+the evidence rather than extending it into a new product claim. Only this
+log entry was appended; existing log edits and untracked scripts preserved.
+No application change, build, commit, push or redeployment; no transactions
+submitted or deposit records created.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T17:16:23Z
+
+### [Live QA] 2026-10-12 — Spec-fit re-audit of wallet-role labels, KOL banner, exact-approval copy, duplicate-conflict message, and API latency; no new flaw found
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first, then re-read
+SPEC.md's "5 minor UX improvements" and reconciliation-engine sections in
+full, given dozens of consecutive prior cycles (both Codex curl-only and
+Claude live-browser passes) covering functional, consistency, and polish
+categories with no new finding — deliberately targeted category 4
+(assignment-fit) this cycle since the brief warns visual polish shouldn't
+crowd it out, and it's had less recent dedicated attention than categories
+1-3.
+
+1. Grepped for the exact wallet-role labels SPEC.md requires ("Signing in
+   as" / "Funds coming from" / "Will be tradable in"): confirmed they live
+   in one shared app/components/WalletRoles.tsx and are rendered on all 4
+   flow screens (deposit, confirm, approve, status/credited) plus login —
+   no screen bypasses the shared component with a bare "your wallet."
+2. Grepped for KolBanner usage: confirmed it renders on every flow screen
+   (home, login, deposit, confirm, approve, status), reads from durable
+   per-deposit flow state (not just the URL ?ref= param, which can be gone
+   on reload), and read app/components/KolBanner.tsx in full — correctly
+   returns null (no banner) when there's no ref, matching spec intent that
+   it's a conditional disclosure, not a marketing widget with a dismiss button.
+3. Grepped app/deposit/approve/page.tsx for the exact-amount vs
+   unlimited-approval toggle copy: "Approve for future deposits too" is
+   explicitly labeled "higher risk: this lets the app spend more in the
+   future without asking again" — matches SPEC.md's required wording closely.
+4. Checked the duplicate-deposit conflict message for a plain-language
+   regression: app/api/deposits/route.ts builds it with a raw
+   `conflict.createdAt` (an ISO 8601 string from `new Date().toISOString()`).
+   Suspected this could leak a raw timestamp to the user, which would be a
+   real plain-language gap. Traced the actual render path in
+   app/deposit/approve/page.tsx:244-245 — it re-wraps the API's createdAt
+   with `new Date(blockedDeposit.createdAt).toLocaleString()` before display,
+   so the user always sees a localized "10/12/2026, 5:16:23 PM"-style string,
+   never the raw ISO. Not a bug; confirmed existing correct behavior.
+5. Timed four live routes with curl -w "%{time_total}" (/, /login, /deposit,
+   /api/gas): 0.038s, 0.042s, 0.047s, 0.286s respectively — no slow/hanging
+   request found.
+6. Spot-checked /manifest.json, /sitemap.xml, /api/health for stray 404s:
+   all three are legitimately absent (not a PWA, intentionally noindex/
+   nofollow per prior log entries so no sitemap is needed, no health route
+   was ever built) — not regressions.
+
+No distinct, substantiated new flaw found in this bounded pass. No
+application code changed, so no build/commit/deploy of app code this cycle
+(only this log entry is committed). No deposit records or transactions
+created. This re-confirms several assignment-fit requirements directly
+against SPEC.md's literal wording rather than re-running already-saturated
+generic polish/consistency checks — at this point essentially every named
+category in the brief has multiple independent live-verified passes, and
+this cycle's own look at the previously-less-covered assignment-fit angle
+also turned up nothing.
+Claude Code tick finished, exit code 0
+
