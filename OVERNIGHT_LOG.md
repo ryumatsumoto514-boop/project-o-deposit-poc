@@ -28091,3 +28091,247 @@ existing behavior rather than extending coverage into a genuinely untested
 area — at this point nearly every named category in the brief has multiple
 independent live-verified passes, and the marginal value of another curl/grep
 sweep without a fresh hypothesis is low.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-12T12:29:09Z
+
+### [Codex review] 2026-10-12 — Independent error-recovery response check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md.
+Inspected app/error.tsx, app/global-error.tsx, app/not-found.tsx,
+app/layout.tsx, app/login/page.tsx, next.config.mjs, app/globals.css,
+tailwind.config.ts, and the preflight and gas API handlers. Searched the
+historical log for error-boundary, not-found and metadata work before
+considering a finding. Recovery copy already warns that retrying a screen
+does not cancel a submitted transaction; no new defect established.
+
+Fetched https://projecto-blond.vercel.app/,
+https://projecto-blond.vercel.app/codex-independent-missing, and
+https://projecto-blond.vercel.app/api/deposits/codex-independent-missing
+with curl -sS --max-time 20, saving raw headers/bodies to
+/tmp/codex-recovery-{home,missing,api}.*. Parsed both HTML bodies using
+Python HTMLParser, excluding scripts/styles from readable copy and checking
+IDs, links and robots metadata. Home returned 200 and explicitly disclosed
+simulated bridging, illustrative telemetry and no actual trading credit.
+The missing page returned HTTP 404 with a Page not found heading and a
+working-target home recovery link. Both have exactly one main-content skip
+target, no duplicate IDs, and noindex metadata. The missing-record API
+returned HTTP 404 with {"error":"NOT_FOUND"}.
+
+No distinct, substantiated small issue worth fixing in this bounded pass.
+These results confirm existing behavior, not a newly discovered fix. Only
+appended this log entry; preserved pre-existing log edits and untracked QA
+scripts. No application changes, build, commit, push or deployment; no
+records or transactions created. Runtime error boundaries were inspected
+in source, not triggered in a browser; wallet signing was not exercised.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T12:36:09Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-12T13:04:09Z
+
+### [Codex review] 2026-10-12 — Independent delivered sign-in control audit; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 180 log lines first, then SPEC.md,
+README.md and testnet-evidence.md. Inspected app/login/page.tsx,
+app/layout.tsx, app/globals.css, tailwind.config.ts and the gas/preflight API
+handlers. Searched prior login, label, form and evidence entries to avoid
+reporting previously fixed issues.
+
+Fetched https://projecto-blond.vercel.app/ and
+https://projecto-blond.vercel.app/login using curl -sS --max-time 20,
+saving response headers and raw HTML in /tmp/codex-form-{home,login}.*.
+Both returned HTTP 200. Parsed actual delivered button text, input elements
+and SVG attributes with Python HTMLParser. Login has three text-named
+buttons: Continue with Google (mock), Continue with Email (mock), and
+Sign in with Browser wallet; the wallet control reports aria-busy=false.
+There are no email inputs or credential forms to validate: these are
+explicitly disclosed mock-identity shortcuts. All nine SVGs across these
+two responses have aria-hidden or an accessible role/name. Source provides
+a role=alert connection-error message and disables wallet connection
+buttons while a request is pending. No missing control name or misleading
+credential-collection form was established.
+
+No distinct, substantiated small issue worth fixing found in this bounded
+review. Only appended this entry; preserved pre-existing log edits and
+untracked QA scripts. No application change, build, commit, push or deploy.
+This checks server-delivered markup and source, not hydrated wallet behavior,
+computed contrast, or current on-chain evidence; no transactions were sent.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T13:11:09Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-12T13:39:09Z
+
+### [Codex review] 2026-10-12 — Independent image-payload integrity check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 150 log lines first, then SPEC.md.
+Inspected deposit creation, duplicate preflight, record GET/PATCH and gas
+handlers, README.md/testnet-evidence.md, layout metadata, image generators,
+robots.ts, next.config.mjs, globals.css and tailwind.config.ts. Validation
+already rejects malformed addresses and nonpositive/oversized/nondecimal
+amounts; no distinct small defect established. Historical image entries
+already cover URL availability and OG dimensions, so those are not new findings.
+
+Fetched https://projecto-blond.vercel.app/ and /deposit/confirm with
+curl -sS --max-time 20; saved raw HTML/headers under
+/tmp/codex-media-{home,confirm}.*. Both return HTTP 200 and advertise
+noindex/nofollow, testnet OG alt text and 1200 x 630 social-image dimensions.
+Parsed the exact image/icon URLs from delivered HTML and fetched all four
+using curl -fsS --max-time 20. Extended the prior header-only image check:
+Python standard-library struct/zlib verified every PNG chunk CRC, terminal
+IEND and successful decompression of the complete IDAT stream for OG
+(1200 x 630), icon (32 x 32), and apple-icon (180 x 180). favicon.ico
+returned 790 bytes with a valid ICO signature (not fully decoded). Pillow
+was unavailable, so no visual/pixel-decoder inspection is claimed.
+
+No substantiated issue worth fixing found in this bounded review. Appended
+only this entry; preserved existing log changes and untracked QA scripts.
+No application change, build, commit, push or redeployment. No deposit
+records or transactions created. These checks do not establish hydrated
+browser behavior or independently revalidate historical on-chain evidence.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T13:46:10Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-12T14:14:10Z
+
+### [Codex review] 2026-10-12 — Independent delivered navigation/copy audit; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 160 log lines first, then SPEC.md,
+README.md and testnet-evidence.md. Inspected app/globals.css,
+tailwind.config.ts, next.config.mjs, layout metadata declarations, and the
+preflight, gas, pull and reconcile API handlers. Searched historical log
+entries for evidence, caching, external-link and fragment checks to avoid
+presenting existing fixes as new findings.
+
+Fetched https://projecto-blond.vercel.app plus /login, /deposit,
+/deposit/confirm, /deposit/approve and
+/deposit/status/codex-link-audit-missing with curl -sS --max-time 20.
+Saved raw headers and HTML under /tmp/codex-link-audit-*.headers and
+/tmp/codex-link-audit-*.html. Parsed each response with Python HTMLParser,
+excluding scripts/styles from readable copy, collecting actual anchor
+attributes and checking local fragment targets. All six returned HTTP 200;
+all delivered fragment targets exist and navigation targets are the fetched
+home/login routes. Delivered home copy labels illustrative telemetry,
+simulated bridging and simulated Hyperliquid credit, explicitly saying no
+funds move to Hyperliquid and no actual trading balance is credited. Login
+labels the identity shortcuts as mocked. All six include the JavaScript
+fallback warning against resending an already-submitted transaction.
+
+No distinct, substantiated small issue worth fixing found. This confirms
+existing behavior rather than claiming a new discovery. Deposit pages are
+reconnection/loading shells in these responses; their HTTP 200 does not
+prove hydrated flow or missing-record handling. No browser wallet flow,
+computed contrast or current on-chain evidence was tested. Appended only
+this entry, preserving pre-existing log edits and untracked QA scripts.
+No application change, build, commit, push or redeployment; no deposit
+records or transactions created.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T14:21:10Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-12T14:49:10Z
+
+### [Codex review] 2026-10-12 — Independent encoded preflight boundary check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 180 log lines first, followed by
+SPEC.md, README.md and testnet-evidence.md. Inspected app/globals.css,
+tailwind.config.ts, app/api/gas/route.ts, app/api/deposits/check/route.ts
+and app/api/deposits/route.ts. Searched historical evidence and styling
+entries to avoid presenting established fixes as discoveries.
+
+Fetched https://projecto-blond.vercel.app/ and /login with curl -sS
+--max-time 20; saved raw HTML and headers to /tmp/codex-validation-*.html
+and .headers. Parsed delivered metadata with Python HTMLParser: both
+advertise testnet-specific descriptions, explicit simulated-service social
+copy, noindex/nofollow and absolute production OG image URLs.
+
+Focused hypothesis: URL decoding or numeric conversion might let a malformed
+amount through preflight as a false clear-to-sign result. Called the live
+/api/deposits/check via curl with a syntactically valid dummy wallet and
+eight amounts: -1, 1000.000001, 1e2, 0x10, a trailing newline, an encoded
+NUL, 0.0000001, and a 400-digit integer. All eight returned HTTP 400 with
+INVALID_REQUEST, not a misleading conflict:null. Full responses saved to
+/tmp/codex-encoded-preflight.json. No records or transactions were created.
+
+No distinct, substantiated small issue worth fixing found in this bounded
+pass. Only appended this entry; preserved existing log edits and untracked
+QA scripts. No application changes, build, commit, push or redeployment.
+This checks delivered HTML and read-only validation responses, not hydrated
+wallet signing, computed contrast or historical on-chain state.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T14:56:10Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-12T15:24:15Z
+
+### [Codex review] 2026-10-12 — Independent no-script recovery review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the last 180 log lines first, then SPEC.md.
+Inspected all six deposit API handlers plus the gas handler, globals.css,
+tailwind.config.ts, root layout, confirmation/approval/status loading gates,
+and README limitations. Searched historical API validation, caching and
+no-JavaScript entries to avoid claiming previously addressed behavior as new.
+
+Concrete hypothesis: a user opening a deposit deep link without JavaScript
+might see only a permanent loading shell, with no useful recovery guidance.
+Fetched https://projecto-blond.vercel.app/ plus /login, /deposit,
+/deposit/confirm, /deposit/approve and
+/deposit/status/codex-noscript-missing using curl -sS --max-time 20.
+Saved raw headers and bodies to /tmp/codex-noscript-{0..5}.{headers,html}.
+Python HTMLParser extracted the actual noscript subtree on each route:
+all six returned 200 and contain the same role=alert banner explaining how
+to enable JavaScript/reload, that status cannot be checked without it, and
+that a submitted transaction must not be sent again. The source places this
+fallback outside Providers, so it does not depend on wallet hydration.
+Prior log entries already document this fallback; it is not a new finding.
+
+No distinct, substantiated small issue worth fixing in this bounded pass.
+No code change, build, commit, push or deployment. Appended only this entry,
+preserving existing log changes and untracked QA scripts. These are raw
+response/source checks, not a browser-disabled-JavaScript rendering test;
+no wallet transactions, deposit records, or on-chain evidence checks made.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T15:31:17Z
+
+### [Live QA] 2026-10-12 — Hydrated click-walk re-verification + fresh desktop screenshot; no new flaw found
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first. Given the extensive
+prior coverage (dozens of consecutive Codex curl-only passes plus Claude
+live-browser passes across functional, consistency, polish, and
+assignment-fit categories, all logged as solid), targeted the one gap most
+recent cycles explicitly flagged as untested: curl-only Codex reviews
+repeatedly note they "do not establish hydrated browser behavior."
+
+1. Re-ran scripts/check-live-flow-console-errors.mjs (existing CDP-based
+   click-walk script) against the live production site, driving a real
+   mobile-emulated (390x844) session through home -> login -> amount entry
+   -> confirm -> approve via actual DOM clicks over port 9333. Result:
+   currentStep reached "approve", 0 console/runtime errors captured across
+   the full flow. Confirms the previously-logged finding still holds live.
+2. Wrote scripts/check-approve-desktop.mjs (new, untracked, follows existing
+   scripts/screenshot.mjs shot() pattern) to capture a desktop viewport
+   (1440x900, non-mobile) screenshot of the deposit flow, seeded via
+   sessionStorage with mockIdentity/draftAmount/address — a resolution/width
+   combination not present in shots-out/ before this cycle (prior desktop-ish
+   shots were narrower: 640-768px "connect-setup" and "home" variants).
+   Screenshot (shots-out/approve-desktop.png) showed the flow correctly
+   redirected to the "Deposit amount" step (not approve) because no wallet
+   was actually connected in the CDP session — expected guard behavior, not
+   a bug. Layout, spacing, borders, and the Cyber Amber/cyan token usage at
+   1440px matched the established design system; no overflow, clipping, or
+   broken state observed.
+
+No distinct, substantiated new flaw found in this bounded pass. No
+application code changed, so no build/commit/deploy this cycle. No deposit
+records or transactions created. This re-confirms existing behavior at a
+viewport width not previously screenshotted, rather than extending coverage
+into a genuinely new area — the live site remains stable across both
+curl-level and hydrated-browser-level checks this cycle.
