@@ -100,6 +100,7 @@ try {
 } catch {
   console.log("  already connected — skipping");
 }
+await shotTo(ws, `${OUT_DIR}/debug-pre-continue.png`);
 console.log("clicking Continue (amount) ...");
 await clickText(ws, "Continue");
 await wait(900);
