@@ -42,6 +42,14 @@ export default function DepositAmountPage() {
     return () => vv.removeEventListener("resize", onResize);
   }, []);
 
+  // The error message growing the form (e.g. the "demo caps deposits at..."
+  // copy) doesn't fire a visualViewport resize, so the listener above won't
+  // catch it — re-run the same scroll whenever an error appears while the
+  // keyboard is still open.
+  useEffect(() => {
+    if (error) continueBtnRef.current?.scrollIntoView({ block: "nearest" });
+  }, [error]);
+
   // `draftAmount` only becomes available after FlowProvider's async
   // sessionStorage read resolves (see flow-context.tsx), which happens after
   // this component's first render — so the useState initializer above misses
