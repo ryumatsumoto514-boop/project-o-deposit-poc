@@ -51,7 +51,7 @@ export function EngineVisual() {
         {NODES.map((node, i) => (
           <Fragment key={node.key}>
             <div
-              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-accent-400/40 bg-accent-400/[0.08] text-accent-300 ${
+              className={`flex h-[clamp(32px,11vw,3.5rem)] w-[clamp(32px,11vw,3.5rem)] shrink-0 items-center justify-center rounded-full border border-accent-400/40 bg-accent-400/[0.08] text-accent-300 ${
                 i === 1 ? "node-pulse" : ""
               }`}
             >
