@@ -22,8 +22,12 @@ const MAX_DISPLAY_NAME_LENGTH = 24;
 function formatKolName(ref: string): string {
   const normalized = ref.toLowerCase();
   if (Object.prototype.hasOwnProperty.call(KNOWN_KOLS, normalized)) return KNOWN_KOLS[normalized];
+  // Only strip "kol" when it's followed by a separator (the demo's own
+  // "kol_alex"-style prefix convention) — an optional separator here would
+  // also strip "kol" from a real code that merely starts with those three
+  // letters (e.g. "kolohe_surf" -> "Ohe Surf" instead of "Kolohe Surf").
   const words = ref
-    .replace(/^kol[_-]?/i, "")
+    .replace(/^kol[_-]/i, "")
     .split(/[_-]+/)
     .filter(Boolean)
     .map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
