@@ -27936,3 +27936,80 @@ and all previously untracked QA probe scripts as found, per established
 cycle convention. No build, commit of app code, deploy, or new deposit
 records/transactions this cycle beyond this log entry and committing the
 backlog of previously-uncommitted log entries from earlier ticks.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-12T11:19:08Z
+
+### [Codex review] 2026-10-12 — Independent HTTP-method boundary and delivered-copy review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 180 log lines first, then SPEC.md.
+Inspected app/globals.css, tailwind.config.ts, app/layout.tsx,
+app/deposit/confirm/page.tsx, next.config.mjs, README.md, and all six
+API route files (creation, preflight, record GET/PATCH, pull, reconcile,
+and gas). Checked prior method/405, clipboard and validation log entries;
+unsupported-method checks also appear in earlier reviews, so these are
+verification results rather than a newly discovered issue.
+
+Fetched production / and /login with curl -sS --max-time 15, saving raw
+headers/bodies under /tmp/codex-method-review-{home,login}.*. Both returned
+200. Parsed visible text with Python HTMLParser excluding scripts/styles:
+login discloses mocked authentication; home discloses simulated bridging,
+no actual Hyperliquid balance credit, and illustrative telemetry. README
+matches the live deployment URL and explicitly describes unauthenticated
+APIs, instance-local persistence/duplicate limitations and relayer concurrency.
+
+Specifically tested HTTP method boundaries on production: GET /api/deposits,
+GET /api/deposits/codex-method-review-missing/pull, GET
+/api/deposits/codex-method-review-missing/reconcile, and POST
+/api/deposits/check all returned 405 with empty bodies. Saved raw responses
+under /tmp/codex-method-review-{create-get,pull-get,reconcile-get,preflight-post}.*.
+Source confirms creation, pull and reconcile export only POST handlers;
+preflight exports only GET. No records or transactions were created.
+
+No distinct, substantiated small issue worth fixing found in this bounded
+review. Appended only this entry, preserving existing tracked log changes
+and untracked QA scripts. No application change, build, commit, push or
+deployment. These HTTP checks do not verify browser hydration, wallet
+signing, computed contrast, or exactly-once execution of supported requests.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T11:26:08Z
+
+## Cron tick: 2026-10-12T11:27:00Z (Claude Code, live QA)
+
+### [Live QA] 2026-10-12 — First live, record-creating idempotency test; no bug found
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first. Noticed a real gap:
+dozens of consecutive Codex review ticks over the last several hours read
+lib/idempotency.ts and lib/store.ts and repeatedly declined to test duplicate
+blocking live because doing so "would create deposit records" — so the
+brief's hard requirement ("call the API twice with the same params, second
+call should be blocked") had only ever been verified by reading source, never
+actually exercised against the live deployment. This cycle did that.
+
+POSTed real deposit-creation requests to https://projecto-blond.vercel.app/api/deposits
+with fresh random throwaway wallets (mockIdentity: "overnight-qa" so these are
+identifiable/filterable from any real test data) in three variants:
+1. Exact duplicate (same wallet, amount "7.5") twice: first returned 201, second
+   returned 409 DUPLICATE_IN_FLIGHT with the original record attached.
+2. Same amount, different decimal formatting ("3.200000" vs "3.2", same wallet):
+   201 then 409 — confirms the numeric (not string) comparison in
+   store.ts:findInFlightByWalletAndAmount actually holds live, not just in source.
+3. Same wallet address in different hex case (lowercase vs uppercase, amount
+   "5.1"): 201 then 409 — confirms the case-insensitive wallet comparison holds
+   live.
+Also confirmed the pre-signature preflight endpoint GET /api/deposits/check
+(the one the UI calls before prompting a wallet signature, so a blocked user
+never wastes gas) independently returns the same in-flight conflict record for
+wallet 0x4ee328bc.../amount 5.1 — the UI-facing warning path is wired correctly
+end to end, not just the creation route.
+
+All three duplicate-blocking paths work correctly live. No bug found, no code
+change made, so no build/commit/deploy this cycle. Six throwaway deposit
+records were created in the live instance-local store under mockIdentity
+"overnight-qa" (ids 6c37091a, 471fab36, 2d0ee8fa, and three blocked attempts
+that didn't create records) — harmless, these are the same ephemeral in-memory
+store other QA cycles already exercise, and they are clearly tagged for anyone
+auditing the data. Did not touch lib/*.ts. This closes out a test-coverage gap
+(the idempotency hard requirement had never actually been fired against prod)
+rather than finding a new product flaw.
