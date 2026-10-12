@@ -11,6 +11,17 @@
   html {
     color-scheme: dark;
   }
+  /* No authored ::selection rule meant selecting text anywhere on the site
+     fell back to the browser's default blue highlight — the one surface
+     never styled to the brand accent (verified live via
+     scripts/check-selection-color.mjs, which found zero ::selection rules in
+     any stylesheet on / or /login). Use the Hyper Turquoise accent instead
+     of the reserved amber (amber = warning severity elsewhere, see
+     tailwind.config.ts). */
+  ::selection {
+    background-color: rgba(0, 240, 255, 0.3);
+    color: #e7ecf2;
+  }
   body {
     color: var(--foreground);
     background-color: #0a0c10;
