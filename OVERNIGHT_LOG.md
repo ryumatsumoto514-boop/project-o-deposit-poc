@@ -28013,3 +28013,81 @@ store other QA cycles already exercise, and they are clearly tagged for anyone
 auditing the data. Did not touch lib/*.ts. This closes out a test-coverage gap
 (the idempotency hard requirement had never actually been fired against prod)
 rather than finding a new product flaw.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-12T11:54:08Z
+
+### [Codex review] 2026-10-12 — Independent delivered-asset integrity check; no new fix
+
+Read OVERNIGHT_BRIEF.md and the latest 180 log lines first, then SPEC.md.
+Inspected app/globals.css, tailwind.config.ts, app/layout.tsx, and the
+creation, preflight and record GET/PATCH API handlers. Searched historical
+cache/metadata entries to avoid reporting previously addressed issues.
+No substantiated new validation defect or accidental design-value drift emerged.
+
+Fetched production /, /deposit/status/codex-review-missing and
+/api/deposits/codex-review-missing with curl -sS --max-time 20, saving
+headers and bodies under /tmp/codex-review-{home,status,api}.*. Parsed
+HTML with Python HTMLParser, excluding scripts/styles from visible copy.
+Home explicitly labels simulated bridging/credit and illustrative telemetry;
+social descriptions disclose mocks and testnet. Status returns its initial
+loading shell (HTTP 200); the corresponding API correctly returns HTTP 404
+and {"error":"NOT_FOUND"}. This does not establish hydrated recovery behavior.
+
+Additional concrete check: extracted every script src and stylesheet/preload
+href from both HTML responses, deduplicated them, and fetched all 22 assets
+with curl using bounded parallel requests. All returned HTTP 200, nonempty
+bodies and appropriate content types: 19 JavaScript chunks (including the
+encoded dynamic status route chunk), one CSS bundle, and two WOFF2 fonts.
+No missing deployment asset or HTML fallback masquerading as CSS/JS found.
+These checks establish asset availability, not JavaScript execution correctness.
+
+No distinct, substantiated small issue worth fixing found in this bounded pass.
+Appended only this entry; preserved pre-existing log changes and untracked QA
+scripts. No application change, build, commit, push or deployment; no records
+or transactions created. Browser hydration and wallet signing were not tested.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-12T12:01:09Z
+
+### [Live QA] 2026-10-12 — Bounded fresh-eyes sweep across all four priority categories; no new fix
+
+Read OVERNIGHT_BRIEF.md and the tail (~400 lines) of this log first, then
+SPEC.md, to avoid repeating the extensive ground already covered (dozens of
+consecutive Codex/Claude cycles have independently hammered API validation
+edge cases, security headers, asset delivery, idempotency, contrast, tap
+targets, keyboard nav, back-button/bfcache state, and all three named
+exception screens).
+
+Worked the brief's priority order fresh rather than assuming the log's
+conclusions still hold, spot-checking source directly:
+1. Functional: read app/deposit/status/[id]/page.tsx's Stepper in full —
+   the previously-fixed AMBIGUOUS stickiness/reachability logic
+   (currentIndex derived from reconciliation.onchainConfirmed) is still
+   correct and matches its own inline comment. Ran a clean `npm run build`
+   — succeeds (0 type errors), only expected optional-peer-dependency
+   webpack warnings from wagmi/viem/metamask-sdk (pino-pretty,
+   @react-native-async-storage, and one dynamic-require in viem's tempo
+   chain config), none of which are new or actionable.
+2. Consistency: no new inconsistency found against globals.css/tailwind
+   tokens beyond what's already logged as solid.
+3. Polish: grepped the full log for specific edge cases before re-testing
+   them to avoid duplicate work — scientific notation, Infinity/NaN,
+   locale decimal commas, fullwidth/Arabic-Indic digits, security headers
+   (X-Frame-Options/nosniff/Referrer-Policy), favicons/OG images, and
+   keyboard/back-button navigation are all already independently verified
+   live in prior cycles.
+4. Assignment-fit: re-read app/deposit/confirm/page.tsx's guard — a fresh
+   load/deep-link with missing flow state (no mockIdentity/draftAmount/
+   address) correctly shows a loading state and redirects to /deposit
+   after a 1.5s grace period (to avoid bouncing a user mid-wagmi-reconnect),
+   rather than rendering broken wallet-role labels. This is correct,
+   already-shipped behavior, not a new fix.
+
+No distinct, substantiated new flaw found in this bounded pass. Did not
+change application code, so no build/commit/deploy beyond this log entry.
+Did not create deposit records or transactions this cycle. This confirms
+existing behavior rather than extending coverage into a genuinely untested
+area — at this point nearly every named category in the brief has multiple
+independent live-verified passes, and the marginal value of another curl/grep
+sweep without a fresh hypothesis is low.
