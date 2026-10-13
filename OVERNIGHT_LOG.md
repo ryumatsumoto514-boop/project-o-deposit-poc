@@ -29951,3 +29951,30 @@ certain.
 Claude Code tick finished, exit code 0
 
 ## Cron tick: 2026-10-13T10:11:43Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-13T10:39:43Z
+
+### [Codex review] 2026-10-13 — Gas poll still fetched when an already-scheduled timer fired in a hidden tab
+
+Read OVERNIGHT_BRIEF.md, recent log entries and SPEC.md first. Inspected
+app/components/AppHeader.tsx and fetched production / and /login with
+curl -sS --max-time 20. Read the referenced production layout chunk
+(layout-7ed1ae046320abb2.js): poll() immediately fetched /api/gas; only
+scheduling the NEXT timer checked document.hidden. Thus the preceding
+cycle's pause fix still allowed a pending timer (or initial hidden mount)
+to start an RPC-backed request while hidden. This is a reproduced gap in
+the recent fix, not a repeat of the original setInterval finding.
+
+A temporary Node VM harness (/tmp/codex-check-gas-poll.cjs) executes the
+actual TypeScript hook with controlled document visibility, timers and
+fetch. Visible mount -> hidden -> scheduled timer failed before the fix
+(two fetches instead of one). Added a cancellation/visibility guard at the
+start of poll(), reusing the existing visibility listener when hidden.
+Afterward the harness passes pending-timer suppression, initially-hidden
+mount suppression and visible-resume cases. No lib/*.ts changes.
+
+npm run build passed, including type/lint checks; dependency warnings for
+MetaMask async-storage, pino-pretty and ox remain. Pre-existing untracked
+QA scripts are preserved outside this focused commit. Production deployment
+and live bundle verification results will be appended below after completion.

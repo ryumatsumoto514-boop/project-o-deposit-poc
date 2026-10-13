@@ -40,6 +40,13 @@ function useGasPriceGwei() {
     }
 
     async function poll() {
+      if (cancelled) return;
+      // Visibility can change after a timer is scheduled, or before mount.
+      // Check again before starting the RPC-backed request.
+      if (document.hidden) {
+        scheduleNext();
+        return;
+      }
       try {
         const res = await fetch("/api/gas");
         if (!res.ok) throw new Error("Gas price request failed");
