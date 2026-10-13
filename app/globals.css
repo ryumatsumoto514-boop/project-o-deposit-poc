@@ -10,6 +10,14 @@
 @layer base {
   html {
     color-scheme: dark;
+    /* .app-header is sticky (56px/h-14) and stays pinned above the page on
+       scroll. Without this, a mobile browser's native scroll-into-view (e.g.
+       bringing a focused input above the on-screen keyboard) scrolls content
+       that sits right below the header — like the page's <h1> — underneath
+       it, where it's clipped by the header's own blurred background. Found
+       live: focusing #deposit-amount with the keyboard open on a 390x844
+       viewport left "Deposit amount" half-hidden behind the header. */
+    scroll-padding-top: 56px;
   }
   /* No authored ::selection rule meant selecting text anywhere on the site
      fell back to the browser's default blue highlight — the one surface

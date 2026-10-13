@@ -74,6 +74,26 @@ await send(ws, "Page.addScriptToEvaluateOnNewDocument", {
 await send(ws, "Page.navigate", { url: `${BASE_URL}/deposit` });
 await new Promise((r) => setTimeout(r, 1800));
 
+// Must actually click "Connect Injected" to trigger wagmi's connect handshake —
+// injecting window.ethereum alone does not establish a connected account.
+const { result: connectBtn } = await send(ws, "Runtime.evaluate", {
+  expression: `
+    (function() {
+      const els = Array.from(document.querySelectorAll("button, a"));
+      const target = els.find(el => el.textContent && /^Connect /.test(el.textContent.trim()) && !el.disabled);
+      if (!target) return null;
+      const r = target.getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    })()
+  `,
+  returnByValue: true,
+});
+if (connectBtn.value) {
+  await send(ws, "Input.dispatchMouseEvent", { type: "mousePressed", x: connectBtn.value.x, y: connectBtn.value.y, button: "left", clickCount: 1 });
+  await send(ws, "Input.dispatchMouseEvent", { type: "mouseReleased", x: connectBtn.value.x, y: connectBtn.value.y, button: "left", clickCount: 1 });
+  await new Promise((r) => setTimeout(r, 900));
+}
+
 await send(ws, "Runtime.evaluate", {
   expression: `document.getElementById("deposit-amount")?.focus()`,
 });
