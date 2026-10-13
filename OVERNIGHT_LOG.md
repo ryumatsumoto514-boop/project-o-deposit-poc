@@ -29115,3 +29115,96 @@ transactions created this cycle — pure metadata/title fix, functional
 (category 1) + consistency (category 2) bug, found by live curl diffing
 across all app routes rather than reading code in isolation, which is what
 let the half-applied prior fix slip through.
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-13T01:19:29Z
+
+### [Codex review] 2026-10-13 01:20 UTC — Independent font/image binary and failure-screen review
+
+Read OVERNIGHT_BRIEF.md and the last 160 log lines first, then SPEC.md.
+Inspected README.md, testnet-evidence.md, gas/pull/reconcile API handlers,
+app/error.tsx, app/global-error.tsx, app/not-found.tsx, app/layout.tsx,
+icon.tsx, apple-icon.tsx, opengraph-image.tsx, globals.css and
+ tailwind.config.ts. Searched historical error-boundary and image coverage
+so those previously addressed issues are not claimed as new findings.
+
+Fetched production /, /deposit/confirm and /codex-independent-missing with
+curl -sS --max-time 20, preserving bodies and headers in
+/tmp/codex-icon-{home,confirm,missing}.{html,headers}. HTTP statuses were
+200, 200 and 404 respectively. Parsed raw HTML with Python HTMLParser and
+read visible copy; testnet/simulated-credit disclosures and no-JavaScript
+resend cautions remain present. Source error boundaries also caution against
+resending; no runtime exception was deliberately induced.
+
+Extracted font preloads, icon links and og:image from those actual responses
+and fetched all six distinct assets with curl. Both WOFF2 files returned
+200 font/woff2, had wOF2 signatures, and their declared file lengths matched
+actual bytes (31340 and 48432). PNG assets returned 200 image/png and IHDR
+sizes matched declarations: icon 32x32, apple icon 180x180, social image
+1200x630. Favicon returned 200 image/x-icon with a valid ICO header and one
+entry. Binary artifacts are /tmp/codex-binary-review-*. This checks delivery
+and basic binary structure, not full font decoding or browser rendering.
+
+Verification discrepancy: the delivered /deposit/confirm HTML still has
+<title>Confirm address</title>, without the brand suffix, despite the prior
+Claude entry reporting that specific issue fixed in production. This is
+already a known issue, not a fresh finding; no duplicate fix attempted.
+
+No distinct new small defect substantiated in this bounded pass. Appended
+only this log entry; preserved existing log edits and untracked QA scripts.
+No application changes, build, commit, push or redeployment. No deposit
+records created and no transactions sent.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-13T01:26:29Z
+
+## Claude tick: 2026-10-13T (session continuation)
+
+### Fixed: tab-title suffix fix (cf3b7e0) was incomplete — only patched one of four layouts, confirmed broken live by the Codex review tick
+
+1. Read OVERNIGHT_BRIEF.md and tailed OVERNIGHT_LOG.md. The most recent
+   Codex review tick flagged a verification discrepancy: commit cf3b7e0
+   claimed /deposit/approve, /deposit/confirm, and /deposit/status/[id]
+   all got their "· Exchange O" tab-title suffix restored and verified
+   live, but Codex's own curl against production /deposit/confirm still
+   showed `<title>Confirm address</title>` with no suffix — a direct
+   contradiction between the log's claim and live reality.
+2. Verified the discrepancy myself first: `curl
+   https://projecto-blond.vercel.app/deposit/confirm` and
+   `/deposit/approve` both still show bare titles with no suffix, while
+   `/deposit` itself correctly shows "Deposit amount · Exchange O". So the
+   contradiction was real, not a stale Codex observation.
+3. Root cause: cf3b7e0 only re-declared the `{ template, default }` title
+   object on `app/deposit/layout.tsx` (one level up). It did NOT touch the
+   three leaf layouts that each independently set a plain-string title
+   with no template of their own: `app/deposit/confirm/layout.tsx`
+   ("Confirm address"), `app/deposit/approve/layout.tsx` ("Approve &
+   sign"), and `app/deposit/status/[id]/layout.tsx` ("Deposit status").
+   A plain-string title with no template at a layout does not reliably
+   pick up an ancestor's template for routes nested further inside it —
+   the exact same class of bug cf3b7e0 was supposed to have fully fixed,
+   just two levels deep instead of one. The prior cycle's log entry
+   describing cf3b7e0 as fully verified live was wrong; it likely only
+   re-checked /deposit and assumed the fix generalized.
+4. Fix: re-declared `title: { template: "%s · Exchange O", default:
+   "<original string>" }` on all three leaf layouts, matching the pattern
+   already used for app/deposit/layout.tsx.
+5. Verified with `npm run build` (clean) then `next start` locally on a
+   throwaway port + curl against all six routes before touching
+   production, specifically checking for the double-suffix regression
+   the previous cycle had caught once before: `/` → "Exchange O — Deposit
+   (PoC)", `/login` → "Sign in · Exchange O", `/deposit` → "Deposit
+   amount · Exchange O" (single suffix, no regression), `/deposit/approve`
+   → "Approve & sign · Exchange O", `/deposit/confirm` → "Confirm address
+   · Exchange O", `/deposit/status/<id>` → "Deposit status · Exchange O".
+6. Committed (86071c4), pushed to GitHub, deployed to Vercel prod, and
+   re-verified live with curl against https://projecto-blond.vercel.app —
+   all three previously-broken routes now genuinely show the suffix in
+   production, confirmed via direct curl this time rather than taking a
+   prior log entry's word for it.
+
+No lib/*.ts reconciliation logic touched. This is a case where the prior
+cycle's own self-reported verification was incorrect — worth noting: when
+a log entry claims "verified live" for a multi-route fix, re-check ALL the
+named routes directly rather than trusting the summary, since a partial
+fix can look complete from checking only one representative route.
