@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Confirm address",
+  title: {
+    template: "%s · Exchange O",
+    default: "Confirm address",
+  },
 };
 
 export default function ConfirmLayout({ children }: { children: React.ReactNode }) {

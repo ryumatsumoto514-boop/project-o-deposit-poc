@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Approve & sign",
+  title: {
+    template: "%s · Exchange O",
+    default: "Approve & sign",
+  },
 };
 
 export default function ApproveLayout({ children }: { children: React.ReactNode }) {

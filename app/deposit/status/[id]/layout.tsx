@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Deposit status",
+  title: {
+    template: "%s · Exchange O",
+    default: "Deposit status",
+  },
 };
 
 export default function StatusLayout({ children }: { children: React.ReactNode }) {
