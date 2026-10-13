@@ -332,7 +332,7 @@ export default function DepositApprovePage() {
             {FAILURE_COPY.NO_GAS.detail}{" "}
             <span className="whitespace-nowrap">
               <a
-                href="https://cloud.google.com/application/web3/faucet/arbitrum/sepolia"
+                href="https://www.alchemy.com/faucets/arbitrum-sepolia"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block -my-3 py-3 underline hover:text-amber-100"
@@ -391,7 +391,7 @@ export default function DepositApprovePage() {
                 {" "}
                 <span className="whitespace-nowrap">
                   <a
-                    href="https://cloud.google.com/application/web3/faucet/arbitrum/sepolia"
+                    href="https://www.alchemy.com/faucets/arbitrum-sepolia"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-rose-200 underline hover:text-rose-100"
