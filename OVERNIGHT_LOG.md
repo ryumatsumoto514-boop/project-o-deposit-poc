@@ -30103,3 +30103,16 @@ controlled effect test, not an actual browser-backgrounding test.
 
 Build/deployment verification results follow below. Pre-existing untracked
 QA scripts are outside this focused change.
+
+Verification complete: npm run build exited 0, including type/lint checks;
+existing MetaMask async-storage and pino-pretty dependency warnings remain.
+Code commit c6012bc pushed to origin/main. Vercel production deployment
+DPDmX7Ba1fFXaSvsCCwuKv4Ab3St reached READY and was aliased to
+https://projecto-blond.vercel.app. Post-deploy curl -fsS of
+/deposit/status/nonexistent succeeded; fetched its referenced live chunk
+/_next/static/chunks/app/deposit/status/%5Bid%5D/page-df33006a84058c5c.js.
+Read the delivered tick function: cancellation check and document.hidden
+check (scheduling visibility resume and returning) both precede the
+fetch of /api/deposits/{id}/reconcile. Live served bytes contain the fix;
+the controlled effect harness establishes the behavior. No core engine
+changes or new testnet transactions.
