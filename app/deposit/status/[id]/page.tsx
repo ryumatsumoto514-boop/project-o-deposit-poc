@@ -190,6 +190,12 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
     }
 
     async function tick() {
+      if (cancelled) return;
+      // Visibility can change after a timer was scheduled, or before mount.
+      if (document.hidden) {
+        scheduleTick(pollDelay.current);
+        return;
+      }
       try {
         const res = await fetch(`/api/deposits/${params.id}/reconcile`, {
           method: "POST",

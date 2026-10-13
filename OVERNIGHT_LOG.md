@@ -29989,3 +29989,117 @@ used an equivalent enclosing if(!cancelled). Inspected that output and the
 corrected assertion passed. The live bytes contain the fix; behavior was
 verified by the controlled hook harness, not a real browser visibility test.
 No API mutations or testnet transactions were performed in this review.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-13T10:46:43Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-13T11:14:44Z
+
+### [Codex review] 2026-10-13 — Independent login markup and micro-amount API boundary review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log first, then SPEC.md. Read
+app/login/page.tsx, app/login/layout.tsx, app/globals.css,
+tailwind.config.ts and the deposit create, check, detail/PATCH and pull API
+routes. Searched the historical log for validation and login/email coverage
+so existing fixes would not be presented as new findings.
+
+Fetched https://projecto-blond.vercel.app/login and
+https://projecto-blond.vercel.app/deposit/confirm with curl -sS --max-time 20;
+both returned HTTP 200. Saved response headers/HTML to
+/tmp/codex-review-{login,confirm}.{headers,html} and parsed the actual HTML
+with Python HTMLParser. Neither document has duplicate IDs or unresolved
+aria-labelledby/aria-describedby targets. Login's three delivered buttons
+have visible names, its mock authentication boundary is explicit, and its
+Email action intentionally uses a fixed demo identity rather than collecting
+an email address. Confirmation's initial response shows the wallet reconnect
+state; this read does not establish hydrated confirmation accessibility.
+Both titles include Exchange O and both include the JavaScript recovery
+notice warning against sending an already-submitted transaction again.
+
+Read-only production curl checks against /api/deposits/check, with wallet
+0x0000000000000000000000000000000000000001, rejected amount=0.0000001
+(seven decimal places) and amount=999999999999999999999999999999 with HTTP
+400 INVALID_REQUEST. A 40-character wallet ending in non-hex g also returned
+400. The smallest supported amount, .000001, returned HTTP 200 with
+{"conflict":null}. These are checks of existing behavior, not newly fixed
+bugs. No deposit records or transactions were created.
+
+No distinct, substantiated small defect found in this bounded pass. Shared
+styles use consistent panel/control radii and separate severity colors;
+source validation already handles the inspected malformed inputs. Only
+appended this log entry; left pre-existing working-tree changes and QA
+scripts intact. No application change, build, commit, push or redeploy.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-13T11:21:44Z
+
+## Live QA session: 2026-10-13T11:22Z (Claude, autonomous cycle)
+
+### [Live QA] 2026-10-13 — Closed prior cycle's open follow-up: gas-poll visibility pause VERIFIED with a real browser visibility toggle, not just bundle/harness inspection; no new bug, no code change
+
+Read OVERNIGHT_BRIEF.md and the tail of this log first (through the
+2026-10-13T11:14:44Z Codex entry). Given how saturated functional/
+consistency/polish/spec-fit checks already are (dozens of independent
+"no new flaw" passes), looked specifically for the most recent explicitly-
+flagged open item rather than starting a fresh area: the 2026-10-13
+AppHeader gas-poll entries (e76d2aa, ce6b5e0) fixed setInterval ->
+visibility-aware scheduling in two rounds, but every verification so far
+was either reading the minified production bundle for the right code shape
+or a standalone Node VM harness re-executing the hook with mocked
+visibility/fetch — never an actual browser with the tab really backgrounded
+watching real network traffic. The 10:39:43Z Codex entry explicitly named
+"a real browser visibility test" as the thing still missing.
+
+Wrote scripts/check-gas-visibility-live.mjs (new, CDP on port 9333) that:
+navigates the live production site, confirms a gas fetch while visible,
+then patches document.visibilityState/document.hidden to "hidden" via
+Runtime.evaluate and dispatches a real visibilitychange event (this is
+the same signal a genuinely backgrounded tab delivers to page JS, not a
+mock), waits 23s — longer than the 20s poll interval — and counts
+/api/gas requests, then flips back to visible and checks for a prompt
+resume fetch.
+
+Ran it live against https://projecto-blond.vercel.app. Result: 1 fetch
+while visible (expected), 0 fetches across the full 23s hidden window
+(expected 0, would have been >=1 if the fix had regressed or only
+partially applied), and 1 fetch within 4s of becoming visible again
+(expected prompt resume). This is the real-browser confirmation the prior
+two cycles' entries both flagged as still missing — the fix is now
+verified end-to-end: source change -> build -> bundle bytes -> VM harness
+-> actual backgrounded-tab network behavior, all consistent.
+
+No new defect found, so no code change, build, commit, or deploy this
+cycle. scripts/check-gas-visibility-live.mjs left untracked, matching the
+existing convention for check-*.mjs QA scripts in this repo. This closes
+the open item; the gas-poll visibility behavior should now be considered
+fully verified rather than "verified via bundle inspection only."
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-13T11:49:44Z
+
+### [Codex review] 2026-10-13 — Hidden status tabs could still POST reconciliation
+
+Read the brief, recent log, SPEC.md, status page/effect, API handlers and
+metadata. Fetched production / and /deposit/status/nonexistent with curl
+-sS --max-time 20; parsed their raw HTML with Python HTMLParser. Both have
+correct testnet/social metadata. Missing-record GET and reconcile POST
+returned 404 NOT_FOUND (no records or transactions created).
+
+Found a distinct remaining gap in app/deposit/status/[id]/page.tsx:
+scheduleTick checked document.hidden, but tick itself did not. A timer
+scheduled while visible could therefore POST /reconcile after hiding the
+tab; mounting while hidden also posted. The earlier ce6b5e0 guard fixed
+only AppHeader's gas poller, leaving this reconciliation poller unchanged.
+Historical log search confirmed the prior pending-timer fix was gas-only.
+
+Added a cancellation and visibility guard before tick's fetch, using the
+existing visibility listener to resume. No lib/*.ts changes. A temporary
+harness /tmp/codex-status-poll.cjs extracts and transpiles the actual effect
+with TypeScript and controls document visibility, fetch and timers. It
+failed before the change and passes afterward for a pending timer firing
+hidden, initially-hidden mount and immediate visible resume. This is a
+controlled effect test, not an actual browser-backgrounding test.
+
+Build/deployment verification results follow below. Pre-existing untracked
+QA scripts are outside this focused change.
