@@ -29978,3 +29978,14 @@ npm run build passed, including type/lint checks; dependency warnings for
 MetaMask async-storage, pino-pretty and ox remain. Pre-existing untracked
 QA scripts are preserved outside this focused commit. Production deployment
 and live bundle verification results will be appended below after completion.
+
+Deployment completed: code commit ce6b5e0 pushed to origin/main; Vercel
+production deployment dpl_7FFMVkm3XgXUHwHz2yi3MmmRJckQ is READY and aliased
+to https://projecto-blond.vercel.app. Post-deploy curl of / returned 200;
+curl of its referenced /_next/static/chunks/app/layout-482d35fe69b9a851.js
+shows the cancellation and document.hidden guards BEFORE fetch("/api/gas").
+An initial bundle assertion expected an early-return spelling; the minifier
+used an equivalent enclosing if(!cancelled). Inspected that output and the
+corrected assertion passed. The live bytes contain the fix; behavior was
+verified by the controlled hook harness, not a real browser visibility test.
+No API mutations or testnet transactions were performed in this review.
