@@ -30,7 +30,10 @@ export const metadata: Metadata = {
   // Keep this testnet demo out of search results. Crawlers must be allowed
   // to fetch the page (see robots.ts) to discover this directive.
   robots: { index: false, follow: false },
-  title: "Exchange O — Deposit (PoC)",
+  title: {
+    template: "%s · Exchange O",
+    default: "Exchange O — Deposit (PoC)",
+  },
   description: "Deposit Reconciliation Engine PoC — Arbitrum Sepolia testnet",
   openGraph: {
     type: "website",
