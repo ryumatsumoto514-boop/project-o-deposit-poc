@@ -19,6 +19,26 @@ function useGasPriceGwei() {
 
   useEffect(() => {
     let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    // This header mounts on every route for the whole session, not just
+    // during an active deposit — left as a plain setInterval it would poll
+    // a real RPC every 20s indefinitely in a backgrounded tab. Mirror the
+    // same pause/resume-on-visible pattern already used by the deposit
+    // status poller instead of burning RPC calls for a tab nobody is
+    // looking at.
+    function scheduleNext() {
+      if (document.hidden) {
+        document.addEventListener("visibilitychange", onVisible, { once: true });
+        return;
+      }
+      timer = setTimeout(poll, 20000);
+    }
+
+    function onVisible() {
+      if (!cancelled && !document.hidden) poll();
+    }
+
     async function poll() {
       try {
         const res = await fetch("/api/gas");
@@ -29,12 +49,13 @@ function useGasPriceGwei() {
         // A failed refresh cannot substantiate the header's live-price claim.
         if (!cancelled) setGwei(null);
       }
+      if (!cancelled) scheduleNext();
     }
     poll();
-    const id = setInterval(poll, 20000);
     return () => {
       cancelled = true;
-      clearInterval(id);
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
