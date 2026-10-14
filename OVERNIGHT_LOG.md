@@ -31526,3 +31526,221 @@ twice and zero instances of the old `-mt-1` string — the fix is live in
 production, not just committed.
 
 No business-logic (lib/*.ts) changes. No new transactions submitted.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-14T09:25:16Z
+
+### [Codex review] 2026-10-14 — Independent live amount-boundary review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent OVERNIGHT_LOG.md tail first, then
+SPEC.md. Read app/globals.css and tailwind.config.ts in full, plus the
+creation, preflight, individual-record, pull and reconcile API handlers,
+app/layout.tsx and app/not-found.tsx. Read lib/idempotency.ts without editing
+it. Searched historical validation, checksum, casing, caching and metadata
+entries to avoid reporting known-fixed behavior as a fresh finding.
+
+Fetched https://projecto-blond.vercel.app/ and /login with curl -sS
+--max-time 20 and parsed their raw HTML using Python HTMLParser, excluding
+script/style text. Saved bodies at /tmp/codex-second-{home,login}.html.
+Delivered metadata has absolute production social-image URLs, noindex,
+English language and a zoom-permitting viewport. Visible copy explicitly
+labels simulated sign-in, bridging and credit, and illustrative telemetry.
+No new concrete CSS inconsistency was established from the source read.
+
+Used curl against /api/deposits/check with wallet
+0x0000000000000000000000000000000000000001 and URL-encoded amount values.
+Zero, -1, 1000.000001, 1e3, 0x10, 0.0000001 and NaN all returned HTTP 400
+with INVALID_REQUEST. Leading-zero 0001.000000 and minimum-unit .000001
+returned HTTP 200 with conflict:null, consistent with the creation handler's
+accepted decimal grammar. These read-only checks establish input handling,
+not replay protection against an existing record. No deposit records or
+transactions were created; hydrated wallet behavior was not tested.
+
+No distinct, substantiated small issue worth fixing found in this bounded
+review. Appended this entry only, preserving pre-existing log edits and
+untracked QA scripts. No application/core changes, build, commit, push or
+redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T09:32:16Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T10:00:16Z
+
+### [Codex review] 2026-10-14 — Independent shared-style and confirmation-copy review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Read app/globals.css and tailwind.config.ts in full, app/layout.tsx,
+app/login/page.tsx, app/deposit/confirm/page.tsx, app/not-found.tsx,
+and components/FlowChrome.tsx and WalletRoles.tsx. Searched historical
+confirmation, clipboard, metadata, accessibility and style entries to
+avoid reporting already-fixed issues. No consequential palette or spacing
+defect was established; shared buttons/cards have consistent base styles,
+and reduced-motion overrides cover the decorative animations.
+
+Fetched https://projecto-blond.vercel.app/, /deposit/confirm and
+/unrecognized-review-route using curl -sS --max-time 20. Saved raw bodies
+at /tmp/codex-fresh-{home,confirm,404}.html and parsed them with Python
+HTMLParser, reading metadata, links and text excluding scripts/styles.
+Delivered social-image URLs are absolute production URLs, viewport allows
+zoom, and the missing-route body has an explicit home recovery link.
+Landing copy labels illustrative telemetry and simulated bridging/credit.
+Confirmation delivers the expected reconnecting placeholder; its source
+includes named address copying, announced clipboard failure, explicit
+confirmation and simulated-account warnings. Curl does not validate the
+hydrated wallet flow or visually measured contrast.
+
+No distinct, substantiated small issue worth fixing found in this bounded
+review. Appended this entry only. Preserved existing log edits and untracked
+QA scripts; no application/core changes, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T10:07:16Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T10:35:17Z
+
+### [Codex review] 2026-10-14 — Independent source and deployed-response review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Read app/globals.css and tailwind.config.ts, app/login/page.tsx,
+app/layout.tsx, the status route layout, next.config.mjs, and API gas,
+record GET/PATCH, pull and reconcile handlers. Searched the full log for
+prior gas, caching, validation, metadata and asset findings. No distinct,
+substantiated small defect emerged; did not re-report known-fixed issues.
+
+Fetched https://projecto-blond.vercel.app/, /login, and
+/deposit/status/codex-second-opinion with curl -sS --max-time 20, saving
+headers and raw bodies at /tmp/codex-oct14-{home,login,status}.{headers,html}.
+All returned HTTP 200. Parsed metadata, landmarks and visible text with
+Python HTMLParser (excluding script/style contents). Page titles differ
+appropriately, English language and zoom-permitting viewport are present,
+and mock sign-in, bridging and credit are disclosed. The status response
+is only the initial loading shell, not verification of hydrated behavior.
+
+Extracted and fetched the exact shared stylesheet, favicon, icon and OG
+image URLs from these responses using curl --max-time 15. All four returned
+200 with appropriate content types. Independently decoded PNG header
+sizes: icon 32x32 and social image 1200x630, matching delivered metadata.
+These checks found no broken asset or image-dimension mismatch; historical
+entries also cover asset delivery, so this is verification, not a new finding.
+
+No code change warranted in this bounded review. Appended this entry only;
+preserved existing log changes and untracked QA scripts. No core edits,
+transactions, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T10:42:17Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-14T11:10:17Z
+
+### [Codex review] 2026-10-14 — Independent redirect/error-response review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Inspected next.config.mjs, app/layout.tsx, app/not-found.tsx, the deposit
+preflight and record GET/PATCH/reconcile handlers, and lib/chain.ts (read
+only). Read README.md and testnet-evidence.md together (output partly
+truncated, so this was not an exhaustive documentation audit). The token
+address agrees with chain.ts; documentation explicitly separates testnet
+transfers from simulated credit. Searched historical documentation,
+redirect, robots and evidence entries to avoid repeating known findings.
+
+Fetched production /, /login, /deposit/, /not-a-route-codex-review, and
+/api/deposits/check?wallet=0x0000000000000000000000000000000000000001&amount=1%26amount%3D2
+with curl -sS --max-time 20 -D -. Saved full headers/bodies to
+/tmp/codex-response-{home,login,redirect,missing,check}.txt. Home and login
+returned 200; /deposit/ returned a same-origin 308 to /deposit; the missing
+route returned a genuine 404 with recovery content. The encoded malformed
+amount returned 400 INVALID_REQUEST, not a successful preflight. No deposit
+records or transactions were created.
+
+Parsed the delivered home/login/404 HTML with Python HTMLParser, excluding
+script/style contents, and read visible text and metadata. Mock sign-in,
+bridging and credit disclosures are present; social images use absolute
+production URLs; noindex directives agree. HTML and API responses carry
+DENY/nosniff/referrer headers matching configuration. This checks delivered
+responses, not hydrated wallet behavior or visual contrast.
+
+No distinct, substantiated small issue worth fixing emerged in this bounded
+review. Appended this entry only; preserved existing log edits and untracked
+QA scripts. No application/core changes, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T11:17:17Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T11:45:17Z
+
+### [Codex review] 2026-10-14 — Independent approval and referral-state review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Inspected app/deposit/approve/page.tsx, app/flow-context.tsx,
+app/components/KolBanner.tsx, app/login/page.tsx, deposit creation and
+preflight API handlers, and app/api/gas/route.ts. Also checked confirmation
+address handling and searched historical approval, referral fallback,
+storage and wallet-confirmation entries to avoid repeating known findings.
+Creation and preflight enforce the same decimal grammar and amount cap;
+approval pins its signing account/network after the asynchronous preflight.
+These are source observations, not a new end-to-end transaction test.
+
+Fetched https://projecto-blond.vercel.app/ and
+https://projecto-blond.vercel.app/login?ref=kol_review with curl -sS
+--max-time 20, saving headers and bodies under /tmp/codex-fresh-{home,login}.
+Both returned HTTP 200. Parsed the actual bodies with Python HTMLParser,
+excluding script/style text, and read visible copy and metadata. Delivered
+pages disclose simulated sign-in, bridging and credit; contain English
+language, zoom-permitting viewport, absolute social-image URLs and noindex.
+The referral banner depends on client hydration, so its absence in this raw
+response is not evidence of a defect. No hydrated wallet interaction tested.
+
+No distinct, substantiated small issue worth fixing emerged in this bounded
+review. Appended this entry only. Preserved existing log changes and untracked
+QA scripts; no application/core edits, transactions, build, commit, push or
+redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T11:52:17Z
+
+## Autonomous QA cycle: 2026-10-14 (live-site self-directed, continued)
+
+### Found and fixed: 404 page used the generic layout title instead of the route-title pattern
+
+Read OVERNIGHT_BRIEF.md and tailed OVERNIGHT_LOG.md first. The recent tail
+is dominated by many consecutive "no new fix" Codex review cycles covering
+validation boundaries, asset delivery, redirects, markup landmarks, and
+delivered-copy checks, plus a prior Claude Code cycle's tap-target fix
+(b6f906c). To avoid re-treading that ground, checked API route method
+handling (GET/PUT/DELETE on every app/api/**/route.ts against production —
+all correctly 404/405, no crashes) and the idempotency/state-machine design
+in lib/idempotency.ts, lib/store.ts and lib/stateMachine.ts (duplicate
+blocking compares amounts numerically — "1.5" vs "1.50" already handled
+correctly per an existing code comment — and STALLED_*/AMBIGUOUS are
+genuinely recoverable side-states per TRANSITIONS, not dead-end blocks); no
+bug found in either.
+
+Then checked page <title> consistency across routes by curling and
+grepping <title> from production: /deposit → "Deposit amount · Exchange O",
+/deposit/confirm → "Confirm address · Exchange O", /deposit/approve →
+"Approve & sign · Exchange O", /login → "Sign in · Exchange O",
+/deposit/status/[id] → "Deposit status · Exchange O" — all follow the
+"%s · Exchange O" template defined in app/layout.tsx's metadata. But
+curling a nonexistent route (/nonexistent-xyz) returned
+"<title>Exchange O — Deposit (PoC)</title>" — the root layout's generic
+`default` title, not a 404-specific one, because app/not-found.tsx had no
+`metadata` export of its own. A sharp reviewer tabbing through routes would
+notice the 404 page breaks the one visual/metadata pattern every other
+screen follows.
+
+Fixed by adding `export const metadata: Metadata = { title: "Page not
+found" }` to app/not-found.tsx, which resolves through the layout's title
+template to "Page not found · Exchange O". Ran `npm run build` — clean,
+all 15 routes generated, zero type/lint errors. Committed (089a03a), pushed
+to origin/main, deployed via `vercel --token "$VERCEL_TOKEN" --yes --prod`.
+
+Verified live: curled https://projecto-blond.vercel.app/nonexistent-xyz-verify
+post-deploy and confirmed the delivered title is now
+"Page not found · Exchange O", matching the established pattern.
+
+No business-logic (lib/*.ts) changes — the state-machine/idempotency read
+was investigation only, no edits made there. No new transactions submitted.
