@@ -32012,3 +32012,15 @@ confirmed-transfer recovery checks. Build/deployment verification follows.
 npm run build passed (existing optional SDK dependency warnings only).
 Staged this fix, its regression test and the log; unrelated untracked QA
 scripts were preserved outside the commit. Deploying to production now.
+
+Deployment verification: fix commit 87340b8 pushed to origin/main. Ran
+vercel --token "$VERCEL_TOKEN" --yes --prod successfully; deployment
+projecto-gj68d4xea-ryumatsumoto514-6823s-projects.vercel.app reached READY
+and was aliased to https://projecto-blond.vercel.app. Post-deployment curl
+of / returned HTTP 200 and its raw HTML buildId changed from
+7TPQD67oN5Qi47sckdyZ0 to Xzo7GvRaXWV0_usQjZ_Cg, confirming the live alias
+serves the new build. POST /api/deposits/codex-review-missing/reconcile
+returned HTTP 404 with {"error":"NOT_FOUND"}. No production test records
+or transactions were created. The aged-approval branch was verified by the
+local regression test, not by waiting five minutes on production; the live
+checks verify deployment and endpoint availability, not that timed scenario.
