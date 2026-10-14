@@ -431,7 +431,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
             href={ARBISCAN_SEPOLIA_TX_URL(deposit.approveTxHash)}
             target="_blank"
             rel="noreferrer"
-            className="w-fit text-sm"
+            className="inline-block -my-3 w-fit py-3 text-sm"
           >
             View on Arbiscan Sepolia ↗
           </a>
@@ -447,7 +447,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
               href={deposit.explorerUrl}
               target="_blank"
               rel="noreferrer"
-              className="w-fit text-sm"
+              className="inline-block -my-3 w-fit py-3 text-sm"
             >
               View on Arbiscan Sepolia ↗
             </a>
