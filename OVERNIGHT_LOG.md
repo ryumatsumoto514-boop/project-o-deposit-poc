@@ -32203,3 +32203,16 @@ Validation: npm run build passed (existing optional SDK/dependency warnings).
 A Node assertion compared connect-src against the installed viem chain RPC
 origin and passed, with no wildcard or extra origins. Staging only the config
 and log preserves the pre-existing untracked QA scripts outside this fix.
+
+Shipped application fix as 27c5f12, pushed origin/main and deployed with
+vercel --token "$VERCEL_TOKEN" --yes --prod. Deployment
+projecto-gbjfgxlks-ryumatsumoto514-6823s-projects.vercel.app is READY and aliased
+to https://projecto-blond.vercel.app. Post-deploy curl of /deposit/approve
+returned HTTP 200 and connect-src 'self' https://sepolia-rollup.arbitrum.io
+(saved /tmp/codex-csp-fixed.headers). Also used the available headless Chrome
+CDP endpoint to open a fresh production approval page and execute a read-only
+eth_chainId fetch to that RPC from the page context. Before deployment it
+failed with TypeError: Failed to fetch; after deployment the identical probe
+returned 0x66eee (421614, Arbitrum Sepolia). Temporary verification script:
+/tmp/codex-csp-rpc-check.mjs. This confirms browser RPC access, not a full
+wallet signing test. No real or testnet funds moved.
