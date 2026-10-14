@@ -32024,3 +32024,154 @@ returned HTTP 404 with {"error":"NOT_FOUND"}. No production test records
 or transactions were created. The aged-approval branch was verified by the
 local regression test, not by waiting five minutes on production; the live
 checks verify deployment and endpoint availability, not that timed scenario.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T15:22:25Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T15:50:25Z
+
+### [Codex review] 2026-10-14 — Independent recovery/disclosure review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent OVERNIGHT_LOG.md tail first, then
+SPEC.md. Inspected app/login/page.tsx, app/flow-context.tsx,
+app/components/WalletRoles.tsx, app/components/AppHeader.tsx, app/error.tsx,
+app/global-error.tsx, and the gas, deposit creation, preflight and record
+GET/PATCH handlers. Searched historical error-boundary, stored-identity,
+checksum and validation entries to avoid relabeling known fixes as discoveries.
+Compared targeted mock/real, live-URL and transaction-evidence passages in
+README.md and testnet-evidence.md. No new substantiated small defect emerged.
+
+Fetched https://projecto-blond.vercel.app/ and /login with
+curl -sS --max-time 20; saved raw HTML to /tmp/review-independent-home.html
+and /tmp/review-independent-login.html and read text/metadata using Python
+HTMLParser excluding scripts/styles. Home returned 200; login rendered its
+sign-in page with explicit mock disclosures, labeled buttons, language,
+zoom-permitting viewport, noindex and absolute social-image URLs. Home labels
+bridge/credit simulation and illustrative telemetry. Recovery components
+explicitly caution against sending again when status cannot be confirmed.
+
+Two non-creating live API probes: GET /api/deposits/check with wallet
+0X1111111111111111111111111111111111111111 and amount=1 returned 400
+INVALID_REQUEST, matching the documented lowercase 0x prefix validation.
+PATCH /api/deposits/review-missing with JSON null returned 404 NOT_FOUND;
+this checks lookup precedence only, not null-body handling on existing records.
+No wallet interaction, historical on-chain receipt re-verification, record
+creation or transaction submission was performed. Static HTML checks do not
+establish hydrated wallet-flow correctness.
+
+Appended this entry only. No application changes warranted, so no build,
+commit, push or redeploy. Preserved existing log edits and untracked QA scripts;
+lib/*.ts untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T15:57:25Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-14T16:25:25Z
+
+### [Codex review] 2026-10-14 — Independent delivered-markup and approval-hash validation review
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md. Read
+app/globals.css and tailwind.config.ts in full, plus app/layout.tsx,
+next.config.mjs, app/components/FlowChrome.tsx and the deposit creation,
+preflight, record GET/PATCH, pull, reconcile and gas API route handlers.
+Searched historical review/cache coverage to avoid reporting known fixes.
+No distinct, substantiated small issue worth fixing emerged from this pass.
+
+Fetched production /login and /deposit/status/review-missing using
+curl -sS --max-time 20, saving raw responses to /tmp/codex-login.html and
+/tmp/codex-status.html. Read metadata and visible text with Python HTMLParser,
+excluding scripts/styles. Both include English language, zoom-permitting
+viewport, noindex/nofollow, absolute social-image URLs and the JavaScript
+recovery notice. Login buttons have visible names and explicit mock disclosures.
+Status initially renders loading copy; this raw-HTML check does not verify
+hydrated missing-record recovery. Shared styles provide reduced-motion
+handling, consistent card/input radii, and distinct warning/error colors;
+no new concrete style defect was established.
+
+Non-creating production probes: POST /api/deposits with otherwise valid
+fields and numeric approveTxHash=42 returned HTTP 400 INVALID_REQUEST with
+its specific hash-format message. POST /api/deposits/codex-review-missing/pull
+returned HTTP 404 NOT_FOUND. No deposit records or transactions were created.
+These checks verify rejection/lookup paths only, not live wallet signing.
+
+Appended this entry only. Preserved the existing uncommitted FlowChrome.tsx
+wallet-reconnect change, prior log edits and untracked QA scripts. No application
+changes, build, commit, push or deployment; lib/*.ts untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T16:32:25Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T17:00:26Z
+
+### [Codex review] 2026-10-14 — Independent confirmation markup and input rejection review
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md. Read
+app/deposit/confirm/page.tsx, app/flow-context.tsx, app/layout.tsx,
+app/globals.css, tailwind.config.ts and the gas, preflight and record GET/PATCH
+handlers. Searched historical clipboard and validation entries to avoid
+reporting existing fixes. No distinct, substantiated small issue worth fixing
+emerged from this review.
+
+Fetched production /deposit/confirm and /login with curl -sS --max-time 20,
+saving raw HTML to /tmp/codex-review-confirm.html and
+/tmp/codex-review-login.html. Parsed tags and visible text with Python
+HTMLParser, excluding scripts/styles. Both include English language,
+zoom-permitting viewport, noindex/nofollow, explicit testnet social descriptions
+and absolute social-image URLs. Login controls have visible names and mock
+sign-in disclosures. Confirmation serves the reconnect/loading shell; this
+is not verification of hydrated confirmation or wallet behavior. Source
+handles failed clipboard writes with an announced manual-copy alternative
+and restores only typed session fields.
+
+Fetched the exact advertised /opengraph-image?66531fee44eb32ca URL: HTTP 200,
+image/png, 21,155 bytes. Two non-creating curl probes of /api/deposits/check
+returned HTTP 400 INVALID_REQUEST: a valid 40-digit wallet with amount=1e2,
+and a 39-digit wallet with amount=1. These verify decimal-format/address-length
+rejections, not duplicate protection or on-chain execution. No production
+records or transactions were created.
+
+Appended this entry only. Preserved existing FlowChrome.tsx edits, prior log
+edits and untracked QA scripts. No application changes, build, commit, push
+or redeploy were warranted; lib/*.ts untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T17:07:26Z
+
+### [Claude agent] 2026-10-14 — Fixed unbounded wallet-reconnect spinner with no escape hatch
+
+Read OVERNIGHT_BRIEF.md and the tail of OVERNIGHT_LOG.md first. `git status`
+showed `app/components/FlowChrome.tsx` had been sitting modified-but-uncommitted
+across at least four prior Codex review cycles (each one explicitly noted
+"preserved existing FlowChrome.tsx wallet-reconnect change" without finishing
+it). Read the diff: a prior cycle had already identified and written a fix for
+a real functional bug but never shipped it — `FlowLoading` (the shared loading
+shell rendered on `/deposit`, `/deposit/confirm`, and `/deposit/approve` while
+wagmi re-checks `eth_accounts` on page load) had no timeout. If a wallet
+extension is locked, unresponsive, or the reconnect promise never resolves,
+`walletSettling` stays true forever and the user is stuck on a bare spinner
+with literally no way out — not even the pages' own 1.5s stale-flow redirect,
+since that's gated on `walletSettling` being false.
+
+The already-written fix adds an 8s timer; once it fires, the spinner gains a
+short plain-language explanation ("This is taking longer than expected. Your
+wallet extension may be unresponsive.") and a `btn-secondary` link back to
+`/login`, reusing an existing design-system class already used elsewhere.
+
+Verified `btn-secondary` is defined in app/globals.css (not a one-off class).
+Ran `npm run build` — passed clean (only pre-existing optional-SDK warnings).
+Committed as ef27c7f, pushed to origin/main, then deployed with
+`vercel --token "$VERCEL_TOKEN" --yes --prod` (projecto-5dfq8apza... -> aliased
+to projecto-blond.vercel.app). Verified live by curling
+https://projecto-blond.vercel.app/deposit/approve, extracting its referenced
+`/_next/static/chunks/*.js` files, and grepping them for the new string —
+found in chunk 784-ae70ee910d750701.js, confirming the fix is the code
+actually served in production, not just committed.
+
+No lib/*.ts changes. No new untracked QA scripts added. This closes out
+stale work-in-progress rather than opening new ground, but it's a genuine
+previously-unshipped bug fix (infinite stuck state with no recovery path),
+which outranks cosmetic/consistency findings per the priority order.
+Claude agent tick finished, exit code 0
