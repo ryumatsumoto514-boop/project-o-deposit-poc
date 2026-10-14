@@ -31943,3 +31943,72 @@ cycle, since nothing changed. The one test record created above
 (6bf94413-704c-4435-9700-1bafc3f8ebf3, wallet 0x1111...1111) is a harmless
 synthetic test record with no real funds or chain transaction attached,
 consistent with prior cycles' test-record pattern.
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-14T14:40:24Z
+
+### [Codex review] 2026-10-14 — Independent CSS and numeric-boundary review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Read app/globals.css and tailwind.config.ts in full: repeated dark surfaces
+and accent values are consistent; card/button radius differences are explicit
+component choices, and reduced-motion overrides cover the decorative effects.
+No substantiated drift worth changing was found. Also inspected creation,
+preflight, record GET/PATCH and gas route handlers, app/error.tsx and
+app/not-found.tsx; read lib/idempotency.ts and lib/constants.ts without edits.
+Searched historical numeric-validation, leading-zero, checksum and caching
+entries to avoid presenting previously-fixed issues as new findings.
+
+Fetched https://projecto-blond.vercel.app and /deposit/approve with
+curl -sS --max-time 20, saving raw bodies and headers under
+/tmp/review-{home,approve}.{html,headers}. Parsed both bodies with Python
+HTMLParser and read visible text and metadata, excluding script/style content.
+Simulation disclosures, absolute social-image URLs, noindex, language and
+zoom-permitting viewport are present. Approval renders a reconnecting shell;
+this does not establish hydrated wallet-flow correctness.
+
+Made six read-only curl requests to /api/deposits/check using wallet
+0x0000000000000000000000000000000000000001 and URL-encoded amounts:
+-0.000001, 1000.000001, 0.0000001, a 320-digit sequence of nines, Arabic-Indic
+numeral ١, and .000001. The five invalid amounts returned HTTP 400 with
+INVALID_REQUEST; the smallest supported unit returned HTTP 200 with
+{"conflict":null}. These verify validation only, not cross-instance duplicate
+protection. No records or chain transactions were created.
+
+No distinct, substantiated small issue worth fixing emerged. Appended this
+entry only, preserving existing log edits and untracked QA scripts. No code
+changes, build, commit, push or deployment were needed; lib/*.ts untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T14:47:24Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T15:15:25Z
+
+### [Codex review] 2026-10-14 — Dropped approvals bypassed the five-minute timeout
+
+Read OVERNIGHT_BRIEF.md, the recent log tail and SPEC.md first. Fetched
+production /, /login and /robots.txt with curl -sS --max-time 20 and parsed
+home/login HTML with Python HTMLParser. Metadata and simulation disclosures
+were present. Read API pull/reconcile handlers, their implementation, error
+boundaries and documentation. A targeted historical search found an old
+screenshot-seeding discussion of the early return (around line 1423), but
+not a fix for an approval that never confirms.
+
+Concrete bug: lib/reconcile.ts returned immediately after attemptPull when
+there was still no transfer hash, before reaching TIMEOUT_MS. When receipt
+lookup kept returning APPROVAL_NOT_CONFIRMED (pending/dropped approval or
+unavailable RPC), a SIGNED record could stay SIGNED forever. Changed only
+that branch to mark overdue unconfirmed approvals STALLED_TIMEOUT with
+specific, uncertainty-preserving copy and a lastCheckedAt timestamp.
+Specific relayer failures retain their existing state; polling can recover.
+This is a genuine core bug, covered by the user's explicit core-edit exception.
+
+Added tests/approval-timeout.cjs, executing the actual transpiled module with
+mocked RPC/store/pull dependencies and no disk writes or chain transactions.
+Passed stale approval, recent approval, preserved STALLED_NO_GAS and later
+confirmed-transfer recovery checks. Build/deployment verification follows.
+
+npm run build passed (existing optional SDK dependency warnings only).
+Staged this fix, its regression test and the log; unrelated untracked QA
+scripts were preserved outside the commit. Deploying to production now.

@@ -23,6 +23,23 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
     const outcome = await attemptPull(deposit);
     deposit = outcome.deposit ?? deposit;
     if (!deposit.txHash) {
+      // A dropped/pending approval must not bypass the normal timeout forever.
+      // Preserve specific relayer failures (especially STALLED_NO_GAS).
+      if (
+        !outcome.ok &&
+        outcome.reason === "APPROVAL_NOT_CONFIRMED" &&
+        Date.now() - new Date(deposit.createdAt).getTime() > TIMEOUT_MS
+      ) {
+        return depositStore.update(id, {
+          status: "STALLED_TIMEOUT",
+          failureReason:
+            "We haven't confirmed your approval transaction after five minutes. Check its status in your wallet. Don't send another deposit while we keep checking.",
+          reconciliation: {
+            ...deposit.reconciliation,
+            lastCheckedAt: new Date().toISOString(),
+          },
+        });
+      }
       return deposit; // still not pulled — nothing else to reconcile this tick
     }
   }
