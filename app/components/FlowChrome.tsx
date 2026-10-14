@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ShieldIcon, SpinnerIcon } from "./icons";
 
 const STEPS = ["Sign in", "Amount", "Confirm", "Approve"] as const;
@@ -8,11 +12,34 @@ const STEPS = ["Sign in", "Amount", "Confirm", "Approve"] as const;
 // previously rendered nothing at all for that window (bare header on an
 // otherwise empty black screen, up to a few seconds on a cold reconnect).
 // This gives that wait a visible, on-brand placeholder instead.
+//
+// wagmi's own reconnect (isAuthorized -> eth_accounts) has no timeout, so a
+// stalled/locked wallet extension can pin `walletSettling` true forever with
+// no way out. The pages' own 1.5s stale-flow redirect never arms in that
+// case (it's gated on walletSettling being false), so this component needs
+// its own absolute ceiling with an escape hatch back to sign-in.
 export function FlowLoading() {
+  const [stuck, setStuck] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStuck(true), 8000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main id="main-content" className="page-shell items-center justify-center text-slate-400">
+    <main id="main-content" className="page-shell items-center justify-center gap-3 text-slate-400">
       <SpinnerIcon className="h-5 w-5" />
       <span className="text-sm">Reconnecting your wallet…</span>
+      {stuck && (
+        <>
+          <p className="max-w-xs text-center text-xs text-slate-400">
+            This is taking longer than expected. Your wallet extension may be unresponsive.
+          </p>
+          <Link href="/login" className="btn-secondary">
+            Back to sign in
+          </Link>
+        </>
+      )}
     </main>
   );
 }
