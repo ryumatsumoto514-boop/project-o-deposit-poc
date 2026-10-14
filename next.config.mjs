@@ -17,8 +17,9 @@ const nextConfig = {
           // Scoped from an actual audit of this app's resources: fonts are
           // self-hosted by next/font (no fonts.gstatic.com fetch at runtime),
           // the OG image route and all images are same-origin, and there is
-          // no client-side RPC/API call to any third-party origin (gas
-          // polling goes through our own /api/gas route). 'unsafe-inline' is
+          // wagmi balance checks and approval-receipt polling use the default
+          // Arbitrum Sepolia RPC in lib/wagmiConfig.ts. Allow that origin;
+          // nav gas polling still goes through our own /api/gas route. 'unsafe-inline' is
           // kept for script/style because Next's App Router streams RSC
           // payloads via inline <script> tags and several components use
           // inline style={{}} — a nonce-based CSP would remove the need for
@@ -28,7 +29,7 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://sepolia-rollup.arbitrum.io; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
           },
           // This app never uses camera/mic/geolocation/payment/USB — the
           // wallet connector talks to window.ethereum, not these browser

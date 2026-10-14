@@ -32175,3 +32175,31 @@ stale work-in-progress rather than opening new ground, but it's a genuine
 previously-unshipped bug fix (infinite stuck state with no recovery path),
 which outranks cosmetic/consistency findings per the priority order.
 Claude agent tick finished, exit code 0
+Claude Code tick finished, exit code 0
+
+## Codex review tick: 2026-10-14T17:35:26Z
+
+### [Codex review] 2026-10-14 — CSP blocked the approval screen's public RPC
+
+Read the brief and recent log first, then SPEC.md. Fetched production / and
+/deposit/approve with curl -sS --max-time 20, saving HTML and response headers
+in /tmp/codex-independent-{home,approve}.{html,headers}. Both returned 200.
+The live Content-Security-Policy had connect-src 'self'. Reading
+app/deposit/approve/page.tsx revealed useBalance and waitForTransactionReceipt;
+lib/wagmiConfig.ts configures http(), not the injected wallet transport, for
+these public reads. Confirmed the installed viem chain's default RPC with
+node: https://sepolia-rollup.arbitrum.io/rpc. Thus browser CSP blocks balance
+checks and approval-receipt polling even though server-side gas reads work.
+The next.config.mjs comment incorrectly asserted there were no external
+client-side RPC calls. Historical CSP entries did not document this fix.
+
+Changed only next.config.mjs application code: allow the specific public RPC
+origin in connect-src and correct the explanatory comment. No lib/*.ts edits,
+no transactions submitted, no production records created. Separate live
+preflight checks rejected negative and extremely large amounts with HTTP 400.
+Build/deployment verification follows below.
+
+Validation: npm run build passed (existing optional SDK/dependency warnings).
+A Node assertion compared connect-src against the installed viem chain RPC
+origin and passed, with no wildcard or extra origins. Staging only the config
+and log preserves the pre-existing untracked QA scripts outside this fix.
