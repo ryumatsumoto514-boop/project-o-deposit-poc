@@ -394,7 +394,7 @@ export default function DepositApprovePage() {
                     href="https://www.alchemy.com/faucets/arbitrum-sepolia"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-rose-200 underline hover:text-rose-100"
+                    className="inline-block -my-3 py-3 text-rose-200 underline hover:text-rose-100"
                   >
                     Open a testnet faucet ↗
                   </a>.
@@ -408,7 +408,7 @@ export default function DepositApprovePage() {
                 <span className="whitespace-nowrap">
                   <a
                     href={`/deposit/status/${orphanedDepositId}`}
-                    className="text-rose-200 underline hover:text-rose-100"
+                    className="inline-block -my-3 py-3 text-rose-200 underline hover:text-rose-100"
                   >
                     check its status
                   </a>.
