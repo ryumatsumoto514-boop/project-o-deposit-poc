@@ -337,7 +337,7 @@ export default function DepositApprovePage() {
                 rel="noopener noreferrer"
                 className="inline-block -my-3 py-3 underline hover:text-amber-100"
               >
-                Open a testnet faucet
+                Open a testnet faucet ↗
               </a>.
             </span>
           </span>
@@ -396,7 +396,7 @@ export default function DepositApprovePage() {
                     rel="noopener noreferrer"
                     className="text-rose-200 underline hover:text-rose-100"
                   >
-                    Open a testnet faucet
+                    Open a testnet faucet ↗
                   </a>.
                 </span>
               </>
