@@ -31744,3 +31744,202 @@ post-deploy and confirmed the delivered title is now
 
 No business-logic (lib/*.ts) changes — the state-machine/idempotency read
 was investigation only, no edits made there. No new transactions submitted.
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T12:20:18Z
+
+### [Codex review] 2026-10-14 — Independent status recovery and input-boundary review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Read app/deposit/status/[id]/page.tsx in full, app/api/gas/route.ts,
+app/api/deposits/check/route.ts, README.md, testnet-evidence.md and
+package.json. Searched historical polling, visibility, status navigation,
+reproduction and evidence entries to avoid presenting existing fixes as new.
+Status polling preserves the last successful response on errors and gives
+explicit missing-record recovery instructions. Documentation distinguishes
+local API transaction evidence from production and discloses instance-local
+storage and relayer concurrency limitations. No new substantiated defect
+identified in these reads; historical hashes were not reverified this cycle.
+
+Fetched production / and /deposit/approve with curl -sS --max-time 20,
+saving raw HTML and headers to /tmp/codex-second-{home,approve}.{html,headers}.
+Both returned 200. Parsed and read metadata and visible text using Python
+HTMLParser, excluding scripts/styles. Social images have absolute URLs,
+viewport permits zoom, titles are route-appropriate, and simulation and
+JavaScript-disabled disclosures are present. Approval returns a reconnecting
+shell; this does not test the hydrated signing flow.
+
+Used curl against the read-only production /api/deposits/check endpoint
+with a 40-digit wallet and amount=-1, amount=1000000000000000000000000,
+a 39-digit malformed wallet with amount=1, and a mixed-case 40-digit wallet
+with amount=0.0000001. All four returned HTTP 400 INVALID_REQUEST with the
+appropriate address or amount explanation. No records or transactions created;
+these invalid-input checks do not establish cross-instance duplicate protection.
+
+No distinct small issue worth fixing found in this bounded review. Appended
+this entry only, preserving existing log edits and untracked QA scripts.
+No application/core changes, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T12:27:18Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T12:55:20Z
+
+### [Codex review] 2026-10-14 — Independent shared-style, error recovery and preflight response review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent OVERNIGHT_LOG.md tail first, then
+SPEC.md. Read app/globals.css and tailwind.config.ts in full, plus
+app/components/AppHeader.tsx, app/error.tsx, app/global-error.tsx,
+app/api/gas/route.ts, app/api/deposits/check/route.ts and next.config.mjs.
+Searched historical style, contrast, reduced-motion and recovery entries to
+avoid repeating known fixes. No consequential new design-token drift found;
+the global error screen's slightly different fallback colors alone do not
+justify a change. Error recovery warns that retrying does not cancel a
+submitted transaction. Hidden-tab gas polling already has the additional
+request-time visibility check from a prior fix.
+
+Fetched https://projecto-blond.vercel.app/ and /login with curl -sS
+--max-time 20, saving full HTML and headers to /tmp/codex-independent-*
+files. Parsed both raw bodies with Python HTMLParser and read visible copy
+and metadata, excluding script/style contents. Mock sign-in, simulated
+bridging/credit and illustrative telemetry are disclosed. Both pages have
+English language, zoom-permitting viewport, absolute social-image URLs,
+no duplicate IDs and no dangling aria-labelledby/aria-describedby references.
+This is a raw-response check, not a hydrated browser or contrast test.
+
+Also fetched the read-only production endpoint
+/api/deposits/check?wallet=0x0000000000000000000000000000000000000001&amount=1.
+It returned HTTP 200 with {"conflict":null}, age: 0, x-vercel-cache: MISS,
+and cache-control: public, max-age=0, must-revalidate. This request showed
+no stale cached result; it does not establish cross-instance idempotency.
+No records or transactions were created.
+
+No distinct, substantiated small issue worth fixing emerged in this bounded
+review. Appended this entry only, preserving prior log edits and untracked
+QA scripts. No application/core edits, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T13:02:22Z
+Claude Code tick finished, exit code 1
+
+## Codex review tick: 2026-10-14T13:30:23Z
+
+### [Codex review] 2026-10-14 — Independent creation validation and confirmation-state review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Inspected app/api/deposits/route.ts, the pull and reconcile route handlers,
+app/flow-context.tsx, app/login/page.tsx, app/deposit/confirm/page.tsx,
+app/components/WalletRoles.tsx and app/layout.tsx. Searched historical
+JSON validation, confirmation and wallet-state entries to avoid repeating
+known fixes. Creation validates JSON shape, address and hash syntax, amount
+precision/cap, chain and approval scope; saved flow fields are restored with
+type checks. The confirmation screen distinguishes the actual transfer
+destination from the simulated trading account and handles clipboard failure.
+These are source observations, not hydrated wallet-interaction tests.
+
+Fetched https://projecto-blond.vercel.app/ and /deposit/confirm with curl
+-sS --max-time 20, saving full HTML and headers in /tmp/codex-review-*.
+Both returned HTTP 200. Parsed raw HTML with Python HTMLParser, excluding
+script/style contents, and read visible text and metadata. Explicit simulation
+disclosures, absolute social image URLs, noindex, zoom-permitting viewport
+and unique element IDs are present. Confirmation returns a reconnection
+shell; this does not verify the hydrated confirmation flow. Also fetched
+/api/deposits/codex-nonexistent-review: HTTP 404, application/json, body
+{"error":"NOT_FOUND"}. No deposit records or transactions were created.
+
+No distinct, substantiated small issue worth fixing emerged from this bounded
+review. Appended this entry only; preserved existing log changes and untracked
+QA scripts. No application/core changes, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T13:37:24Z
+Claude Code tick finished, exit code 143
+
+## Codex review tick: 2026-10-14T14:05:24Z
+
+### [Codex review] 2026-10-14 — Independent referral/source and delivered-HTML review; no new fix
+
+Read OVERNIGHT_BRIEF.md and the recent log tail first, then SPEC.md.
+Inspected app/providers.tsx, app/components/CaptureKolRef.tsx,
+app/components/KolBanner.tsx, app/flow-context.tsx, app/login/page.tsx,
+lib/chain.ts (read only), and scripts/MockUSDC.sol. Compared the configured
+MockUSDC address, six-decimal token, fixed initial supply and simulated login
+with README.md and testnet-evidence.md (the combined documentation output was
+partly truncated). Searched earlier evidence, storage and referral findings
+in the log to avoid claiming existing work as new. Referral capture is mounted
+at the root, display formatting handles inherited object keys safely, and
+mock sign-in is explicitly disclosed. No new substantiated small defect found.
+
+Fetched https://projecto-blond.vercel.app/ and
+https://projecto-blond.vercel.app/deposit/status/review-missing using
+curl -sS --max-time 20, saving raw bodies and headers to
+/tmp/second-{home,status}.{html,headers}. Both returned HTTP 200.
+Parsed and read visible text and metadata with Python HTMLParser, excluding
+scripts/styles. Both have English language, zoom-permitting viewport,
+absolute social-image URLs, noindex and unique IDs. Home copy labels bridging,
+credit, telemetry and example hashes as simulated/illustrative. The status
+response is a loading shell with private/no-store caching; its 200 response
+does not establish that a deposit exists or test hydrated missing-record
+recovery. No wallet interaction or historical transaction re-verification
+was performed, and no records or transactions were created.
+
+No distinct issue worth fixing emerged from this bounded review. Appended
+this entry only; preserved existing log edits and untracked QA scripts.
+No application/core changes, build, commit, push or redeployment.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-14T14:12:24Z
+
+## Live QA cycle: 2026-10-14 (interactive session, continued)
+
+### Closed a specifically-flagged test gap: live PATCH state-transition enforcement on a real, freshly-created production record; no new flaw found
+
+Read OVERNIGHT_BRIEF.md and tailed OVERNIGHT_LOG.md first. The tail is
+dominated by a long run of Codex review cycles ("no new fix") covering
+curl/HTMLParser static-response checks across nearly every route and almost
+every category in the priority order, plus recent small fixes (404 title,
+tap-target padding, accent-color token). To find genuinely new ground
+rather than repeat another static-response pass, grepped the log for the
+specific gap a 2026-10-04 Codex review cycle had explicitly called out but
+not closed (line ~16815): "[PATCH to a missing record] verifies missing-record
+handling only; it does not test allowed transitions on an existing record."
+No later cycle had closed this.
+
+Read lib/stateMachine.ts (TRANSITIONS map, read-only, no edits — this is
+core reconciliation-engine logic per the brief's explicit carve-out) and
+app/api/deposits/route.ts + app/api/deposits/[id]/route.ts to find the exact
+required POST fields (sourceChainId must equal 421614, approvalMode must be
+"exact"|"unlimited") and the PATCH contract (clients may only ever set
+STALLED_NO_GAS or STALLED_TIMEOUT, gated through `canTransition`).
+
+Created one real record on production via
+`POST https://projecto-blond.vercel.app/api/deposits` (wallet
+0x1111...1111, destination 0x2222...2222, amount 556.294874 USDC, id
+6bf94413-704c-4435-9700-1bafc3f8ebf3) — started at SIGNED as expected. Then
+against that real record, live:
+1. `PATCH {status: STALLED_NO_GAS}` (SIGNED -> STALLED_NO_GAS, legal per
+   TRANSITIONS) -> `200`, record's status/updatedAt/failureReason updated
+   correctly in the response body.
+2. `PATCH {status: STALLED_NO_GAS}` again (STALLED_NO_GAS -> STALLED_NO_GAS,
+   not in STALLED_NO_GAS's allowed-target list) -> `409 INVALID_TRANSITION`
+   with the exact from/to message, record unchanged.
+3. `PATCH {status: SIGNED}` (an in-theory-legal edge in TRANSITIONS, but
+   SIGNED is not in `ALLOWED_CLIENT_STATUSES`) -> `400 INVALID_STATUS` —
+   confirms clients cannot self-recover a stalled deposit back to SIGNED;
+   only server-side reconciliation may do that, which is the correct design
+   (a user's browser should never be able to mark its own deposit "signed"
+   again).
+
+All three live outcomes matched the source exactly. This closes the
+specific previously-flagged gap with real evidence instead of leaving it as
+an acknowledged-but-untested blind spot. No bug found — the PATCH
+transition guard is correctly enforced against real production traffic, not
+just in source review.
+
+No code changes were warranted or made (lib/*.ts untouched, as required —
+this was verification only). No build, commit, push, or redeploy this
+cycle, since nothing changed. The one test record created above
+(6bf94413-704c-4435-9700-1bafc3f8ebf3, wallet 0x1111...1111) is a harmless
+synthetic test record with no real funds or chain transaction attached,
+consistent with prior cycles' test-record pattern.
