@@ -349,7 +349,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           <div className="card flex flex-col gap-1">
             <span className="label-caps">Approval transaction (step 1 of 2)</span>
             <span className="break-all font-mono text-xs text-slate-400">{deposit.approveTxHash}</span>
-            <a href={ARBISCAN_SEPOLIA_TX_URL(deposit.approveTxHash)} target="_blank" rel="noreferrer" className="w-fit text-sm">
+            <a href={ARBISCAN_SEPOLIA_TX_URL(deposit.approveTxHash)} target="_blank" rel="noreferrer" className="inline-block -my-3 w-fit py-3 text-sm">
               View on Arbiscan Sepolia ↗
             </a>
           </div>
@@ -359,7 +359,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
             <span className="label-caps">Deposit transfer transaction (step 2 of 2)</span>
             <span className="break-all font-mono text-xs text-slate-400">{deposit.txHash}</span>
             {deposit.explorerUrl && (
-              <a href={deposit.explorerUrl} target="_blank" rel="noreferrer" className="w-fit text-sm">
+              <a href={deposit.explorerUrl} target="_blank" rel="noreferrer" className="inline-block -my-3 w-fit py-3 text-sm">
                 View on Arbiscan Sepolia ↗
               </a>
             )}
