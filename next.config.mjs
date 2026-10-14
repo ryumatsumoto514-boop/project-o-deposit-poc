@@ -14,6 +14,22 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // Scoped from an actual audit of this app's resources: fonts are
+          // self-hosted by next/font (no fonts.gstatic.com fetch at runtime),
+          // the OG image route and all images are same-origin, and there is
+          // no client-side RPC/API call to any third-party origin (gas
+          // polling goes through our own /api/gas route). 'unsafe-inline' is
+          // kept for script/style because Next's App Router streams RSC
+          // payloads via inline <script> tags and several components use
+          // inline style={{}} — a nonce-based CSP would remove the need for
+          // it but requires middleware.ts; this is the safe-by-default
+          // policy that still blocks any injected third-party script/image/
+          // fetch target, which is the realistic XSS/clickjack exfil path.
+          {
+            key: "Content-Security-Policy",
+            value:
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+          },
           // This app never uses camera/mic/geolocation/payment/USB — the
           // wallet connector talks to window.ethereum, not these browser
           // APIs, and the confirm screen's copy-address button only uses
