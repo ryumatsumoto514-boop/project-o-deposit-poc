@@ -355,7 +355,7 @@ export default function DepositApprovePage() {
             name="approval-scope"
             checked={approvalMode === "exact"}
             onChange={() => setApprovalMode("exact")}
-            className="mt-1 h-4 w-4 accent-[#00F0FF]"
+            className="mt-1 h-4 w-4 accent-accent-500"
           />
           <span>
             <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app
