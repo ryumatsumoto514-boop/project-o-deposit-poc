@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import "./globals.css";
+import { AlertIcon } from "./components/icons";
 
 export default function GlobalError({
   error,
@@ -15,47 +17,34 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body
-        style={{
-          background: "#0A0C10",
-          color: "#E6EDF3",
-          fontFamily: "system-ui, sans-serif",
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          padding: "24px",
-        }}
-      >
-        <div style={{ maxWidth: 420 }}>
-          <p style={{ fontSize: 13, letterSpacing: "0.08em", textTransform: "uppercase", color: "#FDA4AF" }}>
-            Something went wrong
-          </p>
-          <h1 style={{ fontSize: 24, fontWeight: 600, margin: "8px 0" }}>
-            Exchange O hit an error
-          </h1>
-          <p style={{ color: "#94A3B8", marginBottom: 20 }}>
-            We couldn’t load this screen, so we can’t confirm your deposit status.
-            If you already signed a transaction, check its status in your wallet
-            before sending again. Retrying this screen does not cancel a submitted
-            transaction.
-          </p>
-          <button
-            onClick={() => reset()}
-            style={{
-              background: "#00F0FF",
-              color: "#05070A",
-              border: "none",
-              borderRadius: 8,
-              padding: "10px 20px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Try again
-          </button>
-        </div>
+      {/* The root layout itself crashed, so this can't assume AppHeader,
+          providers, or router context survived — plain <a>, not next/link,
+          and a self-contained shell instead of page-shell/AppHeader-relative
+          classes, but still the same design tokens as app/error.tsx. */}
+      <body className="min-h-[100dvh] bg-[#05070A] font-sans text-slate-100 antialiased">
+        <main className="flex min-h-[100dvh] flex-col items-center justify-center px-5 py-10 text-center">
+          <div className="card flex w-full max-w-[420px] flex-col items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-rose-400/25 bg-rose-400/[0.08] text-rose-300">
+              <AlertIcon className="h-5 w-5" />
+            </span>
+            <p className="eyebrow">Something went wrong</p>
+            <h1 className="h1">Exchange O hit an error</h1>
+            <p className="body-text">
+              We couldn’t load this screen, so we can’t confirm your deposit status.
+              If you already signed a transaction, check its status in your wallet
+              before sending again. Retrying this screen does not cancel a submitted
+              transaction.
+            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+              <button onClick={() => reset()} className="btn-primary">
+                Try again
+              </button>
+              <a href="/" className="btn-secondary">
+                Back to Exchange O
+              </a>
+            </div>
+          </div>
+        </main>
       </body>
     </html>
   );
