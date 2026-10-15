@@ -18,6 +18,13 @@
        live: focusing #deposit-amount with the keyboard open on a 390x844
        viewport left "Deposit amount" half-hidden behind the header. */
     scroll-padding-top: 56px;
+    /* /deposit/status/[id] polls every few seconds while a real deposit is
+       in flight. Without this, an overscroll swipe at the top of the page
+       on mobile Chrome/Safari triggers the browser's native pull-to-refresh,
+       hard-reloading the tab mid-poll on the one screen where that's most
+       disruptive. Scoped to the y-axis so horizontal back/forward swipe
+       navigation (approve -> confirm -> deposit) is unaffected. */
+    overscroll-behavior-y: contain;
   }
   /* No authored ::selection rule meant selecting text anywhere on the site
      fell back to the browser's default blue highlight — the one surface
