@@ -8,7 +8,7 @@ export const FAILURE_COPY: Record<FailureCode, { title: string; detail: string }
   NO_GAS: {
     title: "You don't have enough ETH on Arbitrum to pay the network fee",
     detail:
-      "Every transaction on Arbitrum needs a small amount of ETH to process, separate from the USDC you're depositing. Get a small amount of free testnet ETH from a faucet, then try again.",
+      "Every transaction on Arbitrum needs a small amount of ETH to process, separate from the USDC you're depositing. Get a small amount of free testnet ETH from a faucet, then try again. Some faucets require an existing wallet balance to use — if one turns you away, try a different testnet faucet.",
   },
   SLOW: {
     title: "This is taking longer than usual",
