@@ -32,9 +32,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   title: {
     template: "%s · Exchange O",
-    default: "Exchange O — Deposit (PoC)",
+    default: "Exchange O — Testnet deposit demo",
   },
-  description: "Deposit Reconciliation Engine PoC — Arbitrum Sepolia testnet",
+  description:
+    "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
   openGraph: {
     type: "website",
     siteName: "Exchange O",
