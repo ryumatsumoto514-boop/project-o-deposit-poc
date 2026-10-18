@@ -38118,3 +38118,12 @@ not submit a transfer. The pull route returns HTTP 400 for this invalid
 approval case. `npm run build` completed successfully. It emitted existing
 optional wallet dependency and critical dependency warnings from third-party
 packages. Next: deploy and verify live.
+
+Deployment follow-up: Vercel production deployment `dpl_9ri6CJkEuNwJ6nKzEm1QsGUQMoaw`
+reached READY and aliased to `https://projecto-blond.vercel.app`. Verified
+with `curl -sS -D ... https://projecto-blond.vercel.app/` (HTTP 200) and a
+POST to `/api/deposits/codex-review-nonexistent/pull` (HTTP 404
+`{"error":"NOT_FOUND"}`, confirming the production handler is responding).
+The endpoint's validation branch itself was not exercised against production,
+because that would require a real stored deposit and could trigger an actual
+testnet transfer. Commit `73b6a40` is pushed to `origin/main`.
