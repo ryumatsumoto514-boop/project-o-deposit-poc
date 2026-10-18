@@ -25,6 +25,8 @@ export async function POST(
         ? 400
         : outcome.reason === "APPROVAL_FAILED"
         ? 409
+        : outcome.reason === "APPROVAL_INVALID"
+        ? 400
         : 502;
     return NextResponse.json(
       { error: outcome.reason, deposit: outcome.deposit },

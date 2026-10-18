@@ -1,11 +1,12 @@
-import { ARBISCAN_SEPOLIA_TX_URL, publicClient } from "./chain";
+import { decodeFunctionData } from "viem";
+import { ARBISCAN_SEPOLIA_TX_URL, DEPOSIT_ADDRESS, ERC20_ABI, publicClient, USDC_ADDRESS } from "./chain";
 import { pullDeposit } from "./relayer";
 import { depositStore } from "./store";
 import type { DepositRecord } from "./types";
 
 export type PullOutcome =
   | { ok: true; deposit: DepositRecord | undefined }
-  | { ok: false; reason: "APPROVAL_MISSING" | "APPROVAL_NOT_CONFIRMED" | "APPROVAL_FAILED" | "RELAYER_FAILED"; deposit: DepositRecord | undefined };
+  | { ok: false; reason: "APPROVAL_MISSING" | "APPROVAL_NOT_CONFIRMED" | "APPROVAL_FAILED" | "APPROVAL_INVALID" | "RELAYER_FAILED"; deposit: DepositRecord | undefined };
 
 // Attempts the relayer's real transferFrom() call. Safe to call repeatedly:
 // a no-op once txHash is set, and safe to retry after a prior failure (e.g.
@@ -33,6 +34,45 @@ export async function attemptPull(deposit: DepositRecord): Promise<PullOutcome> 
           "The approval transaction failed on-chain, so we can't pull funds yet.",
       });
       return { ok: false, reason: "APPROVAL_FAILED", deposit: updated };
+    }
+
+    // A successful hash alone is not proof that this wallet approved this
+    // token/spender/amount. Never let an unrelated successful transaction
+    // activate an allowance the wallet may have granted earlier.
+    const approveTx = await publicClient.getTransaction({ hash: deposit.approveTxHash });
+    let approval: ReturnType<typeof decodeFunctionData<typeof ERC20_ABI>>;
+    try {
+      approval = decodeFunctionData({ abi: ERC20_ABI, data: approveTx.input }) as typeof approval;
+    } catch {
+      return {
+        ok: false,
+        reason: "APPROVAL_INVALID",
+        deposit: depositStore.update(deposit.id, {
+          status: "STALLED_TIMEOUT",
+          failureReason: "The confirmed transaction does not approve this deposit's token, wallet, spender, and amount. No transfer was submitted.",
+        }),
+      };
+    }
+    const approvedAmount = approval.args[1];
+    const expectedAmount = BigInt(deposit.amountRaw);
+    const amountMatches = deposit.approvalMode === "exact"
+      ? approvedAmount === expectedAmount
+      : typeof approvedAmount === "bigint" && approvedAmount >= expectedAmount;
+    if (
+      approveTx.from.toLowerCase() !== deposit.userWallet.toLowerCase() ||
+      approveTx.to?.toLowerCase() !== USDC_ADDRESS.toLowerCase() ||
+      approval.functionName !== "approve" ||
+      String(approval.args[0]).toLowerCase() !== DEPOSIT_ADDRESS.toLowerCase() ||
+      !amountMatches
+    ) {
+      return {
+        ok: false,
+        reason: "APPROVAL_INVALID",
+        deposit: depositStore.update(deposit.id, {
+          status: "STALLED_TIMEOUT",
+          failureReason: "The confirmed transaction does not approve this deposit's token, wallet, spender, and amount. No transfer was submitted.",
+        }),
+      };
     }
   } catch {
     return { ok: false, reason: "APPROVAL_NOT_CONFIRMED", deposit };
