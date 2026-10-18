@@ -38527,4 +38527,4 @@ Updated `app/page.tsx`, `app/components/FlowChrome.tsx`, and all shared social
 metadata in `app/layout.tsx` to state that testnet ETH/MockUSDC are used and no
 mainnet assets are involved. `npm run build` completed successfully; Next.js
 reported existing optional dependency resolution warnings for MetaMask and
-WalletConnect packages. Will verify the deployed HTML after publishing.
+WalletConnect packages. Deployed to production as `dpl_DCS9R7mLecnQwSxmahsdBXqHabjk`. Verified with `curl -sS -L -D /tmp/projecto-final-headers -o /tmp/projecto-final-home https://projecto-blond.vercel.app`: HTTP 200, `age: 0`, `x-vercel-cache: PRERENDER`; the raw HTML contains the revised testnet-only wording in the landing copy and metadata. Pushed commit `523b8c7` (`Clarify testnet asset disclosure`) to `origin/main`.
