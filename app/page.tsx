@@ -63,7 +63,7 @@ export default function Home() {
             <Link href="/login" className="btn-primary w-fit">
               Get started
             </Link>
-            <span className="text-xs text-slate-400">No real funds involved</span>
+            <span className="text-xs text-slate-400">Testnet ETH and MockUSDC only; no mainnet assets</span>
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export default function Home() {
       </section>
 
       <p className="text-center text-xs text-slate-400">
-        Arbitrum Sepolia testnet · not real funds
+        Arbitrum Sepolia testnet · no mainnet assets
       </p>
     </main>
   );

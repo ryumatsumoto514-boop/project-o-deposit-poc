@@ -35,19 +35,19 @@ export const metadata: Metadata = {
     default: "Exchange O — Testnet deposit demo",
   },
   description:
-    "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
+    "Explore deposit tracking on Arbitrum Sepolia testnet. Testnet ETH and MockUSDC are used; sign-in, bridging, and Hyperliquid crediting are simulated. No mainnet assets are used.",
   openGraph: {
     type: "website",
     siteName: "Exchange O",
     title: "Exchange O — Testnet deposit demo",
     description:
-      "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
+      "Explore deposit tracking on Arbitrum Sepolia testnet. Testnet ETH and MockUSDC are used; sign-in, bridging, and Hyperliquid crediting are simulated. No mainnet assets are used.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Exchange O — Testnet deposit demo",
     description:
-      "Explore deposit tracking on Arbitrum Sepolia testnet. Email/Google sign-in, bridging, and Hyperliquid crediting are simulated; no real funds are used.",
+      "Explore deposit tracking on Arbitrum Sepolia testnet. Testnet ETH and MockUSDC are used; sign-in, bridging, and Hyperliquid crediting are simulated. No mainnet assets are used.",
   },
 };
 
