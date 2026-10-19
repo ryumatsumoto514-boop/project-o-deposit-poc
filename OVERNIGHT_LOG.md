@@ -39223,3 +39223,11 @@ warnings for MetaMask SDK/Wagmi and WalletConnect; type checking and static
 page generation passed. This guard is limited to one warm process, consistent
 with the app's documented per-instance PoC store; it does not add distributed
 locking across Vercel instances. Deployment verification follows.
+
+Deployment verification: commit `07eb2c7` was pushed to `origin main`; Vercel
+production deployment `dpl_G341ivrFhSq37LWhBUJfAgf5JdPW` reached READY and
+was aliased to `https://projecto-blond.vercel.app`. After deployment,
+`curl -sS -L` returned HTTP 200 for the live root, and a POST to the live
+`/api/deposits/not-a-real-id/pull` returned the expected HTTP 404
+`NOT_FOUND`, confirming the deployed route responds. The 404 probe does not
+exercise actual relayer submission or prove cross-instance coordination.
