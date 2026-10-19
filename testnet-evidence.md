@@ -22,11 +22,12 @@ wallet:
 Per OVERNIGHT_BRIEF.md's explicit fallback guidance, we deployed a minimal
 mock ERC-20 (`MockUSDC`, `scripts/MockUSDC.sol`) with **identical
 `approve()` / `transferFrom()` / `balanceOf()` / `allowance()` semantics** to
-real USDC (6 decimals, standard ERC-20). The reconciliation engine, UI, and
-state machine treat it exactly as they would real USDC — only the constant
-in `lib/chain.ts` (`USDC_ADDRESS`) would need to change to point at real
-Circle USDC once a faucet API key is available. This substitution is
-labeled here, in `lib/chain.ts`, and in `README.md` — it is not hidden.
+real USDC (6 decimals, standard ERC-20). The reconciliation engine and
+state machine exercise the standard ERC-20 approval and transfer semantics.
+Switching to Circle USDC would require changing `USDC_ADDRESS` in
+`lib/chain.ts` and updating the user-facing MockUSDC labels, setup guidance,
+and evidence documentation. This substitution is labeled here, in
+`lib/chain.ts`, and in `README.md` — it is not hidden.
 
 The "test user" wallet referenced in earlier planning notes
 (`0x1e9d508D...`) had no recoverable private key in this environment and
