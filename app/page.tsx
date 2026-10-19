@@ -35,9 +35,10 @@ export default function Home() {
             Deposit with full visibility, every step of the way.
           </h1>
           <p className="body-text max-w-md">
-            Deposit USDC on Arbitrum and trade on Hyperliquid. This proof of
-            concept makes every step of depositing transparent and honest —
-            including the parts that are mocked.
+            Deposit MockUSDC on Arbitrum Sepolia and see how a Hyperliquid
+            credit would be tracked. This proof of concept makes every step of
+            depositing transparent and honest — including the parts that are
+            mocked.
           </p>
 
           <div

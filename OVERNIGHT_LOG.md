@@ -39525,3 +39525,22 @@ the diagram's node data was the source of the label. Changed it to
 asset. `npm run build` passed; it emitted the existing optional wallet
 dependency and bundler warnings. Committed, pushed, and deployed production;
 then fetched the live homepage and verified the new label in its raw HTML.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T16:48:21Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T17:12:21Z
+
+### [Codex review] 2026-10-19 — Clarified the homepage's token and credit claims
+
+Read the brief and recent log tail first. Fetched the live homepage with
+`curl -sS -L -D /tmp/projecto-live-headers https://projecto-blond.vercel.app/`
+and inspected its raw HTML. Compared the live hero copy against
+`app/page.tsx`: it said “Deposit USDC on Arbitrum and trade on Hyperliquid,”
+while the actual flow uses self-deployed MockUSDC on Arbitrum Sepolia and
+simulates Hyperliquid crediting. Updated the homepage claim to name MockUSDC,
+Arbitrum Sepolia, and describe credit tracking as a demonstration. `npm run
+build` passed, with the existing optional wallet dependency and bundler
+warnings. Committed and pushed the focused change, deployed production, then
+fetched the live homepage and verified the revised claim in its raw HTML.
