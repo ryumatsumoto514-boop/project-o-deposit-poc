@@ -39544,3 +39544,24 @@ Arbitrum Sepolia, and describe credit tracking as a demonstration. `npm run
 build` passed, with the existing optional wallet dependency and bundler
 warnings. Committed and pushed the focused change, deployed production, then
 fetched the live homepage and verified the revised claim in its raw HTML.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T17:19:21Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T17:47:22Z
+
+### [Codex review] 2026-10-19 — Clarified the homepage diagram's mocked credit node
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and
+`SPEC.md`. Fetched the production homepage and `/login`, `/deposit`,
+`/deposit/confirm`, `/deposit/approve`, and `/deposit/status/not-a-real-id`
+with `curl -sS -L`; all returned HTTP 200 with non-empty HTML. Inspected the
+homepage's raw HTML and compared it with `app/components/EngineVisual.tsx`.
+The diagram's final node said “Hyperliquid Credit” / “Tradable balance,” even
+though this PoC's credit check is mocked and no trading balance is credited.
+The nearby simulated-check footer did not make the node's own claim clear.
+Changed it to “Simulated credit” / “No trading balance.” `npm run build`
+completed successfully; it reported the existing optional wallet dependency
+and bundler warnings. After deployment, fetched the live homepage and checked
+its rendered HTML for both replacement labels.

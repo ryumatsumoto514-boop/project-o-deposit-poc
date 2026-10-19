@@ -10,7 +10,7 @@ import { Fragment } from "react";
 const NODES = [
   { key: "deposit", label: "MockUSDC Deposit", sub: "Arbitrum Sepolia" },
   { key: "engine", label: "Reconciliation Engine", sub: "Verifying + relaying" },
-  { key: "credit", label: "Hyperliquid Credit", sub: "Tradable balance" },
+  { key: "credit", label: "Simulated credit", sub: "No trading balance" },
 ] as const;
 
 function NodeIcon({ index }: { index: number }) {
