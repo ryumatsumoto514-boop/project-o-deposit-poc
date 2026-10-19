@@ -326,7 +326,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
           </div>
           <h1 className="h1">Simulated credit complete</h1>
           <p className="body-text max-w-xs">
-            <strong className="text-emerald-300">{deposit.amount} USDC</strong> is confirmed
+            <strong className="text-emerald-300">{deposit.amount} MockUSDC</strong> is confirmed
             on Arbitrum Sepolia. The demo credit is simulated; no actual trading balance is credited.
           </p>
         </div>
@@ -387,7 +387,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
       />
 
       <div className="card text-sm text-slate-300">
-        <strong className="text-slate-100">{deposit.amount} USDC</strong> · opened{" "}
+        <strong className="text-slate-100">{deposit.amount} MockUSDC</strong> · opened{" "}
         {new Date(deposit.createdAt).toLocaleString()}
       </div>
 

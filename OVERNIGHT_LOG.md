@@ -39350,3 +39350,52 @@ response contains the updated MockUSDC label. Then fetched each route's
 page-specific JavaScript bundle and verified it also contains the updated
 MockUSDC copy (the full disclaimer renders after client hydration). Committed
 and pushed the change, then deployed production.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T12:12:18Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T12:32:18Z
+
+## Codex independent review — 2026-10-19
+
+### [Codex review] 2026-10-19 — Referral, API validation, and live share-preview spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before this
+pass. Made a focused check of the referral capture and banner paths in
+`app/components/CaptureKolRef.tsx`, `app/components/KolBanner.tsx`, and
+`app/flow-context.tsx`; checked deposit creation and preflight validation in
+`app/api/deposits/route.ts` and `app/api/deposits/check/route.ts`, plus the
+store's address/amount duplicate comparison in `lib/store.ts`. The API checks
+wallet casing-insensitively and compares decimal amounts numerically; the
+referral capture is mounted for deep links and bounds both stored input and
+display text. Fetched live `/`, `/login`, `/deposit`, `/deposit/confirm`,
+`/deposit/approve`, a status route, `/api/gas`, and `/robots.txt` with curl;
+all returned HTTP 200. The raw live approval HTML contains MockUSDC copy, and
+its description and social metadata describe testnet assets and mocked
+behavior. The referenced live Open Graph PNG URL also returned HTTP 200 with
+`content-type: image/png`. Compared README/testnet-evidence token, transaction,
+and deployment statements with the earlier evidence; no discrepancy emerged
+in this scope. This specific pass found no distinct, substantiated issue to
+fix. No application code changed; no build, commit, push, or redeployment was
+warranted. Existing worktree state was left otherwise untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T12:43:18Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T13:07:19Z
+
+### [Codex review] 2026-10-19 — Raw HTML metadata and motion preference check; no new fix
+
+Read `OVERNIGHT_BRIEF.md` and the recent `OVERNIGHT_LOG.md` tail, then fetched the live `/`, `/login`, and `/deposit/approve` routes directly with `curl -sS -L -D ... -o ...`; each returned HTTP 200. Inspected their raw HTML for title/description, robots, Open Graph and Twitter metadata, canonical tags, and button markup. The shared metadata is populated (including the correct absolute OG image URL); `noindex,nofollow` is set consistently and is intentional per the comment in `app/layout.tsx` to keep this testnet demo out of search results. Read all authored animation and reduced-motion rules in `app/globals.css` and checked animation use in the app; the existing `prefers-reduced-motion: reduce` rule disables animation and transitions, and hides decorative flowing/pulsing elements. Also read the Tailwind accent palette in `tailwind.config.ts`; its shades are a deliberate single turquoise ramp, with amber reserved for warnings. This focused pass found no substantiated defect distinct from prior fixes. No application code changed, so build, commit, push, and redeployment were not warranted. Appended this entry; pre-existing worktree changes were left intact.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T13:13:19Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T13:42:19Z
+
+### [Codex review] 2026-10-19 — Corrected token name on the deposit status screen
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md`, then fetched `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, a status URL, `/api/gas`, and `/robots.txt` from `https://projecto-blond.vercel.app` with curl; all returned HTTP 200. In the screen copy pass, compared the asset names in the amount, confirmation, and approval screens with `app/deposit/status/[id]/page.tsx`. The two status summaries called the self-deployed demo asset “USDC,” even though the other flow screens explicitly say “MockUSDC (the demo token, not Circle USDC).” Updated the in-progress and simulated-credit amount labels to “MockUSDC.” `npm run build` completed successfully; Next reported existing optional wallet connector/bundler warnings. Committed and pushed the change, deployed production, then fetched the live status route and its page JavaScript bundle and verified the updated label is present. No reconciliation logic changed.
