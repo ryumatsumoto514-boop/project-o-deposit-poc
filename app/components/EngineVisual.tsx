@@ -8,7 +8,7 @@ import { Fragment } from "react";
 // loop, not wired to any live deposit; the "illustrative" label below says
 // so explicitly rather than implying it's a real telemetry feed.
 const NODES = [
-  { key: "deposit", label: "USDC Deposit", sub: "Arbitrum Sepolia" },
+  { key: "deposit", label: "MockUSDC Deposit", sub: "Arbitrum Sepolia" },
   { key: "engine", label: "Reconciliation Engine", sub: "Verifying + relaying" },
   { key: "credit", label: "Hyperliquid Credit", sub: "Tradable balance" },
 ] as const;

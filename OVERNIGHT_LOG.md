@@ -39480,3 +39480,48 @@ connector and bundler warnings. After production deployment, fetched `/deposit`
 and confirmed its page bundle includes the updated cap message; called both
 API validation paths with an over-cap amount and confirmed their responses name
 MockUSDC. Committed and pushed the change, then deployed production.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T15:47:20Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T16:02:20Z
+
+### [Codex review] 2026-10-19 — Live route metadata and accessibility spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest log tail first. Fetched
+the production homepage, `/login`, `/deposit`, `/deposit/confirm`,
+`/deposit/approve`, and `/deposit/status/not-a-real-id` with `curl -sS -L`;
+all returned HTTP 200 with page HTML. Inspected the raw response headers and
+metadata: each page has its page-specific title, the same explicit testnet,
+MockUSDC, and simulated-credit description, `noindex,nofollow`, and Open Graph
+and Twitter cards using the production OG image URL. The absence of canonical
+tags is immaterial for this intentionally no-index demo; I found no incorrect
+canonical or social URL to fix. Read `app/layout.tsx`, `app/globals.css`, and
+`tailwind.config.ts`, plus the authored form/button markup in the flow pages.
+The shared layout has a skip-to-main link and `lang="en"`; native form inputs
+have labels, the icon-only destination copy button has an accessible label,
+and reduced-motion overrides are present. Card, button, and input radii use
+the same two-level rounded-md/rounded-lg scale, with the configured accent
+palette used consistently. No distinct, substantiated defect emerged from
+this pass. No application code changed; build, commit, push, and redeployment
+were not warranted. Existing worktree changes were left untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T16:17:20Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T16:37:21Z
+
+### [Codex review] 2026-10-19 — Labeled the landing diagram's source token as MockUSDC
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before this
+pass. Fetched the production homepage HTML with `curl -sS -L` and found the
+diagram rendered `USDC Deposit`, despite the deployed app using its
+self-deployed MockUSDC contract and the README explicitly distinguishing it
+from Circle USDC. Compared the HTML against `app/components/EngineVisual.tsx`;
+the diagram's node data was the source of the label. Changed it to
+`MockUSDC Deposit` so the landing illustration identifies the actual demo
+asset. `npm run build` passed; it emitted the existing optional wallet
+dependency and bundler warnings. Committed, pushed, and deployed production;
+then fetched the live homepage and verified the new label in its raw HTML.
