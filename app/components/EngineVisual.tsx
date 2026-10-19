@@ -83,10 +83,10 @@ export function EngineVisual() {
 
       <div className="flex items-center justify-between border-t border-white/[0.15] pt-4 font-mono text-[11px] text-slate-400">
         <span>
-          THROUGHPUT <span className="text-accent-300">~1 dep / 8s</span>
+          SOURCE CHECK <span className="text-accent-300">Arbitrum Sepolia</span>
         </span>
         <span>
-          SETTLEMENT <span className="text-accent-300">2-of-2 verified</span>
+          CREDIT CHECK <span className="text-accent-300">simulated</span>
         </span>
       </div>
     </div>

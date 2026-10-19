@@ -39399,3 +39399,27 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-10-19 — Corrected token name on the deposit status screen
 
 Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md`, then fetched `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, a status URL, `/api/gas`, and `/robots.txt` from `https://projecto-blond.vercel.app` with curl; all returned HTTP 200. In the screen copy pass, compared the asset names in the amount, confirmation, and approval screens with `app/deposit/status/[id]/page.tsx`. The two status summaries called the self-deployed demo asset “USDC,” even though the other flow screens explicitly say “MockUSDC (the demo token, not Circle USDC).” Updated the in-progress and simulated-credit amount labels to “MockUSDC.” `npm run build` completed successfully; Next reported existing optional wallet connector/bundler warnings. Committed and pushed the change, deployed production, then fetched the live status route and its page JavaScript bundle and verified the updated label is present. No reconciliation logic changed.
+
+## Cron tick: 2026-10-19T13:44:19Z
+Claude Code session not logged in / expired. Skipping this tick.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T14:15:19Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T14:17:19Z
+
+### [Codex review] 2026-10-19 — Removed unsupported landing-page telemetry claims
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and
+`SPEC.md`, then fetched `https://projecto-blond.vercel.app/` with curl
+(HTTP 200, 22,050-byte HTML response). Reviewed the landing-page copy and
+`app/components/EngineVisual.tsx`. Although the visual calls itself
+illustrative, its footer claimed `~1 dep / 8s` throughput and `2-of-2
+verified`; neither is a measured product metric, and the credit-side check is
+mocked. Replaced these with the factual labels `SOURCE CHECK: Arbitrum
+Sepolia` and `CREDIT CHECK: simulated`. `npm run build` completed
+successfully; it emitted the existing optional wallet dependency and bundler
+warnings. Committed and pushed the change, deployed production, then fetched
+the live homepage with curl and confirmed both factual labels appear in the
+HTML.
