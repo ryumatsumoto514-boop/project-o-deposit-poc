@@ -273,7 +273,7 @@ export default function DepositApprovePage() {
       />
 
       <div className="card text-sm text-slate-300">
-        Depositing <strong className="text-slate-100">{draftAmount} USDC</strong> on Arbitrum Sepolia.
+        Depositing <strong className="text-slate-100">{draftAmount} MockUSDC</strong> on Arbitrum Sepolia. This self-deployed demo token is not Circle USDC.
       </div>
 
       {wrongNetwork && (
@@ -359,7 +359,7 @@ export default function DepositApprovePage() {
           />
           <span>
             <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app
-            can spend up to {draftAmount} USDC in total under this approval, even
+            can spend up to {draftAmount} MockUSDC in total under this approval, even
             across multiple transfers.
           </span>
         </label>

@@ -62,7 +62,7 @@ export default function DepositConfirmPage() {
 
       <div className="card flex flex-col gap-2">
         <p className="body-text">
-          You&apos;re about to send <strong className="text-slate-200">{draftAmount} USDC</strong> on
+          You&apos;re about to send <strong className="text-slate-200">{draftAmount} MockUSDC</strong> (the demo token, not Circle USDC) on
           Arbitrum Sepolia to this address:
         </p>
         <div className="flex items-start gap-2">

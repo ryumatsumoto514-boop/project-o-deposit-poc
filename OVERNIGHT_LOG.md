@@ -39231,3 +39231,120 @@ was aliased to `https://projecto-blond.vercel.app`. After deployment,
 `/api/deposits/not-a-real-id/pull` returned the expected HTTP 404
 `NOT_FOUND`, confirming the deployed route responds. The 404 probe does not
 exercise actual relayer submission or prove cross-instance coordination.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T08:38:15Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T09:02:15Z
+
+### [Codex review] 2026-10-19 — Reduced-motion and live telemetry failure-path audit; no new fix
+
+Read `OVERNIGHT_BRIEF.md` and the recent log tail before this independent pass. Checked `app/globals.css` from its authored animations through the end of the file: its `prefers-reduced-motion: reduce` rule disables animation and transitions, hides the decorative flow/LED animations, and removes the active-button transform. Checked `app/api/gas/route.ts` against `app/components/AppHeader.tsx`: RPC failure is returned as `gwei: null`, and the header renders a no-data state rather than presenting a stale/fabricated reading. Fetched the live `/` and `/deposit/status/codex-review-motion-check` responses with `curl -sS -L`; both returned HTTP 200, and the status page contains `<main id="main-content">`. A direct curl to live `/api/gas` returned HTTP 200 JSON under the active RPC. This focused pass did not find a distinct, substantiated issue to change. No application code changed; therefore no build, commit, push, or redeployment was warranted. Pre-existing worktree changes were left untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T09:09:15Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T09:37:17Z
+
+### [Codex review] 2026-10-19 — Independent live markup and design-token pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and
+`SPEC.md` before this pass. Fetched the raw live HTML for `/`, `/deposit`,
+and `/deposit/confirm` with curl and checked `/login`, `/deposit/confirm`,
+`/deposit/approve`, and `/api/gas` response codes; all returned HTTP 200.
+The raw document has the testnet/no-mainnet disclosure, intentional
+`noindex,nofollow`, keyboard skip link, named home link, and main landmark.
+Inspected `app/layout.tsx`, `app/page.tsx`, `app/globals.css`,
+`tailwind.config.ts`, and app TSX usages of buttons/ARIA labels. The
+semantic accent and warning palette is separated consistently, body and
+input text use readable slate colors, icon-only controls found in this
+pass have accessible names, and the forms expose alert/status announcements.
+A canonical tag is absent, but the deployment intentionally opts out of
+indexing, so adding search canonical metadata would not address a concrete
+user or crawler issue here. This focused independent pass found no
+substantiated, fixable issue. No app files changed; build, commit, push, and
+redeployment were therefore not warranted. Existing worktree state was left
+as-is.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T09:39:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-19T10:10:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T10:12:17Z
+
+### [Codex review] 2026-10-19 — Wallet reconnect escape path review; no new fix
+
+Read the brief and recent log tail, then made a focused pass over a flow
+failure surface not covered in the latest entries: `app/components/FlowChrome.tsx`
+(`FlowLoading`), the route guards in `app/deposit/confirm/page.tsx` and
+`app/deposit/approve/page.tsx`, and the identity persistence/account-change
+handling in `app/flow-context.tsx`. The loading placeholder has an 8-second
+escape to sign-in for a wallet extension that never finishes reconnecting;
+the confirm and approve routes wait through `connecting`/`reconnecting` and
+arm their stale-flow redirect only after that settles; wallet account changes
+replace a wallet-based sign-in identity and clear destination confirmation.
+Fetched the live `/login`, `/deposit/confirm`, and `/deposit/approve` routes
+with `curl -sS -L`; each returned HTTP 200 with a non-empty HTML response.
+This targeted review found no concrete reconnect/route-guard defect to fix.
+No application code changed, so build, commit, push, and redeployment were
+not warranted. Existing worktree state was left intact.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T10:41:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T10:47:17Z
+
+### [Codex review] 2026-10-19 — Independent live-route and status recovery pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and
+`SPEC.md`. Made a focused pass over live-rendered routes with
+`curl -sS -L -o /tmp/codex-live-body -w ...` for `/`, `/login`, `/deposit`,
+`/deposit/confirm`, `/deposit/approve`, and
+`/deposit/status/codex-independent-review-20261019`; all returned HTTP 200
+with non-empty HTML. `/api/gas` returned HTTP 200 JSON and `/robots.txt`
+returned HTTP 200. Then inspected the deposit creation validation in
+`app/api/deposits/route.ts` and the status-page recovery path in
+`app/deposit/status/[id]/page.tsx`, including consecutive 404 handling,
+transient poll errors, lost-record messaging, and the instruction to check
+Arbiscan before resending. This targeted pass found no distinct, substantiated
+issue to fix. No application code changed; no build, commit, push, or
+redeployment was warranted. The pre-existing modified log was appended to;
+other worktree state was left untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T11:12:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T11:22:18Z
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T11:42:18Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T11:57:18Z
+
+### [Codex review] 2026-10-19 — Clarified demo token identity before approval
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and
+`SPEC.md`, then compared `lib/chain.ts` and `testnet-evidence.md` with the
+actual deposit flow copy in `app/deposit/page.tsx`,
+`app/deposit/confirm/page.tsx`, and `app/deposit/approve/page.tsx`. The
+configured token is a self-deployed MockUSDC, but the amount-entry form,
+destination confirmation, and approval summary called it only “USDC.” That
+could lead someone to mistake the demo token for Circle USDC at the point of
+choosing an amount or signing an approval. Updated those screens to call it
+MockUSDC; the connect-wallet copy and destination confirmation explicitly say
+it is the demo token, not Circle USDC, and the approval summary says it is
+self-deployed.
+
+`npm run build` completed successfully (with existing optional wallet
+connector dependency / bundler warnings). After deployment, fetched the live
+`/deposit`, `/deposit/confirm`, and `/deposit/approve` HTML with curl and
+verified the MockUSDC and non-Circle disclosures are present. Committed and
+pushed the change, then deployed production.

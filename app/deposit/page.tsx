@@ -103,7 +103,8 @@ export default function DepositAmountPage() {
         <div className="card flex flex-col gap-3">
           <p className="body-text">
             Connect the wallet you&apos;ll fund this deposit from. This must
-            be a real wallet with testnet ETH and USDC on Arbitrum Sepolia.
+            be a real wallet with testnet ETH and MockUSDC (the demo token,
+            not Circle USDC) on Arbitrum Sepolia.
           </p>
           {connectors.map((connector) => (
             <button
@@ -133,7 +134,7 @@ export default function DepositAmountPage() {
             handleContinue();
           }}
         >
-          <label htmlFor="deposit-amount" className="label-caps">Amount (USDC)</label>
+          <label htmlFor="deposit-amount" className="label-caps">Amount (MockUSDC)</label>
           <div className="relative">
             <input
               id="deposit-amount"
@@ -153,7 +154,7 @@ export default function DepositAmountPage() {
               className="input pr-16 font-mono text-lg [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
             <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-slate-400">
-              USDC
+              MockUSDC
             </span>
           </div>
           {error && <p id="deposit-amount-error" role="alert" className="text-sm text-rose-400">{error}</p>}
