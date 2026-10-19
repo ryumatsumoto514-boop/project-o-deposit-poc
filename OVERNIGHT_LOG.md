@@ -39345,6 +39345,8 @@ self-deployed.
 
 `npm run build` completed successfully (with existing optional wallet
 connector dependency / bundler warnings). After deployment, fetched the live
-`/deposit`, `/deposit/confirm`, and `/deposit/approve` HTML with curl and
-verified the MockUSDC and non-Circle disclosures are present. Committed and
-pushed the change, then deployed production.
+`/deposit`, `/deposit/confirm`, and `/deposit/approve` HTML with curl; each
+response contains the updated MockUSDC label. Then fetched each route's
+page-specific JavaScript bundle and verified it also contains the updated
+MockUSDC copy (the full disclaimer renders after client hydration). Committed
+and pushed the change, then deployed production.
