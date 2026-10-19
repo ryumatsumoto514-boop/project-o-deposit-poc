@@ -17,7 +17,7 @@ export interface DepositRecord {
   destinationAccount: `0x${string}`; // Hyperliquid-side trading account (mocked)
   amount: string; // human-readable decimal string, e.g. "10.0"
   amountRaw: string; // base-unit string (bigint serialized), matches ERC-20 decimals
-  asset: "USDC";
+  asset: "MockUSDC";
   sourceChainId: number; // 421614 for Arbitrum Sepolia
   status: DepositStatus;
   createdAt: string; // ISO timestamp

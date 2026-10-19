@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
     amount: body.amount,
     // The relayer must transfer exactly the validated, displayed amount.
     amountRaw: parseUnits(body.amount, USDC_DECIMALS).toString(),
-    asset: "USDC",
+    asset: "MockUSDC",
     sourceChainId: body.sourceChainId,
     status: "SIGNED",
     createdAt: now,

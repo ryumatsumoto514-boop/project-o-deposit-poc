@@ -216,7 +216,7 @@ mocked Hyperliquid balance agree.
   alerting is needed before trusting this pattern with real user funds.
 - **No rate limiting or auth on the API routes.** Anyone who can reach the
   deployed app can call the deposit APIs directly.
-- **Demo deposit cap** of 1000 USDC in the UI, arbitrary, just to keep test
+- **Demo deposit cap** of 1000 MockUSDC in the UI, arbitrary, just to keep test
   amounts sane.
 
 ## Primary metric + guardrails

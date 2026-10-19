@@ -39568,3 +39568,27 @@ its rendered HTML for both replacement labels.
 
 ## Cron tick: 2026-10-19T17:49:22Z
 Claude Code session not logged in / expired. Skipping this tick.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T18:20:22Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T18:22:22Z
+
+### [Codex review] 2026-10-19 — Aligned deposit API asset records with the deployed demo token
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`. Compared the
+live user-facing MockUSDC disclosures and testnet evidence with the deposit
+record schema in `lib/types.ts` and creation code in
+`app/api/deposits/route.ts`. Although this deployment uses the self-deployed
+MockUSDC contract, newly created API records still serialized `asset: "USDC"`;
+the record type reinforced that incorrect asset identity. Also found the
+README's cap limitation still called the capped amount USDC. Changed all three
+to `MockUSDC`. `npm run build` passed with the existing optional wallet
+connector and bundler warnings. Deployed the change; `curl` confirmed the
+production homepage returns HTTP 200 and the live `/api/deposits` route is
+served (a GET returns its expected HTTP 405 because this route only accepts
+POST). I did not POST a test record because the API has no delete operation
+and that would leave an unintended in-flight demo deposit. The new record
+label is confirmed in the built/deployed route artifact, but its production
+JSON response was not exercised.
