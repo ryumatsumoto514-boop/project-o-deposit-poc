@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
   }
   if (parsedAmount > MAX_DEMO_AMOUNT) {
     return NextResponse.json(
-      { error: "INVALID_REQUEST", message: `This demo caps deposits at ${MAX_DEMO_AMOUNT} USDC.` },
+      { error: "INVALID_REQUEST", message: `This demo caps deposits at ${MAX_DEMO_AMOUNT} MockUSDC.` },
       { status: 400 }
     );
   }

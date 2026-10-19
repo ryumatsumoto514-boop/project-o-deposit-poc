@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     parsedAmount > MAX_DEMO_AMOUNT
   ) {
     return NextResponse.json(
-      { error: "INVALID_REQUEST", message: `amount must be a positive decimal string with at most 6 decimal places, capped at ${MAX_DEMO_AMOUNT} USDC.` },
+      { error: "INVALID_REQUEST", message: `amount must be a positive decimal string with at most 6 decimal places, capped at ${MAX_DEMO_AMOUNT} MockUSDC.` },
       { status: 400 }
     );
   }

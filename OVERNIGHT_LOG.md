@@ -39423,3 +39423,60 @@ successfully; it emitted the existing optional wallet dependency and bundler
 warnings. Committed and pushed the change, deployed production, then fetched
 the live homepage with curl and confirmed both factual labels appear in the
 HTML.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T14:46:20Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T14:52:20Z
+
+### [Codex review] 2026-10-19 — API failure-boundary and live response pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest log entries first. As a
+fresh pass outside the recent metadata, visual, referral, and reconnect checks,
+read `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`,
+`app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`,
+`app/api/deposits/[id]/reconcile/route.ts`, `app/api/gas/route.ts`, and
+`lib/store.ts`. Checked validation boundaries for JSON shape, address format,
+decimal notation/precision, nonpositive and over-cap amounts, source chain,
+approval mode, and transaction hash format; checked that client-reported
+failure states are constrained by the transition table and that pull errors
+map to explicit HTTP statuses. Compared production persistence and API access
+risks against README.md: per-instance in-memory records, non-durable Vercel
+`/tmp`, cross-instance duplicate races, and unauthenticated/unlimited API
+access are already plainly documented as PoC limitations, including observed
+production failures, so they are not new discoveries for this pass.
+
+Fetched live responses with curl from `/api/gas`, `/api/deposits/check` (no
+parameters), `/api/deposits/check?wallet=0x0000000000000000000000000000000000000001&amount=1`,
+`/api/deposits/not-a-uuid`, and `/api/deposits/`. They returned the expected
+200 JSON, 400 JSON, 200 `{ "conflict": null }`, 404 JSON, and Vercel's 308
+trailing-slash redirect respectively. This focused pass found no distinct,
+substantiated fix beyond the already documented limitations. No application
+code changed; build, commit, push, and redeployment were not warranted. Existing
+worktree changes were left untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T15:16:20Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T15:27:20Z
+
+### [Codex review] 2026-10-19 — Made over-limit validation identify the demo token
+
+Read `OVERNIGHT_BRIEF.md`, the latest log tail, and `SPEC.md`. Fetched the
+live `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and a
+status route with `curl -sS -L`; each returned HTTP 200 with non-empty HTML.
+Then reviewed the amount-entry copy in `app/deposit/page.tsx` and searched all
+app code for `USDC`. The amount field already identifies the asset as
+MockUSDC, but the over-limit message called it USDC. The same ambiguity was
+present in the corresponding validation messages in
+`app/api/deposits/route.ts` and `app/api/deposits/check/route.ts`. Updated all
+three user-facing messages to say MockUSDC, consistent with the self-deployed
+demo token disclosure on the flow screens.
+
+`npm run build` completed successfully with existing optional wallet
+connector and bundler warnings. After production deployment, fetched `/deposit`
+and confirmed its page bundle includes the updated cap message; called both
+API validation paths with an over-cap amount and confirmed their responses name
+MockUSDC. Committed and pushed the change, then deployed production.

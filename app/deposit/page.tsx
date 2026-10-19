@@ -76,7 +76,7 @@ export default function DepositAmountPage() {
       return;
     }
     if (parsed > MAX_DEMO_AMOUNT) {
-      setError(`This demo caps deposits at ${MAX_DEMO_AMOUNT} USDC.`);
+      setError(`This demo caps deposits at ${MAX_DEMO_AMOUNT} MockUSDC.`);
       return;
     }
     // Strip leading zero padding ("010.5" -> "10.5") so the confirm,
