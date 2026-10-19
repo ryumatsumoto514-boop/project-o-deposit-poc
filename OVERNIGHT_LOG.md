@@ -39680,3 +39680,8 @@ opacity so the label uses the same contrast as other `label-caps` text. The
 production build passed (with existing optional wallet dependency and
 bundler warnings). Production deployment and live verification are recorded
 below after deployment.
+
+Production deployment completed successfully at `https://projecto-blond.vercel.app`.
+Fetched `/deposit/status/contrast-review-check` with curl (HTTP 200) and then
+fetched its referenced status-page JavaScript chunk; the live chunk contains
+`className:"label-caps shrink-0"` for “Next step” with no opacity modifier.
