@@ -15,7 +15,23 @@ export type PullOutcome =
 // attempt) and the reconciliation loop (which retries automatically on every
 // poll tick, so a deposit self-heals once the underlying issue clears
 // instead of sitting stuck until someone manually retries it).
-export async function attemptPull(deposit: DepositRecord): Promise<PullOutcome> {
+// API retries and the reconciliation poll can overlap while the relayer RPC
+// is in flight. Share one attempt per deposit in this process so concurrent
+// callers cannot submit two transferFrom transactions before txHash is saved.
+const inFlightPulls = new Map<string, Promise<PullOutcome>>();
+
+export function attemptPull(deposit: DepositRecord): Promise<PullOutcome> {
+  const existing = inFlightPulls.get(deposit.id);
+  if (existing) return existing;
+
+  const attempt = attemptPullOnce(deposit).finally(() => {
+    inFlightPulls.delete(deposit.id);
+  });
+  inFlightPulls.set(deposit.id, attempt);
+  return attempt;
+}
+
+async function attemptPullOnce(deposit: DepositRecord): Promise<PullOutcome> {
   if (deposit.txHash) {
     return { ok: true, deposit }; // already pulled
   }

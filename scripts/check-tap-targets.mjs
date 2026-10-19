@@ -1,10 +1,8 @@
-import { newTab, closeTab } from "./screenshot.mjs";
+// One-off: measure live rendered tap-target sizes (WCAG 2.5.5 AAA wants
+// >=44x44 CSS px) for interactive elements on key mobile flow screens.
+import { newTab, closeTab, shot } from "./screenshot.mjs";
 
 const CDP = "http://127.0.0.1:9333";
-const BASE_URL = "https://projecto-blond.vercel.app";
-const WALLET = "0x9a11f5B6D8c2A7e4C1d3F0b8E6a9C4d7F2b1A3e5";
-const CHAIN_ID_HEX = "0x66eee";
-
 function connect(wsUrl) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(wsUrl);
@@ -28,62 +26,40 @@ function send(ws, method, params = {}) {
   });
 }
 
-const INJECT_WALLET = `
-(function() {
-  const ADDR = ${JSON.stringify(WALLET)};
-  const CHAIN_ID = ${JSON.stringify(CHAIN_ID_HEX)};
-  window.ethereum = {
-    isMetaMask: true,
-    request: async ({ method }) => {
-      if (method === "eth_requestAccounts" || method === "eth_accounts") return [ADDR];
-      if (method === "eth_chainId") return CHAIN_ID;
-      if (method === "net_version") return String(parseInt(CHAIN_ID, 16));
-      return null;
-    },
-    on: () => {},
-    removeListener: () => {},
-  };
-})();
-`;
+const BASE = "https://projecto-blond.vercel.app";
+const PAGES = ["/", "/login", "/deposit"];
 
-const jobs = [
-  { url: `${BASE_URL}/`, seedFlow: null },
-  { url: `${BASE_URL}/login`, seedFlow: null },
-  { url: `${BASE_URL}/deposit`, seedFlow: { kolRef: null, mockIdentity: WALLET } },
-  { url: `${BASE_URL}/deposit/confirm`, seedFlow: { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0" } },
-  { url: `${BASE_URL}/deposit/approve`, seedFlow: { kolRef: null, mockIdentity: WALLET, draftAmount: "42.0", addressConfirmed: true } },
-];
-
-for (const job of jobs) {
+for (const path of PAGES) {
   const page = await newTab();
   const ws = await connect(page.webSocketDebuggerUrl);
   await send(ws, "Page.enable");
   await send(ws, "Runtime.enable");
   await send(ws, "Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 2, mobile: true });
-  await send(ws, "Page.addScriptToEvaluateOnNewDocument", { source: INJECT_WALLET });
-  if (job.seedFlow) {
-    await send(ws, "Page.addScriptToEvaluateOnNewDocument", {
-      source: `sessionStorage.setItem("exo_flow_state", ${JSON.stringify(JSON.stringify(job.seedFlow))});`,
-    });
-  }
-  await send(ws, "Page.navigate", { url: job.url });
-  await new Promise((r) => setTimeout(r, 1800));
+  await send(ws, "Page.navigate", { url: `${BASE}${path}` });
+  await new Promise((r) => setTimeout(r, 1500));
   const { result } = await send(ws, "Runtime.evaluate", {
-    expression: `(function(){
-      const els = Array.from(document.querySelectorAll("button, a, input, [role=button]"));
-      return JSON.stringify(els.map(el => {
-        const r = el.getBoundingClientRect();
-        const cs = getComputedStyle(el);
-        return {
-          tag: el.tagName,
-          text: (el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 30),
-          w: Math.round(r.width), h: Math.round(r.height),
-          visible: r.width > 0 && r.height > 0 && cs.visibility !== "hidden" && cs.display !== "none",
-        };
-      }).filter(e => e.visible && (e.w < 44 || e.h < 44)));
-    })()`,
+    expression: `
+      (function() {
+        const els = Array.from(document.querySelectorAll("button, a, input, [role=button]"));
+        return els.map(el => {
+          const r = el.getBoundingClientRect();
+          const style = getComputedStyle(el);
+          return {
+            tag: el.tagName,
+            text: (el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 40),
+            w: Math.round(r.width),
+            h: Math.round(r.height),
+            visible: r.width > 0 && r.height > 0 && style.visibility !== "hidden" && style.display !== "none",
+          };
+        }).filter(e => e.visible);
+      })()
+    `,
     returnByValue: true,
   });
-  console.log(job.url, "-> small targets:", result.value);
+  console.log(`\n=== ${path} ===`);
+  for (const el of result.value) {
+    const flag = (el.w < 44 || el.h < 44) ? "  <<< UNDER 44px" : "";
+    console.log(`${el.tag} [${el.w}x${el.h}] "${el.text}"${flag}`);
+  }
   await closeTab(page.id);
 }

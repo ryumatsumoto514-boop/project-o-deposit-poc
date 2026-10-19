@@ -95,7 +95,7 @@ console.log("navigating to /deposit ...");
 await send(ws, "Page.navigate", { url: `${BASE_URL}/deposit` });
 await wait(1200);
 try {
-  await clickText(ws, "Connect Injected");
+  await clickText(ws, "Connect Browser wallet");
   await wait(800);
 } catch {
   console.log("  already connected — skipping");
