@@ -405,7 +405,7 @@ export default function DepositStatusPage({ params }: { params: { id: string } }
             </div>
             {copy.nextStep && (
               <div className={`flex items-start gap-2.5 border-t ${style.divider} pt-2 text-sm`}>
-                <span className="label-caps shrink-0 opacity-70">Next step</span>
+                <span className="label-caps shrink-0">Next step</span>
                 <span>{copy.nextStep}</span>
               </div>
             )}

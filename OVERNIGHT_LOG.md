@@ -39592,3 +39592,91 @@ POST). I did not POST a test record because the API has no delete operation
 and that would leave an unintended in-flight demo deposit. The new record
 label is confirmed in the built/deployed route artifact, but its production
 JSON response was not exercised.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T18:51:22Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T18:57:22Z
+
+### [Codex review] 2026-10-19 — Independent API edge-case review; no new fix
+
+Read `OVERNIGHT_BRIEF.md` and the recent log tail first. Took a fresh pass
+through `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`,
+`app/api/deposits/[id]/route.ts`, `lib/idempotency.ts`, and `lib/store.ts`,
+then compared input validation with the relevant constraints in `SPEC.md`.
+Confirmed creation and preflight reject non-decimal, zero/negative, over-cap,
+and over-precision amounts; validate both addresses; and use case-insensitive
+wallet plus numeric amount matching for duplicate checks (so `1`, `1.0`, and
+`1.00` match). Client PATCH is limited to the two client-observed stalled
+states and checks state transitions. Fetched the live `/api/deposits` endpoint
+with `curl -sS -i`; GET returned the expected 405 for a POST-only route. Also
+requested a nonexistent status route and observed 404. I did not POST a valid
+deposit because the deployed store has no delete operation. No independently
+substantiated, narrow production defect emerged, so no application change,
+build, commit, or redeployment was made. Existing worktree changes were left
+untouched.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T19:22:22Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T19:32:23Z
+### [Codex review] 2026-10-19 — Live markup accessibility spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`. Fetched the
+production `/`, `/login`, and `/deposit` responses directly with `curl -sS -L`
+and saved the raw HTML under `/tmp` for inspection. Parsed those HTML responses
+to check for images without alt text and buttons without visible or ARIA names;
+none were present. Reviewed `app/globals.css` and `tailwind.config.ts` for
+palette, radius, spacing, and focus-style drift; the shared controls consistently
+use the configured turquoise accent, warning/error/success colors remain distinct,
+and reduced-motion and focus-visible styles are present. This pass found no
+specific defect worth changing. No application code changed; build, commit, push,
+and redeployment were not warranted. The pre-existing worktree modification to
+this log was preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T19:53:23Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T20:07:23Z
+
+### [Codex review] 2026-10-19 — Independent production/docs cross-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before this
+pass. Fetched the production `/`, `/login`, `/deposit`, `/deposit/confirm`,
+`/deposit/approve`, `/deposit/status/not-a-real-id`, and
+`/api/deposits/check` responses with `curl -sS -L`. The flow pages returned
+non-empty HTML; the invalid status ID returned HTTP 200 with the app's
+recovery UI (rather than a raw server error), while the check API returned
+its expected `MISSING_PARAMS` response. Inspected the homepage's raw meta
+markup and `app/layout.tsx`: description, robots, OG, Twitter card/image,
+and theme metadata are present, and the testnet/mock boundary is explicit.
+Compared README and testnet evidence claims with `SPEC.md` and the deployed
+MockUSDC disclosures; the documented testnet transaction evidence and the
+known limitations are explicit. Also inspected `CaptureKolRef.tsx`,
+`KolBanner.tsx`, and `FlowChrome.tsx`; referral capture and display behavior
+matches the documented flow. This pass found no specific, independently
+substantiated defect worth changing. No application code changed; build,
+commit, push, and redeployment were not warranted. Existing worktree changes
+were preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T20:24:23Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T20:42:23Z
+
+### [Codex review] 2026-10-19 — Restored contrast for status next-step label
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before this
+pass. Fresh review of `app/deposit/status/[id]/page.tsx` found that the small
+“Next step” label used the shared `slate-400` label color with an additional
+`opacity-70`. On the status card background (`#10131a`), compositing that
+combination yields approximately `#6c7889`, or 4.15:1 contrast; this falls
+short of the 4.5:1 WCAG AA target for normal-size text. Removed only the extra
+opacity so the label uses the same contrast as other `label-caps` text. The
+production build passed (with existing optional wallet dependency and
+bundler warnings). Production deployment and live verification are recorded
+below after deployment.
