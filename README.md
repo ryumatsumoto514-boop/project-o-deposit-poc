@@ -29,7 +29,7 @@ against the live URL, not just localhost).
 | Login (email / Google) | **Mocked** — no real Privy/OAuth. Clicking either button just sets a fake identity string. There is no real authentication in this PoC. |
 | Hyperliquid balance / "collateral credited" check | **Mocked** — we do not have Hyperliquid testnet access. A timer (15–30s after on-chain confirmation) simulates the balance becoming available. This is labeled in the UI on every status screen. |
 | "Trading account" / destination account shown to the user | **Mocked** — deterministically derived from the wallet address, cosmetic only, not a real Hyperliquid account |
-| Data store | **Mocked/PoC-scope** — an in-memory `Map`, backed by a local JSON file (`.data/deposits.json`) so it survives dev-server reloads. Not a real database. Wiped on redeploy. |
+| Data store | **Mocked/PoC-scope** — locally, an in-memory `Map` backed by `.data/deposits.json` so records survive dev-server restarts. On Vercel, each warm function instance has its own in-memory `Map` and best-effort `/tmp` file; neither is shared or durable. Not a real database. See Known limitations for the observed record-loss and duplicate-detection risks. |
 
 **The one thing that must be real and is:** the approve() + transferFrom()
 pair moving actual testnet ERC-20 tokens (a self-deployed mock USDC, see

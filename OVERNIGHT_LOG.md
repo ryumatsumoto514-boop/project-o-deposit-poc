@@ -40202,3 +40202,71 @@ Codex review tick finished, exit code 0
 Claude Code session not logged in / expired. Skipping this tick.
 
 ## Codex review tick: 2026-10-20T13:37:36Z
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T13:50:36Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T14:12:36Z
+
+### [Codex review] 2026-10-20 — Transaction-link and mobile amount-entry pass; no new fix warranted
+
+Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and the
+relevant PoC constraints in `SPEC.md`. For a fresh angle beyond the repeated
+metadata, CSS, API, and broad accessibility checks, inspected transaction
+links in `app/deposit/status/[id]/page.tsx` and followed `explorerUrl` back
+through `lib/pull.ts`: explorer links are built from transaction hashes, and
+external anchors use `target="_blank"` with `rel="noreferrer"`. Fetched the
+live `/deposit/status/demo` response with `curl -sS -L -D`; it returned HTTP
+200 and private/no-store caching headers. Then inspected the amount field and
+keyboard handling in `app/deposit/page.tsx`, including its `inputMode="decimal"`,
+six-decimal validation, and visual-viewport resize handling for the Continue
+button. The inspected areas already handle the edge cases I checked; I did not
+find a specific actionable defect. No application code changed; build, commit,
+push, and redeployment were not warranted. Preserved the pre-existing log
+modification and appended this review entry.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T14:21:36Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T14:47:37Z
+
+### [Codex review] 2026-10-20 — Live raw HTML and social preview asset check; no fix warranted
+
+Read `OVERNIGHT_BRIEF.md` and the latest review-log tail first. I checked the live production raw HTML directly with `curl -sS -L` for `/` and `/deposit/status/demo`, then inspected the response bodies for titles, descriptions, robots directives, Open Graph/Twitter fields, viewport, icons, headings, and link tags. The homepage emits the configured `noindex, nofollow`, honest testnet/mock description, social titles/descriptions, and a versioned Open Graph image URL; the status route has its own title and the shared noindex directive. Fetched the referenced `/opengraph-image` asset itself with `curl -sS -L -D`; it returned HTTP 200 and `content-type: image/png`. The root response also carries `lang="en"`. These checks did not substantiate a missing/broken metadata asset or another fixable issue. No application code changed; build, commit, push, and redeployment were not warranted. Existing worktree change remains the review log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T14:52:37Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T15:22:37Z
+
+### [Codex review] 2026-10-20 — Crash fallback and token contrast spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the latest review-log tail, and the scope/mock boundary in `SPEC.md`. For a focused angle not established by the recent metadata, route, API, or ordinary control checks, inspected `app/global-error.tsx`, `app/error.tsx`, and `app/not-found.tsx`, including the root-crash fallback's standalone shell and its retry/home recovery controls. The global fallback imports the shared stylesheet and uses the same component tokens; its separate root background is intentional because the root layout may have failed, and its comment records that constraint. Reviewed the actual color tokens in `app/globals.css` and `tailwind.config.ts` against their dark surfaces and semantic uses (including button text, muted body copy, warning/success/error banners, and turquoise links); no actionable contrast failure or inconsistent token use was substantiated. Fetched the live homepage with `curl -sS -L -D` (HTTP 200, 22,090 bytes) and an unknown status path with `curl -sS -L -o ... -w '%{http_code}'` (HTTP 200, 14,759 bytes; Next.js renders the not-found screen). This pass found no specific defect worth changing. No application code changed; build, commit, push, and redeployment were not warranted. The pre-existing worktree modification remains the log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T15:23:37Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-20T15:54:37Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T15:57:37Z
+### [Codex review] 2026-10-20 — Corrected README persistence scope
+
+Read `OVERNIGHT_BRIEF.md` and the recent review tail, then compared the
+README's real-vs-mocked table with `lib/store.ts` and the detailed Known
+limitations section. The table said the store was backed by local
+`.data/deposits.json` and "Wiped on redeploy" without distinguishing
+environments. `lib/store.ts` uses that JSON file only in local development;
+on Vercel it writes best-effort to `/tmp` and relies on an in-memory Map per
+warm function instance. That mismatch understated the known production data
+loss and duplicate-detection limitation. Clarified the table in `README.md`
+to describe both environments and link the limitation to its detailed
+section. Verified the local behavior against the `DATA_FILE` selection and
+store comments in `lib/store.ts`; fetched production `/` and the duplicate
+preflight API with `curl` (HTTP 200 for both; preflight returned
+`{"conflict":null}`). Documentation-only change; no app bundle or deployed
+behavior changed, so build and redeployment were not applicable.
