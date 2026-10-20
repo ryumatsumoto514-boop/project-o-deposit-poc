@@ -23,7 +23,7 @@ export default function GlobalError({
           classes, but still the same design tokens as app/error.tsx. */}
       <body className="min-h-[100dvh] bg-[#05070A] font-sans text-slate-100 antialiased">
         <main className="flex min-h-[100dvh] flex-col items-center justify-center px-5 py-10 text-center">
-          <div className="card flex w-full max-w-[420px] flex-col items-center gap-3">
+          <div role="alert" className="card flex w-full max-w-[420px] flex-col items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-full border border-rose-400/25 bg-rose-400/[0.08] text-rose-300">
               <AlertIcon className="h-5 w-5" />
             </span>
