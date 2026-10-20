@@ -5,6 +5,8 @@ export const metadata: Metadata = {
     template: "%s · Exchange O",
     default: "Deposit status",
   },
+  openGraph: { title: "Deposit status · Exchange O" },
+  twitter: { title: "Deposit status · Exchange O" },
 };
 
 export default function StatusLayout({ children }: { children: React.ReactNode }) {

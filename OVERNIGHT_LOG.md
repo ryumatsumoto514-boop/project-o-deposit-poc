@@ -39856,3 +39856,63 @@ the existing optional MetaMask/WalletConnect dependency and `ox` warnings
 remain. Committed as `7a5bf5a`, pushed to `origin main`, and deployed to
 production. After deployment, the same curl returned “Deposit lifecycle” and
 no longer returned “Live pipeline.”
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T01:31:27Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T01:57:27Z
+
+### [Codex review] 2026-10-20 — API mutation boundary spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before this
+independent pass. I focused on whether live mutation routes expose unexpected
+behavior around malformed deposit IDs: fetched production `POST
+/api/deposits/not-a-uuid/reconcile` and `/pull` with `curl -sS -i`; both
+returned HTTP 405 for GET, confirming method gating. Fetched production
+`PATCH /api/deposits/not-a-uuid` with a syntactically valid stalled-state body;
+it returned JSON `{"error":"NOT_FOUND"}` with HTTP 404. Cross-checked the
+route handlers in `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`,
+and `app/api/deposits/[id]/reconcile/route.ts` with `lib/stateMachine.ts`:
+the client PATCH accepts only the two documented client-observed stalled
+states and delegates transition validity to the existing transition map; the
+pull/reconcile handlers resolve records before attempting work. This specific
+boundary check did not substantiate a new defect worth changing. No app code
+changed, so build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T02:02:27Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T02:32:27Z
+
+### [Codex review] 2026-10-20 — Independent app copy and live-route pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent `OVERNIGHT_LOG.md`
+tail before reviewing. Fetched the raw production HTML for `/`, `/login`,
+`/deposit`, `/deposit/confirm`, `/deposit/approve`, and
+`/deposit/status/demo` with `curl -sS -L`; all six returned HTTP 200 and
+non-empty HTML. For a focused copy/interaction pass outside the prior
+metadata, CSS, route-integrity, and API-validation checks, inspected
+`app/login/page.tsx`, `app/components/KolBanner.tsx`,
+`app/components/CaptureKolRef.tsx`, `app/components/AppHeader.tsx`, the
+wallet-role component usage across the deposit screens, and the live-vs-mock
+statements in `README.md` and `testnet-evidence.md`. The login explicitly
+labels email/Google as simulated, wallet connection as real, the referral
+banner is formatted/capped and captured on deep links, and funding versus
+trading account labels are present in the flow screens. The README and
+transaction evidence consistently identify MockUSDC as a self-deployed token
+and the Hyperliquid-side credit check as mocked. This pass found no specific,
+independently substantiated defect worth changing. No application code
+changed; build, commit, push, and redeployment were not warranted. Existing
+worktree modification to `OVERNIGHT_LOG.md` was preserved and this entry was
+appended.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T02:33:27Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-20T03:04:28Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T03:07:28Z
