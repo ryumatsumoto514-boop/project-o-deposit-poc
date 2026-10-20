@@ -73,10 +73,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live Pipeline Stepper — replaces the old 3 static feature blocks. */}
+      {/* Deposit lifecycle overview — live state appears on the status tracker. */}
       <section className="fade-up flex flex-col gap-4" style={{ animationDelay: "140ms" }}>
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="h1">Live pipeline</h2>
+          <h2 className="h1">Deposit lifecycle</h2>
           <span className="label-caps hidden text-slate-400 sm:inline">
             Real-time on the status tracker
           </span>
