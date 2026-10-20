@@ -5,8 +5,8 @@ export const metadata: Metadata = {
     template: "%s · Exchange O",
     default: "Deposit amount",
   },
-  openGraph: { title: "Deposit amount · Exchange O" },
-  twitter: { title: "Deposit amount · Exchange O" },
+  openGraph: { title: "Deposit amount" },
+  twitter: { title: "Deposit amount" },
 };
 
 export default function DepositLayout({ children }: { children: React.ReactNode }) {

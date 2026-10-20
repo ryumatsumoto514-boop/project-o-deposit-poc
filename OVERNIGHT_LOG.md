@@ -39916,3 +39916,115 @@ Claude Code session not logged in / expired. Skipping this tick.
 Claude Code session not logged in / expired. Skipping this tick.
 
 ## Codex review tick: 2026-10-20T03:07:28Z
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T03:35:28Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T03:42:28Z
+
+### [Codex review] 2026-10-20 — Independent form semantics and live response check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before this
+pass. To check a fresh accessibility angle, inspected form/input/button
+semantics and live status announcements in `app/login/page.tsx`,
+`app/deposit/page.tsx`, `app/deposit/confirm/page.tsx`,
+`app/deposit/approve/page.tsx`, and `app/deposit/status/[id]/page.tsx`.
+The amount input has an associated visible label, invalid state and linked
+alert; approval radios are grouped and wrapped by labels; address confirmation
+and copy controls are labeled; status updates use a polite live region. Fetched
+the raw production `/` and `/deposit/status/demo` response bodies with
+`curl -sS -L`; both returned HTTP 200, with no broken response or unexpected
+empty document. The raw HTML counters undercount controls because the Next.js
+client-rendered UI is not represented as literal `<button>`/`<img>` tags in
+the fetched body, so I used source for the control audit rather than treating
+those counts as evidence of missing controls. This focused pass found no
+specific defect to fix. No application code changed; build, commit, push, and
+redeployment were not warranted. The pre-existing worktree modification to
+this log was preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T04:05:28Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T04:17:28Z
+
+### [Codex review] 2026-10-20 — Live crawler directives check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before this
+pass. For a fresh production check beyond the prior page metadata and raw
+HTML reviews, fetched `https://projecto-blond.vercel.app/robots.txt` with
+`curl -sS -D ... -o ...`; it returned HTTP 200 and `User-Agent: * / Allow:
+/`. Fetched the live homepage HTML and confirmed it emits
+`<meta name="robots" content="noindex, nofollow">`, matching
+`app/layout.tsx`. Also requested `/sitemap.xml` directly; it returned 404.
+Because this deployment is explicitly marked noindex in source, the absent
+sitemap is consistent with the demo's search-exclusion intent and is not a
+fixable product defect. This focused check did not substantiate a new issue.
+No application code changed; build, commit, push, and redeployment were not
+warranted. Preserved the pre-existing worktree log modification and appended
+this review entry.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T04:35:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T04:52:29Z
+
+### [Codex review] 2026-10-20 — Live route and API validation pass; no substantiated fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest log entries before this pass. Fetched raw production responses with `curl -sS -L` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, `/api/gas`, and `/robots.txt`; all returned HTTP 200 with bodies, and `/api/gas` returned a numeric live Gwei value. Reviewed the deposit creation and duplicate preflight handlers (`app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`) plus the wallet/amount comparison in `lib/store.ts`: both paths validate positive decimal amounts with at most six decimals and the same 1,000 MockUSDC cap, while matching addresses case-insensitively and amounts numerically. Their validation and duplicate-key semantics were consistent in source. Also reviewed the global layout metadata/viewport and key color tokens in `app/globals.css` and `tailwind.config.ts`; values and semantic color roles are coherent. I did not find a specific regression or inconsistency worth changing in this pass. No application code changed; build, commit, push, and redeployment were not warranted.
+
+Operational note: as a live POST validation probe, I created one 0.000001 MockUSDC demo deposit using disposable addresses `0x0000000000000000000000000000000000000001` and `0x0000000000000000000000000000000000000002`. The endpoint returned HTTP 201 and a `SIGNED` record. This is only test data; the PoC's documented in-memory Vercel store may retain it only in that warm function instance. No on-chain transaction was submitted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T05:06:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T05:27:29Z
+
+### [Codex review] 2026-10-20 — Independent API lifecycle and live response check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest `OVERNIGHT_LOG.md`
+tail before this pass. To avoid repeating recent metadata, CSS, amount
+validation, and copy checks, inspected the state transition table in
+`lib/stateMachine.ts` and the API lifecycle handlers in
+`app/api/deposits/route.ts`, `app/api/deposits/[id]/route.ts`,
+`app/api/deposits/[id]/pull/route.ts`, and
+`app/api/deposits/[id]/reconcile/route.ts`, along with the backing behavior in
+`lib/store.ts`, `lib/pull.ts`, and `lib/reconcile.ts`. I found the pull route
+revalidates the approval receipt and decodes its transaction to check sender,
+token, spender, and approved amount before submitting `transferFrom`; retries
+are coalesced per deposit within a running process. The reconciliation code
+retains `AMBIGUOUS` until credit is observed and keeps a fixed on-chain
+confirmation timestamp for escalation. No new lifecycle inconsistency was
+substantiated.
+
+Also fetched the live production `/`, `/deposit/approve`, and `/api/gas`
+responses using `curl -sS -D ... -o ...`. The two pages returned HTTP 200
+with route-specific titles; `/api/gas` returned HTTP 200 JSON with a numeric
+Gwei value. The page HTML has no canonical URL, but this deployment emits
+`noindex, nofollow` as already confirmed in the earlier crawler-directives
+review, so I did not treat canonical absence as a fix. No application code
+changed; build, commit, push, and redeployment were not warranted. Preserved
+the existing worktree log modification and appended this review entry.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T05:37:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T06:02:29Z
+
+### [Codex review] 2026-10-20 — Duplicate brand in social preview titles fixed
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail first. Fetched
+raw production HTML for `/`, `/login`, `/deposit`, `/deposit/confirm`,
+`/deposit/approve`, and `/deposit/status/demo` with a Python `urllib` probe
+(to inspect metadata in each returned body). The `/login` and `/deposit` OG
+titles were `Sign in · Exchange O · Exchange O` and
+`Deposit amount · Exchange O · Exchange O`; their route layouts hard-coded the
+brand while the root metadata template appends it. Removed the redundant brand
+from the child layouts' Open Graph and Twitter title values in the login and
+deposit route layouts (including confirm, approve, and status for consistency).
+`npm run build` passed. Next I will commit, push, deploy, and repeat the live
+HTML metadata probe to verify the corrected titles.
