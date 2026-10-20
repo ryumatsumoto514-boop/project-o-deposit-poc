@@ -39818,3 +39818,20 @@ Codex review tick finished, exit code 0
 Claude Code session not logged in / expired. Skipping this tick.
 
 ## Codex review tick: 2026-10-20T00:47:26Z
+
+### [Codex review] 2026-10-20 — Homepage illustration label clarified
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`. For a fresh
+copy review against the real-versus-mocked boundary, inspected
+`app/components/EngineVisual.tsx`, `app/page.tsx`, and the status tracker copy.
+The `EngineVisual` source says its animated loop is not wired to any live
+deposit, but its rendered caption said “O Engine · live telemetry
+(illustrative).” Direct `curl -sS -L https://projecto-blond.vercel.app/` and
+inspection of the raw HTML confirmed that wording was live. Changed the
+caption to “O Engine · illustrative pipeline,” leaving “Real-time on the
+status tracker” for the actual deposit tracker. `npm run build` completed
+(type checking and static page generation passed; existing wallet connector
+and `ox` dependency warnings appeared). Committed as `4821993`, pushed to
+`origin main`, and deployed to production. A post-deploy curl of the live
+homepage returned the updated “O Engine · illustrative pipeline” caption and
+no longer returned “live telemetry (illustrative).”
