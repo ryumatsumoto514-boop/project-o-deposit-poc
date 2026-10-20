@@ -39685,3 +39685,136 @@ Production deployment completed successfully at `https://projecto-blond.vercel.a
 Fetched `/deposit/status/contrast-review-check` with curl (HTTP 200) and then
 fetched its referenced status-page JavaScript chunk; the live chunk contains
 `className:"label-caps shrink-0"` for “Next step” with no opacity modifier.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T20:55:23Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T21:17:24Z
+### [Codex review] 2026-10-19 — Independent live-flow/API follow-up; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, this log's recent entries, and `SPEC.md` before
+reviewing. Took a fresh pass over the live flow responses with a Python
+`urllib` fetch (equivalent to inspecting the raw `curl` bodies) for `/`,
+`/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and
+`/deposit/status/demo`; each returned HTTP 200 with non-empty server-rendered
+HTML. Checked `/api/deposits/check?wallet=bad&amount=1`; it returned HTTP 400,
+and `/api/deposits/demo` returned 404. Re-read the duplicate guard in
+`lib/idempotency.ts` and the comparison in `lib/store.ts`: wallet casing is
+normalized and amounts compare numerically, so `1`, `1.0`, and `1.00` cannot
+evade duplicate detection inside an instance. Re-read the creation, preflight,
+and PATCH route validation in `app/api/deposits/route.ts`,
+`app/api/deposits/check/route.ts`, and `app/api/deposits/[id]/route.ts`.
+This review found no specific additional issue worth changing. No application
+code changed; build, commit, push, and redeployment were not warranted. The
+known cross-instance persistence/idempotency limitation remains documented in
+README and is not a newly discovered issue.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T21:25:24Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T21:52:24Z
+
+### [Codex review] 2026-10-19 — Independent live metadata and route response review; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`. Fetched the
+production homepage with `curl -sS -L` and inspected its raw HTML and response
+headers. Checked `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`,
+and `/deposit/status/not-a-real-id` directly; each returned HTTP 200 with
+non-empty HTML. The nonexistent status ID returns the application's recovery
+page. Verified `/opengraph-image` returns HTTP 200 as `image/png` (21,155
+bytes), so the live OG image URL resolves. Checked `/robots.txt` and found it
+allows crawlers; read `app/robots.ts` and `app/layout.tsx` to confirm this is
+intentional so crawlers can see the site's `noindex, nofollow` directive. The
+homepage's testnet/MockUSDC disclosures and metadata are present. This pass
+found no independently substantiated, narrow defect worth changing. No app
+code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T21:56:24Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-19T22:27:24Z
+
+## Codex review tick: 2026-10-19T22:27:24Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+### [Codex review] 2026-10-19 — Independent canonical/OG URL spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`. Fetched the
+raw production HTML for `/` and `/deposit` with `curl -sS -L`, and inspected
+response headers. Both pages returned HTTP 200 and the same explicit
+`noindex, nofollow` directive and testnet/MockUSDC description. The shared
+metadata in `app/layout.tsx` sets the production `metadataBase`; live HTML
+resolves the OG and Twitter image URLs to the production `/opengraph-image`
+route. I found no canonical URL in the raw markup, but with indexing explicitly
+disabled and no contradictory page identity, this did not substantiate a
+fixable production defect. No application change was made; build, commit, push,
+and redeployment were not warranted. Existing worktree changes were preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T22:58:25Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T23:02:25Z
+
+### [Codex review] 2026-10-19 — Independent API edge-case review; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`. Inspected all
+six route files under `app/api/`, focusing on input validation, failure
+transitions, and whether the relayer trusts client-supplied approval claims.
+`POST /api/deposits` rejects malformed addresses, non-decimal/zero/negative
+amounts, amounts above the demo cap, and amounts with more than six decimal
+places. `GET /api/deposits/check` applies the same wallet and amount checks.
+`lib/pull.ts` independently fetches the approval receipt and transaction,
+then checks sender, token, spender, and approved amount before `transferFrom`.
+Fetched live `/api/gas` and a valid `/api/deposits/check` request with `curl
+-sS -i`; both returned HTTP 200 with valid JSON. Tried GET requests on the
+pull/reconcile mutation routes; both returned HTTP 405. This specific pass
+found no additional defect I could substantiate and fix narrowly. No app code
+changed, so build, commit, push, and deployment were not warranted. The
+pre-existing worktree modification to this log was preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T23:28:25Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-19T23:37:25Z
+
+### [Codex review] 2026-10-19 — Production route/resource integrity pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the latest review entries in this log, and
+`SPEC.md` before starting. For a fresh angle beyond prior markup, metadata,
+accessibility, and API checks, fetched the raw production HTML for `/`,
+`/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and
+`/deposit/status/demo` with Python `urllib` and extracted each page's local
+`href`/`src` references. Followed the emitted root, login, favicon, apple-icon,
+and icon URLs; every fetched resource returned HTTP 200. Cross-checked the
+flow's internal links and client navigation (`app/page.tsx`,
+`app/components/FlowChrome.tsx`, `app/login/page.tsx`,
+`app/deposit/page.tsx`, `app/deposit/confirm/page.tsx`, and
+`app/deposit/approve/page.tsx`) against the existing App Router file tree.
+The observed `/login` → `/deposit` → `/deposit/confirm` → `/deposit/approve`
+paths and status URL pattern all have matching routes, and I found no broken
+local link or asset in this pass. No specific defect was substantiated, so no
+application change was made; build, commit, push, and deployment were not
+warranted. The existing worktree log modification was preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-19T23:59:25Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T00:12:25Z
+
+### [Codex review] 2026-10-20 — Independent CSS consistency and reduced-motion check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent `OVERNIGHT_LOG.md` tail before this pass. Since prior Codex ticks had already covered metadata, route integrity, and API input validation, I reviewed a different surface: `app/globals.css` and `tailwind.config.ts` for color/radius drift, plus the motion accessibility path. The authored tokens show a consistent card radius (`rounded-lg`), compact control radius (`rounded-md`), and a deliberate distinction between the turquoise brand accent and semantic amber warning color; the nearby one-off background shades and glow values are documented/used for separate surfaces and effects, so I found no narrow correction to make.
+
+Fetched the live `/deposit/approve` HTML with `curl -sS -D /tmp/projecto-live-headers https://projecto-blond.vercel.app/deposit/approve -o /tmp/projecto-approve.html` (HTTP 200), then fetched each linked production CSS asset. The live app stylesheet contains both `prefers-reduced-motion:reduce` and `animation:none!important`; `app/globals.css` applies that preference to animations/transitions and disables decorative flow/pulse elements. This confirms the animated status/hero treatment already has a reduced-motion fallback in production. No new defect was substantiated in this focused pass, so no application code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T00:30:25Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T00:47:26Z

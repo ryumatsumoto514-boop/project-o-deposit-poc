@@ -45,7 +45,7 @@ function NodeIcon({ index }: { index: number }) {
 export function EngineVisual() {
   return (
     <div className="card flex flex-col gap-6 p-6 sm:p-8">
-      <span className="label-caps">O Engine · live telemetry (illustrative)</span>
+      <span className="label-caps">O Engine · illustrative pipeline</span>
 
       <div className="flex items-center">
         {NODES.map((node, i) => (
