@@ -5,8 +5,8 @@ export const metadata: Metadata = {
     template: "%s · Exchange O",
     default: "Approve & sign",
   },
-  openGraph: { title: "Approve & sign" },
-  twitter: { title: "Approve & sign" },
+  openGraph: { title: "Approve & sign · Exchange O" },
+  twitter: { title: "Approve & sign · Exchange O" },
 };
 
 export default function ApproveLayout({ children }: { children: React.ReactNode }) {

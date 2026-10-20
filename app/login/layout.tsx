@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sign in",
-  openGraph: { title: "Sign in" },
-  twitter: { title: "Sign in" },
+  openGraph: { title: "Sign in · Exchange O" },
+  twitter: { title: "Sign in · Exchange O" },
 };
 
 export default function LoginLayout({ children }: { children: React.ReactNode }) {

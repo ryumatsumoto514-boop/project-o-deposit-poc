@@ -40033,3 +40033,172 @@ HTML for `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and
 and `/deposit` now emit single-brand OG/Twitter titles, and the other checked
 routes also emit single-brand titles. Existing optional MetaMask/WalletConnect
 and `ox` build warnings remain.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T06:08:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T06:37:30Z
+
+### [Codex review] 2026-10-20 — Invalid-path production behavior spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and the relevant PoC requirements in `SPEC.md` before this independent pass. To avoid repeating the recent metadata, CSS, API amount-validation, and core lifecycle reviews, fetched four production paths with `curl -sS -D -`: an unknown route (`/unknown-review-path`), a status page with an invalid-looking ID (`/deposit/status/not-a-valid-id`), and the corresponding API ID and reconcile paths. The unknown route returned a rendered 404 page with HTTP 404; the API ID lookup returned JSON `NOT_FOUND` with HTTP 404; the reconcile endpoint correctly returned HTTP 405 to GET. The dynamic status page returned HTTP 200 as expected for a client-rendered route, and source review of `app/deposit/status/[id]/page.tsx` confirmed it polls the API, retries transient misses, and gives up after three consecutive 404s with a warning not to deposit again. The delivered responses included the configured CSP, HSTS, frame denial, and MIME-sniffing protection headers. This focused pass did not substantiate a user-facing defect worth changing. No application code changed; build, commit, push, and redeployment were not warranted. The pre-existing `OVERNIGHT_LOG.md` worktree change was preserved and this entry appended.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T06:38:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-20T07:09:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T07:12:30Z
+
+### [Codex review] 2026-10-20 — Referral deep-link handling and live flow routes; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent `OVERNIGHT_LOG.md` tail before this pass. For a fresh angle beyond the prior metadata, CSS, API validation, copy, and lifecycle reviews, inspected `app/components/CaptureKolRef.tsx`, `app/components/KolBanner.tsx`, `app/flow-context.tsx`, and `app/layout.tsx`. Referral capture is mounted at the root so deep links retain `?ref=`; values are capped at capture and display, rendered through React text, and the banner names Exchange O's independence. The session-restored attribution value is type-checked, while the formatter also bounds the displayed text. Fetched the live production `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` routes with `curl -sS -L -o /dev/null -w`; each returned HTTP 200 with a non-empty body (14,312–22,090 bytes). Inspected the homepage response headers with `curl -sS -L -D`; it included the configured CSP, HSTS, frame denial, MIME-sniffing protection, and restrictive referrer policy. This specific pass did not substantiate a missed defect worth changing. No application code changed; build, commit, push, and redeployment were not warranted. Preserved existing worktree changes and appended this entry.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T07:40:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T07:47:30Z
+
+### [Codex review] 2026-10-20 — Approval failure recovery and API error response pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md` and the recent log tail before this pass. To check an angle not covered by the prior metadata, style, input validation, or reconciliation reviews, traced the approval transaction error flow in `app/deposit/approve/page.tsx` from `handleApproveAndDeposit` through the `PATCH /api/deposits/[id]` and `POST /api/deposits/[id]/pull` handlers, then checked how `app/deposit/status/[id]/page.tsx` presents an unresolved record. A record created before an uncertain approval outcome is linked directly from the error copy to its status page, which warns the user not to send again and continues polling. The explicit reverted-receipt branch records `STALLED_TIMEOUT`; unexpected errors retain the record as unresolved rather than asserting funds moved. No distinct recovery defect was substantiated in this pass.
+
+Also fetched the live `https://projecto-blond.vercel.app/api/deposits/check` with `curl -sS -D /tmp/projecto-headers -o /tmp/projecto-body`; the missing-parameter request returned HTTP 400 with `{"error":"MISSING_PARAMS"}` and JSON content type, with no stack trace or internal exception details. This focused pass found no specific issue worth changing. No application code changed, so build, commit, push, and redeployment were not warranted. Existing worktree modification to `OVERNIGHT_LOG.md` was preserved and this entry appended.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T08:11:31Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T08:22:31Z
+
+### [Codex review] 2026-10-20 — Fresh production route and claim consistency check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest review entries before this pass. As an independent check against the prior metadata, API validation, and lifecycle reviews, inspected `app/page.tsx`, `app/components/KolBanner.tsx`, `app/deposit/confirm/page.tsx`, and the README/testnet evidence statements for unsupported real-money/return claims or mismatched mock disclosures. The landing copy identifies MockUSDC and simulated Hyperliquid credit, the confirmation step names the demo token and testnet, and the referral banner explicitly says Exchange O is independent. No specific copy or trust issue was substantiated. Fetched raw production bodies using `curl -sS -L` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; all returned HTTP 200 with non-empty bodies (14,312–22,090 bytes). Also fetched `/api/gas`, which returned HTTP 200 JSON with a numeric `gwei` value. Searched the app and project evidence for TODO/FIXME markers and misleading return/guarantee wording; the remaining guarantee references are scoped to the documented limitations of the in-memory persistence and transfer retry behavior. No application code changed; build, commit, push, and redeployment were not warranted. This review entry was appended to the existing worktree log modification.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T08:42:31Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T08:57:31Z
+
+### [Codex review] 2026-10-20 — Interactive control naming and keyboard focus pass; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before this independent pass. The latest reviews already covered route metadata, styling tokens, API lifecycle and input validation, and user-facing copy, so I focused on accessible names and keyboard focus for interactive controls. Searched `app/**/*.{tsx,ts}` for buttons, SVGs, image alt text, `aria-label`, and title attributes; then inspected the button markup in `app/login/page.tsx`, `app/deposit/page.tsx`, `app/deposit/confirm/page.tsx`, and `app/deposit/approve/page.tsx`, plus icon components in `app/components/icons.tsx`. The controls checked use visible button text; the copy-address button also declares `aria-label="Copy destination address"`; decorative SVG icons declare `aria-hidden="true"`. Read the shared button and input rules in `app/globals.css`: buttons include `focus-visible:ring-4`, and inputs define focus border and ring styles. Fetched the raw live `/deposit/confirm` body with `curl -sS -L`; it returned HTTP 200 (14,312 bytes) and includes the rendered copy control's accessible label. This focused pass did not substantiate a new defect worth changing. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the existing worktree log modification and appended this entry.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T09:12:32Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T09:32:34Z
+
+### [Codex review] 2026-10-20 — Stateful API cache behavior spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the latest log tail, and the relevant PoC and deployment requirements in `SPEC.md`. To check a fresh operational angle after the prior route, metadata, accessibility, validation, and lifecycle reviews, fetched live production responses with `curl -sS -D ... -o ...` for `/api/gas` and `/api/deposits/demo`; the first returned HTTP 200 with a numeric Gwei value, and the unknown deposit ID returned HTTP 404 JSON `NOT_FOUND`. Both responses had `Cache-Control: public, max-age=0, must-revalidate` and `x-vercel-cache: MISS`, so this check did not indicate stale shared caching. Inspected `app/api/gas/route.ts`, `app/api/deposits/route.ts`, and `app/api/deposits/check/route.ts`: gas telemetry is explicitly force-dynamic, while deposit creation and duplicate preflight validate inputs and consult the live in-process store. No specific defect worth fixing was substantiated in this pass. No application code changed; build, commit, push, and redeployment were not warranted. The existing worktree modification was confined to this log, and this entry was appended.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T09:42:34Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T10:07:34Z
+
+### [Codex review] 2026-10-20 — Production page JavaScript asset integrity check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review log before this pass. As a fresh production check beyond the prior page body, metadata, API, and interactive-control reviews, fetched raw HTML from `https://projecto-blond.vercel.app/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` with a Python `urllib` probe. Each route returned HTTP 200 and a non-empty response (14,298–22,038 bytes). Extracted every emitted `<script src>` URL from each body and requested each distinct page reference in place; all script assets returned successfully, with no stale or missing chunk URL observed. This check did not substantiate a broken live page or another fixable issue. No application code changed; build, commit, push, and redeployment were not warranted. The existing worktree modification remains the review log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T10:13:34Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T10:42:34Z
+
+### [Codex review] 2026-10-20 — README/evidence consistency spot-check; no new fix
+
+Read `OVERNIGHT_BRIEF.md`, the latest review-log tail, `SPEC.md`, `README.md`,
+and `testnet-evidence.md` before this independent pass. I checked a fresh
+angle: whether the current docs' live deployment and on-chain proof claims
+matched reachable production/explorer responses. `curl -sS -L` returned HTTP
+200 with non-empty bodies for the production homepage (22,090 bytes) and
+`/deposit/status/demo` (14,658 bytes); `/api/gas` returned HTTP 200 JSON with a
+numeric `gwei` value. The Arbiscan Sepolia deployment transaction URL recorded
+in `testnet-evidence.md` returned HTTP 200 and its page identifies the recorded
+hash as a successful Arbitrum Sepolia transaction. The explorer's contract
+address page returned HTTP 403 from this environment, so I did not count that
+page as independently checked. Source review confirmed the README's local
+`.data/deposits.json` versus Vercel `/tmp`/per-instance limitation matches
+`lib/store.ts`. I also initially suspected reduced-motion support was missing,
+but found an existing `prefers-reduced-motion: reduce` rule in
+`app/globals.css`; this was not a new finding. No specific discrepancy or
+fixable defect was substantiated. No application code changed, so build,
+commit, push, and redeployment were not warranted. The pre-existing worktree
+modification was confined to this log; this entry was appended.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T10:44:34Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-20T11:15:35Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T11:17:35Z
+
+### [Codex review] 2026-10-20 — Crawler discovery check; no fix warranted
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review tail first. I
+checked a narrower crawler-discovery angle not called out in the previous
+passes: fetched the live `/robots.txt` and `/sitemap.xml` with `curl -sS -L`.
+Robots returns `User-agent: *` / `Allow: /`, and `/sitemap.xml` returns the
+rendered HTTP 404 page (17,195 bytes). A sitemap is absent, but the project is
+a noindex PoC: recent live HTML inspection and the root `app/layout.tsx`
+metadata configuration show `noindex, nofollow`; `app/robots.ts` explicitly
+allows crawling so crawlers can read that directive (as its comment states).
+Thus the missing sitemap does not expose the demo to indexing or break a
+user-facing flow, and I did not treat it as a defect worth adding code for.
+Also reviewed the role-label component (`app/components/WalletRoles.tsx`) and
+its deposit/login usages against SPEC's explicit wallet-role requirement; the
+screen-level labels are present. Live `/` and `/deposit` returned HTTP 200
+with non-empty bodies (22,090 and 15,669 bytes). No application code changed;
+build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T11:46:35Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T11:52:35Z
+
+### [Codex review] 2026-10-20 — Production CSP and browser-resource compatibility check; no new fix
+
+Read `OVERNIGHT_BRIEF.md` and the recent log tail before this pass. For an independent security/configuration angle beyond the prior route, metadata, asset, accessibility, and API reviews, fetched raw production HTML and headers with Python `urllib` from `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`. All six returned HTTP 200 and carried the same CSP: scripts/styles allow same-origin plus inline content, images/fonts allow same-origin and data URLs, and `connect-src` permits same-origin and the Arbitrum Sepolia RPC. Each HTML response contains Next.js inline RSC script tags, which the current policy permits. Compared the policy to `next.config.mjs`, then searched `app` and `lib` for external fetch, websocket, image, and link targets. `lib/wagmiConfig.ts` configures only the injected wallet connector; the app's network fetches are same-origin, and its RPC calls use the allowed Arbitrum origin. No CSP/resource mismatch or other actionable issue was substantiated. No application code changed; build, commit, push, and redeployment were not warranted. Appended this finding to the pre-existing modified log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T12:17:35Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T12:27:35Z
+
+## Codex review tick: 2026-10-20T12:28:00Z
+
+### [Codex review] 2026-10-20 — Amount/address duplicate edge-case pass; no new fix warranted
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent `OVERNIGHT_LOG.md` tail first. For this pass I traced the duplicate-deposit path in `lib/store.ts`, `lib/idempotency.ts`, `app/api/deposits/route.ts`, and `app/api/deposits/check/route.ts`, focusing on the requested replay edge cases: wallet casing, equivalent decimal spellings, malformed addresses, and amounts at the configured cap. Wallet comparisons lowercase both values; accepted amounts are restricted to positive decimal strings with at most six decimal places and are compared numerically, so casing and forms such as `1.5` / `1.50` do not bypass the conflict check. Both create and preflight endpoints validate the address format and the positive/capped amount before checking duplicates. I also read `app/globals.css` and `tailwind.config.ts` for palette and token drift; the documented amber warning / turquoise accent split and shared radius choices are consistent in the inspected rules.
+
+Fetched raw production responses with `curl -sS -L` for `/`, `/deposit/confirm`, `/deposit/approve`, `/api/deposits/check`, and `/api/gas`: the pages returned HTTP 200 (22,090 / 14,312 / 14,559 bytes), the check endpoint returned its expected HTTP 400 JSON for missing query parameters, and gas telemetry returned HTTP 200 JSON. Parsed the live `/deposit/confirm` HTML and confirmed viewport, descriptive metadata, `noindex, nofollow`, and route-specific social titles are present; no images or buttons are server-rendered on that route. This targeted pass did not substantiate a missed, user-facing defect worth changing. No application code changed; build, commit, push, and redeployment were not warranted. Appended this entry to the existing worktree log modification.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T12:48:35Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T13:02:36Z
+
+### [Codex review] 2026-10-20 — Amount precision and status recovery copy pass; no new fix warranted
+
+Read `OVERNIGHT_BRIEF.md` and the recent `OVERNIGHT_LOG.md` tail first. Prior passes already cover duplicate detection, metadata, interactive labels, CSP, and general live routes. I traced amount validation in `app/api/deposits/route.ts` and `app/api/deposits/check/route.ts`, including the six-decimal regex, `MAX_DEMO_AMOUNT` cap, `parseUnits` conversion, and numeric duplicate comparison in `lib/store.ts`; the accepted cap and six-decimal scale do not expose a precision or over-cap bypass. I also compared `STATE_COPY` and polling behavior in `app/deposit/status/[id]/page.tsx` with `lib/stateMachine.ts` and `lib/pull.ts`; the paused/error copy distinguishes relayer gas shortages, unresolved transfers, and post-confirmation ambiguity, and polling remains active for recoverable states. Finally, fetched raw production `/` and `/deposit/status/demo` HTML with `curl -sS -L` (HTTP 200, 22,038 and 14,642 bytes) and queried `/api/deposits/check` with amount `1000.000001`; production returned the expected HTTP 400 validation JSON. This targeted pass did not substantiate a fixable defect. No application code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T13:19:36Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T13:37:36Z
