@@ -39841,3 +39841,18 @@ Codex review tick finished, exit code 0
 Claude Code session not logged in / expired. Skipping this tick.
 
 ## Codex review tick: 2026-10-20T01:22:27Z
+
+### [Codex review] 2026-10-20 — Homepage pipeline heading clarified
+
+Read `OVERNIGHT_BRIEF.md` and the recent `OVERNIGHT_LOG.md` tail first. In a
+fresh copy pass after the earlier illustration-caption fix, inspected
+`app/page.tsx` and fetched the raw production homepage with
+`curl -sS -L https://projecto-blond.vercel.app/`. The HTML still called the
+static lifecycle overview “Live pipeline,” although its adjacent qualifier
+said real-time updates appear on the status tracker. This could imply that the
+illustrative overview itself was live. Changed the section heading to
+“Deposit lifecycle” and updated its source comment. `npm run build` passed;
+the existing optional MetaMask/WalletConnect dependency and `ox` warnings
+remain. Committed as `7a5bf5a`, pushed to `origin main`, and deployed to
+production. After deployment, the same curl returned “Deposit lifecycle” and
+no longer returned “Live pipeline.”
