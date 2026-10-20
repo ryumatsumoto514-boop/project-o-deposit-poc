@@ -40026,5 +40026,10 @@ titles were `Sign in · Exchange O · Exchange O` and
 brand while the root metadata template appends it. Removed the redundant brand
 from the child layouts' Open Graph and Twitter title values in the login and
 deposit route layouts (including confirm, approve, and status for consistency).
-`npm run build` passed. Next I will commit, push, deploy, and repeat the live
-HTML metadata probe to verify the corrected titles.
+`npm run build` passed. Committed as `fae5e10`, pushed to `origin main`, and
+deployed production (`dpl_5zMj1sQC95HDvZALkQZrr66nHusv`). Re-fetched live
+HTML for `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and
+`/deposit/status/demo` with Python `urllib`; all returned HTTP 200. `/login`
+and `/deposit` now emit single-brand OG/Twitter titles, and the other checked
+routes also emit single-brand titles. Existing optional MetaMask/WalletConnect
+and `ox` build warnings remain.
