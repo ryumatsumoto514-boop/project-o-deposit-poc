@@ -49,6 +49,19 @@ export async function PATCH(
   if (!body.status || !ALLOWED_CLIENT_STATUSES.includes(body.status)) {
     return NextResponse.json({ error: "INVALID_STATUS" }, { status: 400 });
   }
+  // Client reports are only used for a failed wallet approval, before the
+  // relayer starts the deposit transfer. Once reconciliation has observed
+  // on-chain progress, a client must not overwrite that evidence with a
+  // stale or forged timeout report.
+  if (deposit.status !== "SIGNED") {
+    return NextResponse.json(
+      {
+        error: "INVALID_TRANSITION",
+        message: "Client-reported failures are only accepted before the deposit transfer starts.",
+      },
+      { status: 409 }
+    );
+  }
   if (!canTransition(deposit.status, body.status)) {
     return NextResponse.json(
       {

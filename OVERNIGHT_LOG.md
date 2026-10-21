@@ -40751,3 +40751,59 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-10-21 — Referral banner no longer implies a URL tag is a verified endorsement
 
 Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and `SPEC.md` before this independent review. In `app/components/CaptureKolRef.tsx`, confirmed that any user-editable `?ref=` value is captured, capped, and persisted; `app/flow-context.tsx` retains it in session storage and the deposit API carries it forward. In `app/components/KolBanner.tsx`, the old copy stated “You arrived via [value]'s content,” even though the component comments explicitly acknowledge that referral slugs can be spoofed by anyone. This could falsely attribute an endorsement to an arbitrary person or brand. Changed the disclosure to call it a “Referral link label” and say that the label comes from the link and does not verify an endorsement, while retaining Exchange O's independence statement. Ran `npm run build` successfully (existing optional MetaMask/pino/viem warnings only). Committed and pushed the change, deployed to Vercel production, and verified the live homepage with `curl` using `/?ref=kol_alex`; because the banner is rendered client-side, its text is absent from raw HTML. Extracted the page JavaScript bundle URLs from that response and fetched the homepage bundle: it contains the new unverified-label disclosure and no longer contains the old endorsement claim.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T15:50:06Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T15:53:06Z
+
+### [Codex review] 2026-10-21 — README/evidence cross-check against live flow; no new mismatch substantiated
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, the recent review tail, `README.md`, and `testnet-evidence.md`. Cross-checked the documented MockUSDC address and relayer/deposit-address pattern against `lib/chain.ts` and `lib/relayer.ts`, and the flow's record-creation and receipt-check sequence against `app/deposit/approve/page.tsx` and `app/api/deposits/route.ts`. Fetched production `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, `/api/gas`, and a malformed `/api/deposits/check` request with Python `urllib`: the pages returned HTTP 200 with nonempty HTML, gas returned HTTP 200 with numeric `gwei`, and the malformed check returned HTTP 400. The readme's stated real-versus-mocked boundaries match the source and current UI copy; the state record is created after the wallet returns the approval transaction hash and before waiting for its on-chain receipt. Tried to independently retrieve all seven documented transaction receipts from the public Arbitrum Sepolia RPC, but that endpoint returned HTTP 403 for every request, so receipt status was not independently re-verified in this pass. This review did not substantiate a fixable documentation or live-flow mismatch. No app code or docs behavior changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T16:20:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T16:28:07Z
+
+### [Codex review] 2026-10-21 — Live route and API failure-response spot check; no new defect substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` first. For a fresh check beyond recent metadata, validation, and lifecycle reviews, fetched raw production responses with `curl -sS -L` from `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, `/api/gas`, and `/robots.txt`; each returned HTTP 200 with a non-empty body. Then searched the API route handlers for thrown exception details or raw stack/message serialization and read the shared referral disclosure and capture components (`app/components/KolBanner.tsx` and `app/components/CaptureKolRef.tsx`). The API handlers return structured validation errors, and referral display is bounded and explicitly disclaims endorsement verification. I did not find a specific live response, API failure-path, or referral-display issue that justified a change. No application or documentation behavior changed; build, commit, push, and redeployment were not warranted. This entry records the exact production paths and source files checked.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T16:51:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T17:03:07Z
+
+### [Codex review] 2026-10-21 — Approval-to-transfer transaction representation pass; no defect substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent review entries, and `SPEC.md` before this pass. For a different flow-level check, traced the approval path in `app/deposit/approve/page.tsx` through `app/api/deposits/route.ts`, `lib/pull.ts`, `lib/reconcile.ts`, and `lib/types.ts`. The record intentionally keeps the user's `approveTxHash` separate from `txHash`/`explorerUrl`: approval grants allowance, while the relayer's later `transferFrom` is the transaction that actually moves funds and is the one tracked as the deposit transaction. The approval path waits for a successful receipt before triggering that pull; reconciliation independently checks the transfer receipt. This distinction is consistent with the type comments and the flow copy, so I found no transaction-label or state-transition correction to make. As a live check, fetched `https://projecto-blond.vercel.app/deposit/approve` with `curl -sS -L -D /tmp/codex-review-live-headers ... -o /tmp/codex-review-live-approve`; it returned HTTP 200 with a 14,690-byte HTML body. I also read the full authored tokens in `app/globals.css` and `tailwind.config.ts`; the sampled accent, warning, success, and body-text roles remain distinct, with no concrete contrast/token mismatch substantiated in this pass. No application or documentation code changed. There was no fix to build, commit, push, or redeploy.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T17:22:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T17:38:07Z
+
+### [Codex review] 2026-10-21 — Referral deep-link and displayed-label edge pass; no new fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, and the referral scope in `SPEC.md` before this independent pass. Focused on whether arbitrary referral parameters still create a trust or usability issue after the prior disclosure-copy fix. Read `app/components/CaptureKolRef.tsx`, `app/components/KolBanner.tsx`, and the referral persistence/rehydration logic in `app/flow-context.tsx`. The capture path caps input at 64 characters; display formatting strips only the `kol_`/`kol-` convention, safely title-cases labels, bounds visible names to 24 characters, and has a generic fallback for separator-only values. The banner explicitly says the value comes from the link and does not verify an endorsement. Fetched `https://projecto-blond.vercel.app/?ref=kol_alex` with curl (HTTP 200, 22,165 bytes), extracted its script URLs, and fetched the page bundle; it contains both the current “Referral link label” copy and the non-verification disclosure. This focused check did not substantiate a distinct fixable referral bug or misleading claim. No application or documentation behavior changed; build, commit, push, and redeployment were not warranted. This entry records the live URL, fetched bundle, and source paths checked.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T17:53:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T18:13:08Z
+
+### [Codex review] 2026-10-21 — Independent live HTML and metadata spot check; no actionable issue found
+
+Read `OVERNIGHT_BRIEF.md` and the current log tail before starting, then read the page metadata layouts in `app/layout.tsx`, `app/login/layout.tsx`, `app/deposit/layout.tsx`, `app/deposit/confirm/layout.tsx`, `app/deposit/approve/layout.tsx`, and `app/deposit/status/[id]/layout.tsx`, plus `app/robots.ts` and `app/not-found.tsx`. Fetched the raw production responses with Python `urllib` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, and `/opengraph-image`: the six screens each returned HTTP 200 HTML with nonempty bodies, and the OG route returned HTTP 200 `image/png` (21,155 bytes). The page-specific title metadata is present; global metadata supplies the demo/testnet disclosure and `noindex,nofollow`, and robots allows crawlers to read that directive. This separate live-response pass did not substantiate a missing metadata, broken OG asset, or route-response defect. No app or documentation behavior changed, so build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T18:24:08Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T18:48:08Z
