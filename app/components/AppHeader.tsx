@@ -103,9 +103,13 @@ export function AppHeader() {
             />
             {typeof gwei === "number" ? `${gwei.toFixed(3)} GWEI` : gwei === null ? "GAS —" : "GAS …"}
           </span>
-          <span className="pill shrink-0">
+          <span
+            className="pill shrink-0"
+            aria-label="Arbitrum Sepolia testnet"
+            title="Arbitrum Sepolia testnet"
+          >
             <span className="led-dot led-live bg-emerald-400 text-emerald-400 shrink-0" />
-            Sepolia
+            Arb Sepolia
           </span>
           {isConnected && address && (
             <span
