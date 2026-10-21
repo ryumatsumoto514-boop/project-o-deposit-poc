@@ -40834,3 +40834,63 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-10-21 — Referral deep-link capture waits for session restoration
 
 Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` before this independent pass. In `app/providers.tsx`, the root mounts `CaptureKolRef` beside `FlowProvider`; tracing their effects in `app/components/CaptureKolRef.tsx` and `app/flow-context.tsx` showed the query capture could run before the provider's asynchronous `sessionStorage` restore. That ordering could allow stale saved attribution to overwrite a new `?ref=` value on a deep link or refresh. Updated capture to wait for `hydrated`, so persisted flow state is restored first and the URL referral then takes precedence. `npm run build` passed locally; Vercel's production build also passed (both emitted the existing optional MetaMask/pino and viem warnings). Committed as `81a62ed`, pushed to `origin/main`, and deployed production as `dpl_9tbyEyqxdgxa9dGWzShRXn1RaQ8b` (aliased to `https://projecto-blond.vercel.app`). Verified the live homepage returned HTTP 200 (22,165 bytes) and served the deployed layout client bundle containing the referral capture/hydration logic. The race itself is fixed by the effect guard and build-verified; this was not exercised through a browser session with preloaded storage.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T20:25:15Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T20:33:15Z
+
+### [Codex review] 2026-10-21 — Independent storage and copy cross-check; no distinct missed defect substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` first. For a fresh pass beyond the recent metadata, validation, referral, and reconciliation reviews, traced the deployment persistence boundary in `lib/store.ts` and compared its behavior/limitations with `README.md`'s data-store row and Known limitations section. The Vercel per-instance in-memory map and best-effort `/tmp` persistence limitations, including observed record loss and duplicate misses, are already explicitly and accurately documented; this is a real product limitation but not a newly missed finding. Also searched the user-facing copy in `app/` and the README for real-return/guarantee claims and wallet-role language, and read the current design token roles in `app/globals.css` and `tailwind.config.ts`. Fetched the live homepage using `curl -sS -L -D /tmp/codex-review-hdr https://projecto-blond.vercel.app/ -o /tmp/codex-review-home.html`; it returned HTTP 200 with the configured response security headers. These bounded checks did not substantiate another concrete defect worth changing. No application or docs behavior changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T20:55:15Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T21:08:15Z
+
+### [Codex review] 2026-10-21 — Full destination-address confirmation and role labels; no missed defect substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the current log tail, and `SPEC.md` before this independent pass. Focused on the address-poisoning protection from the spec, including whether the supposedly full destination remains usable on a narrow layout and whether the role summary hides the authoritative value. Read `app/deposit/confirm/page.tsx`, `app/components/WalletRoles.tsx`, and the `.mono-box` rules in `app/globals.css`. The confirmation screen renders the complete deposit address in a `break-all` monospace box, has a labeled copy control with announced success/failure status, and requires the user to affirm checking that full address. Wallet-role rows intentionally truncate quick-reference addresses but preserve the complete value in the title attribute; the confirmation screen separately displays the complete destination. Fetched the production HTML with `curl -sS -L -D /tmp/codex-review-confirm-headers.txt https://projecto-blond.vercel.app/deposit/confirm -o /tmp/codex-review-confirm.html` (HTTP 200, 14,443 bytes), then fetched `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` individually; all returned HTTP 200 nonempty HTML. No address truncation, mislabeled role, or broken route response was substantiated in this focused pass. No application code or docs behavior changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T21:26:16Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T21:43:16Z
+
+### [Codex review] 2026-10-21 — Duplicate-check casing and reduced-motion accessibility pass; no missed fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` before this independent pass. Checked a different set of edge cases from the recent referral, metadata, and state-report reviews: read `app/api/deposits/check/route.ts`, the matching `POST` validation and conflict path in `app/api/deposits/route.ts`, `lib/idempotency.ts`, and `lib/store.ts`. Both preflight and creation use the same helper; stored and supplied wallet addresses are compared case-insensitively, and amounts are compared numerically, so address casing changes and equivalent decimal spellings such as `1.5`/`1.50` do not bypass duplicate blocking. Fetched production `https://projecto-blond.vercel.app/api/deposits/check?wallet=0x0000000000000000000000000000000000000001&amount=1` with `curl -sS -D /tmp/codex-dup-hdr ... -o /tmp/codex-dup-body`; it returned HTTP 200 and `{"conflict":null}` for the valid wallet/amount with no matching record. Also searched `app/globals.css` for all authored animation declarations and found its existing `@media (prefers-reduced-motion: reduce)` rule disables animations and transitions, hides decorative flow/pulse indicators, and prevents active-button scaling. These checks did not substantiate a distinct defect, so no code change was made; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T21:57:16Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T22:18:16Z
+
+### [Codex review] 2026-10-21 — Mobile amount and confirmation controls pass; no actionable defect found
+
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, and the UI/mobile requirements in `SPEC.md`. For a fresh interaction-focused check, read `app/deposit/page.tsx`, `app/deposit/confirm/page.tsx`, `app/components/AppHeader.tsx`, and the shared button/input/focus rules in `app/globals.css`. The amount field has an explicit label and announced validation errors; its submit button is kept in view when iOS's visual viewport changes. The confirmation screen exposes the full destination, a labeled copy action with live feedback, and a labeled checkbox gate. Shared controls use a visible `focus-visible` ring. The header hides its gas pill below the small breakpoint to preserve room for the network and wallet indicators. Fetched `https://projecto-blond.vercel.app/deposit` with `curl -sS -L`; it returned nonempty HTML with `viewport` set to `width=device-width, initial-scale=1`. This pass did not substantiate a specific mobile interaction, labeling, or focus defect worth changing. No application or docs behavior changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T22:28:16Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T22:53:16Z
+
+### [Codex review] 2026-10-21 — Independent amount-boundary and raw-route check; no new fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` before this pass. Fetched the live page routes `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, and `/nonexistent` with `curl -sS -L`; each expected flow route returned HTTP 200 with a nonempty HTML body and a page title, while the unknown route returned the branded HTTP 404 page. Then reviewed `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`, `app/api/deposits/[id]/pull/route.ts`, `lib/pull.ts`, `lib/store.ts`, and `lib/failures.ts` for decimal parsing, amount bounds, and transfer-trigger behavior. The create route validates a plain decimal string with no more than six places and enforces the 1,000 MockUSDC cap before `parseUnits`; the duplicate preflight applies the same format and range checks. Queried the live `/api/deposits/check` endpoint with a valid wallet and `-1`, `0`, `1e3`, and `1000.000001` (all HTTP 400), as well as `.000001` and `1000` (both HTTP 200). The pull path independently verifies the successful approval receipt and that the transaction matches the recorded wallet, token, spender, and approval amount before submitting `transferFrom`. These checks did not substantiate a concrete new defect, so no application or documentation behavior was changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T22:59:16Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T23:28:17Z
+
+### [Codex review] 2026-10-21 — Approval hash surfaced when duplicate creation loses a race
+
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, and the relevant safety scope in `SPEC.md`. Traced the two-request duplicate guard through `app/deposit/approve/page.tsx`, `app/api/deposits/check/route.ts`, and `app/api/deposits/route.ts`: the client preflight can return clear, then the user submits an on-chain approval, but another deposit can win before the subsequent create POST. The create route then returns 409; the old blocked UI showed the other deposit and silently discarded the approval hash even though that approval was already submitted. Updated the 409 branch to retain that hash and display an explicit warning plus Arbiscan link in the blocked state. `npm run build` passed (with the existing optional MetaMask/pino and viem warnings). Committed, pushed to `origin/main`, and deployed production. Verified `/deposit/approve` live and fetched the deployed route JS bundle to confirm it contains the new approval warning and transaction link. The rare race itself was source/build verified rather than induced with production transactions.

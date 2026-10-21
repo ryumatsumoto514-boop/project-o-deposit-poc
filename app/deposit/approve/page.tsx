@@ -55,6 +55,7 @@ export default function DepositApprovePage() {
   const [step, setStep] = useState<Step>("form");
   const [errorMessage, setErrorMessage] = useState<{ title: string; detail: string } | null>(null);
   const [blockedDeposit, setBlockedDeposit] = useState<DepositRecord | null>(null);
+  const [untrackedApprovalTxHash, setUntrackedApprovalTxHash] = useState<string | null>(null);
   const [orphanedDepositId, setOrphanedDepositId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -157,6 +158,9 @@ export default function DepositApprovePage() {
       });
       const createBody = await createRes.json();
       if (createRes.status === 409) {
+        // The preflight and create requests are separate; another request can
+        // win between them after this wallet has already submitted approval.
+        setUntrackedApprovalTxHash(approveTxHash);
         setBlockedDeposit(createBody.deposit);
         setStep("blocked");
         return;
@@ -246,6 +250,24 @@ export default function DepositApprovePage() {
             send again — here&apos;s its current status.
           </span>
         </div>
+        {untrackedApprovalTxHash && (
+          <div className="banner-amber flex items-start gap-2.5">
+            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+            <span>
+              Your approval transaction was submitted, but it was not attached
+              to this existing deposit. Check it in your wallet before taking
+              any further action.{" "}
+              <a
+                href={`https://sepolia.arbiscan.io/tx/${untrackedApprovalTxHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-amber-100"
+              >
+                View approval transaction ↗
+              </a>
+            </span>
+          </div>
+        )}
         <button
           onClick={() => router.push(`/deposit/status/${blockedDeposit.id}`)}
           className="btn-primary w-fit"
