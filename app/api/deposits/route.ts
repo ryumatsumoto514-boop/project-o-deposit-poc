@@ -37,6 +37,12 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+  if (typeof body.mockIdentity === "string" && body.mockIdentity.length > 120) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "mockIdentity must be at most 120 characters." },
+      { status: 400 }
+    );
+  }
 
   if (
     body.approveTxHash != null &&
@@ -102,6 +108,12 @@ export async function POST(req: NextRequest) {
   if (body.kolRef != null && typeof body.kolRef !== "string") {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "kolRef must be a string or null." },
+      { status: 400 }
+    );
+  }
+  if (typeof body.kolRef === "string" && body.kolRef.length > 120) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "kolRef must be at most 120 characters." },
       { status: 400 }
     );
   }
