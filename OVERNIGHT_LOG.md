@@ -40446,3 +40446,56 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-10-20 — Runtime error announcements for assistive technology
 
 Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review tail first. For a bounded accessibility check beyond the already-reviewed form controls and normal routes, inspected `app/error.tsx` and `app/global-error.tsx`: both render actionable runtime-failure guidance, but the error panels had no live announcement semantics, so screen-reader users could miss the failure and recovery instructions when the boundary replaces a crashed screen. Added `role="alert"` to each panel. Before editing, fetched production `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, an unknown route, `/api/deposits/demo`, and `/api/deposits/demo/pull` with `curl -sS -L`; expected route/API behavior returned (200 for app shells, 404 for unknown page/deposit, 405 for GET pull). `npm run build` passed after the change; Next emitted existing optional dependency / dynamic import warnings from MetaMask SDK, pino, and viem. Pushed commit `81fde7c` and deployed production successfully via `vercel --token "$VERCEL_TOKEN" --yes --prod` (deployment `dpl_EMqNqXrjgReGCABK1KiY2SXRKNFr`, aliased to `https://projecto-blond.vercel.app`). Fetched the live homepage, extracted its script assets, then fetched the deployed `/_next/static/chunks/app/error-136bbe556003a6e8.js` and `global-error-ee161a48981a3acd.js`; each contains the corresponding error-screen text and compiled `role:"alert"` semantics.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T23:03:49Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-20T23:32:49Z
+
+### [Codex review] 2026-10-20 — Live API numeric-boundary and malformed-body pass; no defect found
+
+Read `OVERNIGHT_BRIEF.md` and the recent review tail first. For a distinct API check from the earlier basic validation/idempotency review, inspected `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`, and `lib/constants.ts`, then sent production requests with `curl` to `https://projecto-blond.vercel.app/api/deposits/check`: a valid 0.000001 amount returned HTTP 200; 0.0000001, 1e2, and 1000001 each returned HTTP 400 with the decimal-precision/positive-amount/1000 MockUSDC cap message. A malformed JSON POST to `/api/deposits` returned HTTP 400 with `Request body must be valid JSON`; a bad-address preflight returned HTTP 400 with the expected wallet validation message. These responses match the source's six-decimal regex, shared `MAX_DEMO_AMOUNT = 1000`, address validation, and JSON parse error handling. The API responses carried `cache-control: public, max-age=0, must-revalidate`, so I found no cache behavior mismatch in these requests. No actionable defect was substantiated; no application code changed, so build, commit, push, and redeployment were not warranted. This entry records the focused checks; the existing worktree change is the ongoing review log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-20T23:34:49Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-21T00:05:49Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T00:07:49Z
+
+### [Codex review] 2026-10-21 — Independent keyboard-navigation and production-header pass; no missed fix substantiated
+
+Read `OVERNIGHT_BRIEF.md` and the recent log tail first. The earlier passes already cover metadata, route shells, error announcements, and API input bounds, so I checked a distinct accessibility edge: whether the global skip link's `#main-content` target exists on each normal flow screen and the route-level error boundary. Read `app/layout.tsx`, `app/page.tsx`, `app/login/page.tsx`, `app/deposit/page.tsx`, `app/deposit/confirm/page.tsx`, `app/deposit/approve/page.tsx`, `app/deposit/status/[id]/page.tsx`, `app/error.tsx`, and `app/global-error.tsx`; all normal route shells and the route error boundary have a matching `main-content` target. The global error document is self-contained because the root layout failed, so it does not render the normal skip link. Also fetched production `/api/gas` with `curl -sS -D /tmp/proj_head -o /tmp/proj_body`; it returned HTTP 200, valid JSON, and the expected anti-stale `public, max-age=0, must-revalidate` cache policy alongside the deployed security headers. This was a specific review of a separate keyboard-navigation path and the live API response; I found no actionable defect worth changing. No application or documentation code changed, and build/commit/push/deployment were not warranted. The existing worktree change remains this ongoing review log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T00:36:49Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T00:42:49Z
+
+### [Codex review] 2026-10-21 — Production route title and description consistency; no new fix warranted
+
+Read `OVERNIGHT_BRIEF.md` and the recent review tail first. For a focused check not covered by the recent raw-route pass, fetched production `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` with `curl -sS -L -D`; all returned HTTP 200. Inspected each raw HTML `<title>`, description, robots directive, and Open Graph title, then compared those results with the metadata declarations in `app/layout.tsx` and the per-route layouts. Each route emits its intended title and matching Open Graph title, inherits the testnet/MockUSDC/simulated-flow description and `noindex,nofollow` directive, and I found no route metadata mismatch to fix. Also inspected the user-facing buttons in `app/login/page.tsx`, the copy-address and confirmation controls in `app/deposit/confirm/page.tsx`, and the global recovery controls in `app/global-error.tsx`; their accessible names come from visible text or an explicit label. No new actionable defect was substantiated. No application code changed; build, commit, push, and redeployment were not warranted. This entry is the only new worktree change.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T01:07:50Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T01:17:50Z
+
+### [Codex review] 2026-10-21 — Bound client-reported failure text
+
+Read `OVERNIGHT_BRIEF.md` and the recent log tail first. Earlier reviews covered
+deposit input bounds and status transitions, but not the size of a client
+reported failure reason. Reading `app/api/deposits/[id]/route.ts` showed that
+PATCH checked the value's type but accepted any string length, then persisted
+and echoed it in later deposit responses. Added a 500-character maximum with a
+clear HTTP 400 validation response. `npm run build` passed locally and the
+Vercel production build completed (with the existing optional dependency and
+dynamic import warnings). Committed as `ee5d2cd`, pushed to `origin/main`, and
+deployed production `dpl_7sh9FeASPWiG6RPVUebYQQn8Q59U`. Verified live by creating
+a test deposit with `POST /api/deposits`, then PATCHing it with a 501-character
+failure reason; production returned HTTP 400 and the new validation message.
