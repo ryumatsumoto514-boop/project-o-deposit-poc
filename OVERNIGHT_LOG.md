@@ -40651,3 +40651,7 @@ Codex review tick finished, exit code 0
 Claude Code session not logged in / expired. Skipping this tick.
 
 ## Codex review tick: 2026-10-21T10:03:03Z
+
+### [Codex review] 2026-10-21 — Clarified the active testnet in the persistent network badge
+
+Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and `SPEC.md` first. In an independent pass through `app/components/AppHeader.tsx`, noticed the always-visible network pill said only “Sepolia,” even though `lib/chain.ts`, the wallet switch path, and `/api/gas` all use Arbitrum Sepolia (chain ID 421614). That label could lead users to confuse the app's network with Ethereum Sepolia. Changed the compact visible label to “Arb Sepolia” and added the accessible name and tooltip “Arbitrum Sepolia testnet.” Ran `npm run build` locally successfully; it emitted the already documented optional MetaMask/pino and viem dynamic-import warnings. Committed as `5cc177d`, pushed to `origin/main`, and deployed production as `dpl_DN1bLeNBFH3onUeujod2qbNmY2Ca` (aliased to `https://projecto-blond.vercel.app`). Verified with `curl -sS -L https://projecto-blond.vercel.app/`: live homepage HTML contains “Arb Sepolia” and no longer has the ambiguous standalone “Sepolia” badge text.
