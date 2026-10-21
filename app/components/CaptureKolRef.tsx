@@ -17,12 +17,15 @@ const MAX_REF_LENGTH = 64;
 
 export function CaptureKolRef() {
   const searchParams = useSearchParams();
-  const { setKolRef } = useFlow();
+  const { hydrated, setKolRef } = useFlow();
   const ref = searchParams.get("ref");
 
   useEffect(() => {
-    if (ref) setKolRef(ref.slice(0, MAX_REF_LENGTH));
-  }, [ref, setKolRef]);
+    // Let FlowProvider restore sessionStorage first, then let the URL take
+    // precedence. Otherwise these sibling passive effects can race and a
+    // refresh with ?ref=... may restore the older referral over this value.
+    if (hydrated && ref) setKolRef(ref.slice(0, MAX_REF_LENGTH));
+  }, [hydrated, ref, setKolRef]);
 
   return null;
 }
