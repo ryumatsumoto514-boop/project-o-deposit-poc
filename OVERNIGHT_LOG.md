@@ -40811,3 +40811,26 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-10-21 — Client failure reports cannot overwrite observed transfer progress
 
 Read `OVERNIGHT_BRIEF.md`, the recent review tail, and `SPEC.md` before this pass. Reviewed the client failure-report path in `app/api/deposits/[id]/route.ts`, its caller in `app/deposit/approve/page.tsx`, and `lib/stateMachine.ts`. Found that the general transition table intentionally allows `STALLED_TIMEOUT` after `CONFIRMED_ONCHAIN` and `BRIDGING`, but the public PATCH endpoint uses that same table for untrusted client reports. A stale or forged client request could therefore replace observed on-chain progress with a client-reported timeout. The actual caller reports only a reverted approval, before the transfer starts, while the record is still `SIGNED`. Added a route-level guard so client-reported failure updates are accepted only in `SIGNED`; reconciler transitions are unchanged. `npm run build` passed (with the existing optional MetaMask/pino/viem dependency warnings). Committed as `41ec4a9`, pushed to `origin main`, and deployed to production (`dpl_2pngFjWhJeqj9Pwf4S37fhnhZqwq`, alias `https://projecto-blond.vercel.app`). Verified the live homepage with curl (HTTP 200, 22,165 bytes) and confirmed the live PATCH route responds (HTTP 404 `NOT_FOUND` for a deliberately nonexistent UUID). I did not create a synthetic deposit in production, so the new rejection branch is verified by source/build and deployment, not by mutating production test data.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T18:55:08Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T19:23:08Z
+
+### [Codex review] 2026-10-21 — Independent raw-response and accessibility/error-surface pass; no distinct missed fix substantiated
+
+Read `OVERNIGHT_BRIEF.md` and the recent `OVERNIGHT_LOG.md` tail before this pass, then read `SPEC.md` for product boundaries. Fetched raw production responses with `curl -sS -L -D -` from `https://projecto-blond.vercel.app/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, `/does-not-exist`, and `/api/deposits/check` (the last intentionally omitted required query parameters). The app routes returned HTTP 200 with HTML bodies, the unknown route returned HTTP 404 with the branded page shell, and the malformed API request returned HTTP 400 `MISSING_PARAMS`. The route responses include the configured CSP, `nosniff`, referrer and permissions policies. Read `next.config.mjs` to compare the CSP's `connect-src` Arbitrum Sepolia RPC origin with `lib/wagmiConfig.ts` and `app/api/gas/route.ts`; the browser chain client uses the allowed RPC and gas polling is same-origin. Also read `app/error.tsx`, `app/global-error.tsx`, `app/not-found.tsx`, and the interactive controls in `app/login/page.tsx`, `app/deposit/confirm/page.tsx`, and `app/deposit/approve/page.tsx`: recovery actions have visible names, the copy action has an explicit accessible name, and errors are announced. The first curl loop printed expected `curl: (23)` messages for some HTML routes because `head` closed the response-header pipeline early; the captured status and initial bodies were still returned, and this did not indicate an application failure. This pass did not substantiate a specific fixable defect. No application or documentation behavior changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T19:25:08Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-21T19:55:11Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T19:58:11Z
+
+### [Codex review] 2026-10-21 — Referral deep-link capture waits for session restoration
+
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` before this independent pass. In `app/providers.tsx`, the root mounts `CaptureKolRef` beside `FlowProvider`; tracing their effects in `app/components/CaptureKolRef.tsx` and `app/flow-context.tsx` showed the query capture could run before the provider's asynchronous `sessionStorage` restore. That ordering could allow stale saved attribution to overwrite a new `?ref=` value on a deep link or refresh. Updated capture to wait for `hydrated`, so persisted flow state is restored first and the URL referral then takes precedence. `npm run build` passed locally; Vercel's production build also passed (both emitted the existing optional MetaMask/pino and viem warnings). Committed as `81a62ed`, pushed to `origin/main`, and deployed production as `dpl_9tbyEyqxdgxa9dGWzShRXn1RaQ8b` (aliased to `https://projecto-blond.vercel.app`). Verified the live homepage returned HTTP 200 (22,165 bytes) and served the deployed layout client bundle containing the referral capture/hydration logic. The race itself is fixed by the effect guard and build-verified; this was not exercised through a browser session with preloaded storage.
