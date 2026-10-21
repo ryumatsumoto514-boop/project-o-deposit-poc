@@ -40655,3 +40655,99 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-10-21 — Clarified the active testnet in the persistent network badge
 
 Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and `SPEC.md` first. In an independent pass through `app/components/AppHeader.tsx`, noticed the always-visible network pill said only “Sepolia,” even though `lib/chain.ts`, the wallet switch path, and `/api/gas` all use Arbitrum Sepolia (chain ID 421614). That label could lead users to confuse the app's network with Ethereum Sepolia. Changed the compact visible label to “Arb Sepolia” and added the accessible name and tooltip “Arbitrum Sepolia testnet.” Ran `npm run build` locally successfully; it emitted the already documented optional MetaMask/pino and viem dynamic-import warnings. Committed as `5cc177d`, pushed to `origin/main`, and deployed production as `dpl_DN1bLeNBFH3onUeujod2qbNmY2Ca` (aliased to `https://projecto-blond.vercel.app`). Verified with `curl -sS -L https://projecto-blond.vercel.app/`: live homepage HTML contains “Arb Sepolia” and no longer has the ambiguous standalone “Sepolia” badge text.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T10:13:03Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T10:38:03Z
+
+### [Codex review] 2026-10-21 — Production form hydration and live header telemetry check; no new fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the latest log tail, and `SPEC.md` before this independent pass. Earlier reviews covered general route availability and static accessibility markup, so I checked the production HTML for the state-dependent deposit amount form and compared that with its source conditions in `app/deposit/page.tsx`. `curl`-equivalent Python `urllib` GETs to `/`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/api/gas` all returned HTTP 200. The disconnected `/deposit` shell does not include `id="deposit-amount"`, the amount label, or submit button because the form is rendered only when wagmi reports a connected account; that behavior matches the source and avoids presenting a funding form before a real wallet is connected. The homepage HTML includes the updated “Arb Sepolia” label, its full accessible title, and the home link name. `/api/gas` returned a numeric live RPC value (`0.020282` GWEI) in this sample. I found no form-label mismatch, stale network label, or fabricated telemetry to fix. No application or documentation content changed; build, commit, push, and redeployment were not warranted. This log entry records the URLs, observed response content, and source condition checked.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T10:44:03Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T11:13:04Z
+
+### [Codex review] 2026-10-21 — Live canonical and sharing metadata check; no fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest `OVERNIGHT_LOG.md` entries first. To check a specific raw-HTML gap not called out in the recent reviews, fetched `https://projecto-blond.vercel.app/` and `/deposit/confirm` with `curl -sS -L -D`, then parsed the homepage response body for canonical, icon, description, robots, Open Graph, and Twitter tags. The deployed homepage has no canonical link, but `app/layout.tsx` sets `noindex,nofollow` intentionally for this assignment demo, so a canonical URL would not provide useful indexing guidance. Its OG and Twitter title/description, image URL, image alt text, and metadata base all resolve to the live production domain; icon links are present. The confirmation route returned non-empty HTML, and `/api/gas` returned a numeric JSON response (`{"gwei":0.020304}`) during the check. No mismatch or actionable issue was found in this focused pass. No application code or docs changed; build, commit, push, and redeployment were not warranted. This review entry records the exact live URLs and source file checked.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T11:14:04Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-10-21T11:44:04Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T11:48:04Z
+
+### [Codex review] 2026-10-21 — External-link opener safety and live destination check; no issue found
+
+Read `OVERNIGHT_BRIEF.md`, the latest log tail, and `SPEC.md` first. For a narrow fresh pass, searched every external URL in `app/` and audited links opened in a new tab, including the faucet CTAs in `app/deposit/approve/page.tsx` and explorer links in `app/deposit/status/[id]/page.tsx`. The new-tab links specify `rel="noopener noreferrer"` (or `noreferrer`, which also implies opener isolation); the faucet links without `target="_blank"` do not open a separate tab. Fetched the live homepage via `curl -sS -L -D /tmp/codex-live-h https://projecto-blond.vercel.app/ -o /tmp/codex-live.html` and confirmed a nonempty production response. This bounded review found no unsafe new-tab opener or broken external-link handling, so there was no code change to build or deploy. This entry records the exact source paths and live request checked.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T12:14:04Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T12:23:04Z
+
+### [Codex review] 2026-10-21 — Design-token, live route metadata, and control-label pass; no fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the current log tail, and `SPEC.md` before starting. For a distinct pass beyond prior route-availability and broad metadata checks, read the complete design-token/component section and reduced-motion rules in `app/globals.css`, the extended palette in `tailwind.config.ts`, and the rendered control markup in `app/login/page.tsx` and `app/components/AppHeader.tsx`. The core surfaces consistently use one turquoise accent, amber warning treatment, matching 6px/8px component radii, and the reduced-motion override; login buttons have descriptive visible names and the header's icon-free network badge has an accessible label. Fetched raw production HTML with `curl -sS -L` from `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`: all returned HTTP 200 with nonempty bodies and route-specific titles, the shared accurate testnet/mock description, and `noindex,nofollow`. I found no specific token drift, unnamed control, or live metadata defect to fix in this pass. No application code changed; build, commit, push, and redeployment were not warranted. This entry documents the concrete files and URLs checked.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T12:45:05Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T12:58:05Z
+
+### [Codex review] 2026-10-21 — Sitemap fallback response checked; no actionable change for noindex demo
+
+Read `OVERNIGHT_BRIEF.md`, the latest review-log tail, and `SPEC.md` before this pass. Fetched raw production responses with `curl -sS -L` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; each returned nonempty HTML. Also fetched `/api/gas` (HTTP 200 with numeric `gwei`), `/api/deposits/check?wallet=bad&amount=1` (HTTP 400 `INVALID_REQUEST`), `/robots.txt` (HTTP 200), and `/sitemap.xml` (HTTP 200 but Next.js homepage HTML rather than XML). Checked `app/robots.ts` and `app/layout.tsx`: the demo intentionally emits `noindex,nofollow`, and robots.txt does not advertise a sitemap, so a missing sitemap is not actionable for the stated search-excluded demo. The malformed-wallet API response is also correctly rejected. No application or documentation behavior warranted a fix in this bounded review; no build, commit, push, or redeployment was performed. This entry records the exact production paths and the sitemap response examined.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T13:16:05Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T13:33:05Z
+
+### [Codex review] 2026-10-21 — Live deposit-creation boundary checks; no missed defect substantiated
+
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest review-log tail first. For an independent API edge-case pass, read `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`, `lib/idempotency.ts`, and the store's wallet/amount comparison in `lib/store.ts`. Confirmed idempotency compares wallet addresses case-insensitively and amounts numerically, so casing and equivalent decimal spellings do not bypass duplicate detection. Posted malformed JSON and amounts `-1`, `0`, `1e3`, `1.0000001`, and `1000.000001` to the live `https://projecto-blond.vercel.app/api/deposits`; every request returned HTTP 400 with a specific validation error, and none created a deposit. The current 1000 MockUSDC cap is enforced before `parseUnits`. This focused review did not substantiate a fixable API validation or casing/replay issue. No app code changed, so build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T13:46:05Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T14:08:05Z
+
+### [Codex review] 2026-10-21 — Relayer pull recovery and live preflight pass; no fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the latest log entries, and `SPEC.md` before this pass. Focused on a lifecycle edge not covered by the recent metadata and input-validation passes: whether a failed relayer `transferFrom` attempt is actually retried and whether the UI's retry promise is true. Read `app/deposit/approve/page.tsx`, `app/deposit/status/[id]/page.tsx`, `lib/pull.ts`, and `lib/reconcile.ts`. The approval screen sends users to the status route after pull errors; the status route polls `/reconcile` while the record is not `CREDITED`; reconciliation calls the shared `attemptPull`, which is a no-op after a tx hash is stored and coalesces concurrent attempts per deposit within a process. Relayer failures preserve `STALLED_NO_GAS` or `STALLED_TIMEOUT` and are retried on later polls. Fetched production `/deposit/approve` with `curl -sS -L -D ...` (HTTP 200, 14,672-byte HTML response) and `/api/deposits/check?wallet=0x0000000000000000000000000000000000000001&amount=1` (HTTP 200, `{"conflict":null}`); the cache header was `public, max-age=0, must-revalidate`. This pass found no mismatch between the retry copy and behavior, nor a live response defect. No application or docs behavior warranted a fix, so no build, commit, push, or redeployment was performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T14:17:05Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T14:43:06Z
+
+### [Codex review] 2026-10-21 — Raw production status markup and API mutation validation; no new fix substantiated
+
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before this independent pass. To check a gap not covered by the recent sitemap, creation-validation, and retry checks, fetched raw production `https://projecto-blond.vercel.app/deposit/status/demo` with `curl -sS -L -D /tmp/codex-review-headers.txt ... -o /tmp/codex-review-status.html`. It returned HTTP 200, 14,789 bytes, `private, no-cache, no-store` caching, a skip link to `#main-content`, and status markup with `aria-live`/`aria-atomic`; the static shell contains no unnamed empty buttons or image alt-text omissions. Read all API route handlers under `app/api/deposits` and `app/api/gas`, including the client status PATCH validator. The PATCH path checks JSON shape, restricts client reports to `STALLED_NO_GAS`/`STALLED_TIMEOUT`, checks the state transition, and caps failure text before mutating the record; pull independently verifies approval on-chain. Gas lookup failure returns `gwei: null`, which the header renders as unavailable rather than a fabricated value. I did not find a distinct fixable defect in these checks. No application or documentation behavior changed; build, commit, push, and redeployment were not warranted. The worktree already contained the accumulated log entries since commit `f4160e4`; I preserved them and appended this review record.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-10-21T14:48:06Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-10-21T15:18:06Z
+
+## Cron tick: 2026-10-21T15:19:06Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+### [Codex review] 2026-10-21 — Referral banner no longer implies a URL tag is a verified endorsement
+
+Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and `SPEC.md` before this independent review. In `app/components/CaptureKolRef.tsx`, confirmed that any user-editable `?ref=` value is captured, capped, and persisted; `app/flow-context.tsx` retains it in session storage and the deposit API carries it forward. In `app/components/KolBanner.tsx`, the old copy stated “You arrived via [value]'s content,” even though the component comments explicitly acknowledge that referral slugs can be spoofed by anyone. This could falsely attribute an endorsement to an arbitrary person or brand. Changed the disclosure to call it a “Referral link label” and say that the label comes from the link and does not verify an endorsement, while retaining Exchange O's independence statement. Ran `npm run build` successfully (existing optional MetaMask/pino/viem warnings only). Committed and pushed the change, deployed to Vercel production, and verified the live homepage with `curl` using `/?ref=kol_alex`; the rendered HTML contains the new unverified-label disclosure and no longer contains the old endorsement claim.
