@@ -68,6 +68,12 @@ export async function PATCH(
       { status: 400 }
     );
   }
+  if (typeof body.failureReason === "string" && body.failureReason.length > 500) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "failureReason must be at most 500 characters." },
+      { status: 400 }
+    );
+  }
   const updated = depositStore.update(deposit.id, {
     status: body.status,
     failureReason: body.failureReason ?? null,
