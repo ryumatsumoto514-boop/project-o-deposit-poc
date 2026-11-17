@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseUnits } from "viem";
-import { CHAIN, USDC_DECIMALS } from "@/lib/chain";
+import { decodeFunctionData, parseUnits } from "viem";
+import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, publicClient, USDC_ADDRESS, USDC_DECIMALS } from "@/lib/chain";
 import { depositStore } from "@/lib/store";
 import { findConflictingInFlightDeposit } from "@/lib/idempotency";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
@@ -121,6 +121,48 @@ export async function POST(req: NextRequest) {
   if (body.approvalMode !== "exact" && body.approvalMode !== "unlimited") {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "approvalMode must be \"exact\" or \"unlimited\"." },
+      { status: 400 }
+    );
+  }
+
+  // A public create endpoint must not let an arbitrary caller reserve another
+  // wallet's wallet/amount pair with a missing or unrelated transaction hash.
+  // The transaction may still be pending here; /pull independently verifies
+  // its successful receipt before any funds are transferred.
+  if (!body.approveTxHash) {
+    return NextResponse.json(
+      { error: "APPROVAL_MISSING", message: "A wallet approval transaction is required." },
+      { status: 400 }
+    );
+  }
+  let approvalTx;
+  try {
+    approvalTx = await publicClient.getTransaction({ hash: body.approveTxHash as `0x${string}` });
+  } catch {
+    return NextResponse.json(
+      { error: "APPROVAL_NOT_FOUND", message: "The approval is not visible on Arbitrum Sepolia yet. Try again shortly." },
+      { status: 425 }
+    );
+  }
+  try {
+    const approval = decodeFunctionData({ abi: ERC20_ABI, data: approvalTx.input });
+    const requestedAmount = parseUnits(body.amount, USDC_DECIMALS);
+    const approvedAmount = approval.args[1];
+    const amountMatches = body.approvalMode === "exact"
+      ? approvedAmount === requestedAmount
+      : typeof approvedAmount === "bigint" && approvedAmount >= requestedAmount;
+    if (
+      approvalTx.from.toLowerCase() !== body.userWallet.toLowerCase() ||
+      approvalTx.to?.toLowerCase() !== USDC_ADDRESS.toLowerCase() ||
+      approval.functionName !== "approve" ||
+      String(approval.args[0]).toLowerCase() !== DEPOSIT_ADDRESS.toLowerCase() ||
+      !amountMatches
+    ) {
+      throw new Error("Approval does not match deposit");
+    }
+  } catch {
+    return NextResponse.json(
+      { error: "APPROVAL_INVALID", message: "The transaction does not approve this wallet, token, spender, and amount." },
       { status: 400 }
     );
   }

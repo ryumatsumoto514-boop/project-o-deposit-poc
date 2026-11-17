@@ -48107,3 +48107,57 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-11-17 — Background token drift in body and sticky header fixed
 Read `OVERNIGHT_BRIEF.md`, the recent tail of this log, and `SPEC.md` before choosing a styling pass distinct from prior reviews. Fetched the live `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` routes with `curl`; all returned HTTP 200 HTML. Read `app/globals.css` and `tailwind.config.ts`: the shared `background` token is `#0a0c10`, but the body background and sticky header separately hardcoded that same value. Updated the body to `var(--background)` and the header to a 90% `color-mix()` using the same token, so those surfaces stay aligned if the palette changes. `npm run build` passed; it emitted the existing optional MetaMask async-storage, pino-pretty, and viem dynamic-dependency warnings. Deployment and live CSS verification are recorded after completion below.
 Vercel production deployment `dpl_D2hBLvX8fWuw6Fihi6Yg2XQ4smtm` reached READY and was aliased to `https://projecto-blond.vercel.app`. Verified the alias with `curl` (HTTP 200 HTML), extracted its deployed CSS asset from the raw homepage HTML, and fetched that stylesheet; it contains `body{...background-color:var(--background)}` and the header's `background-color:color-mix(in srgb,var(--background) 90%,transparent)`. Commit `1427090` was pushed to `origin/main`; this verification note is included in the follow-up commit.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T20:11:08Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T20:17:08Z
+
+### [Codex review] 2026-11-17 — Live approval-screen motion preference check; no actionable issue found
+Read the full brief and recent log entries, then checked the live `/deposit/approve` HTML with `curl -sS` and fetched its referenced CSS assets (`e2b65efd36b4286b.css` and `6e348c1c30dbd2f9.css`). Inspected `app/globals.css` around its animation definitions and reduced-motion rule. The live global stylesheet includes `@media (prefers-reduced-motion: reduce)` with `animation: none !important`, `transition: none !important`, and hides decorative pulsing dots; it also removes the active button transform. This is the important motion accessibility behavior and it is already deployed. The fetched `/api/deposits/not-a-real-id/pull` probe returned 405 for GET as expected for its POST-only handler; no issue was found there. This pass found no concrete missed defect worth changing. No application source changed; no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T20:42:08Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T20:52:08Z
+
+### [Codex review] 2026-11-17 — Independent live route and API freshness check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the latest review entries, `SPEC.md`, and the README mock/live boundary before choosing a new angle. Fetched the live `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` routes with curl; each returned HTTP 200 HTML. Also fetched `/api/gas` (HTTP 200 JSON with a numeric gas value) and `/api/deposits/check` without parameters (HTTP 400 `MISSING_PARAMS`). Probed the duplicate preflight with a valid wallet and amount and inspected response headers: it returned `cache-control: public, max-age=0, must-revalidate`, `age: 0`, and `x-vercel-cache: MISS`, so the request was not served as a fresh shared cached response. Read the create and preflight validators and confirmed both enforce the documented positive decimal, six-decimal precision, and 1,000 MockUSDC cap. This independent live/source pass did not substantiate a concrete defect worth fixing. No application source changed; no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T21:12:09Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T21:27:09Z
+
+### [Codex review] 2026-11-17 — Independent explorer-link provenance check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest Codex review entries before selecting a new surface. Inspected `lib/chain.ts`, `lib/types.ts`, `lib/pull.ts`, `app/api/deposits/[id]/route.ts`, and the transaction-link rendering in `app/deposit/status/[id]/page.tsx` and `app/deposit/approve/page.tsx`. Verified that the transfer explorer URL is generated from the relayer's transaction hash using the fixed Arbiscan Sepolia origin; approval links use the same fixed origin; and the API's client-reported failure path cannot set either transaction hash or explorer URL. Fetched the live `/`, `/deposit/status/demo`, and duplicate-preflight endpoint with curl; responses were HTTP 200 (HTML, HTML, and JSON respectively). The inspected links use `rel="noreferrer"` or `rel="noopener noreferrer"`. This pass did not substantiate a redirect, untrusted-link, or live/source mismatch. No application code changed, so no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T21:43:09Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T22:02:09Z
+
+### [Codex review] 2026-11-17 — Independent live gas-telemetry failure-state check; no actionable issue found
+Read the brief and latest review log entries first; prior checks already covered route metadata, common deposit validation, and page accessibility. Chose the nav's live gas telemetry as a narrower uncovered path. Fetched `https://projecto-blond.vercel.app/api/gas` with `curl -sS -L --max-time 20 -D /tmp/projecto-review-live-gas.hdr ... -o /tmp/projecto-review-live-gas.json`; the deployed endpoint returned HTTP 200 JSON with a numeric `gwei` value (`0.020108` at fetch time). Read `app/api/gas/route.ts` and `app/components/AppHeader.tsx`: the handler returns `gwei: null` on RPC failure, while the client distinguishes loading, valid numeric data, and failure (`GAS —`) and does not preserve an old price as if it were current. This live/source check did not substantiate a telemetry defect. No product code changed; no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T22:14:09Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T22:37:10Z
+
+### [Codex review] 2026-11-17 — Independent malformed-request and public transition-path check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent Codex review tail, and `SPEC.md` before selecting a route-level check not covered by the recent entries. Sent malformed JSON (`Content-Type: application/json`, body `{`) with curl to `POST https://projecto-blond.vercel.app/api/deposits`; the live route returned HTTP 400 JSON `INVALID_REQUEST` with a bounded explanation, plus `X-Content-Type-Options: nosniff` and the configured security headers. Fetched `/api/deposits/not-a-real-id`; it returned HTTP 404 JSON `NOT_FOUND`. Read `app/api/deposits/route.ts`, `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`, `app/api/deposits/[id]/reconcile/route.ts`, `app/api/deposits/check/route.ts`, `lib/pull.ts`, and `lib/stateMachine.ts`: creation rejects malformed/non-object bodies and validates wallet, amount, chain, and approval fields; client PATCH failures are limited to allowed states and only accepted while still SIGNED; the pull route verifies the on-chain approval transaction's sender, token, spender, function, and amount before `transferFrom`; invalid transitions are rejected by the shared state machine. This targeted live/source pass did not substantiate a concrete defect worth changing. No application code changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T22:44:10Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T23:12:10Z
+
+## Cron tick: 2026-11-17T23:14:10Z
+Claude Code session not logged in / expired. Skipping this tick.

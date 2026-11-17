@@ -141,23 +141,34 @@ export default function DepositApprovePage() {
         args: [DEPOSIT_ADDRESS, approvalMode === "exact" ? amountRaw : maxUint256],
       });
 
-      const createRes = await fetch("/api/deposits", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          mockIdentity,
-          userWallet: address,
-          destinationAccount: deriveMockTradingAccount(address),
-          amount: draftAmount,
-          amountRaw: amountRaw.toString(),
-          sourceChainId: CHAIN.id,
-          kolRef,
-          approvalMode,
-          approveTxHash,
-        }),
+      const createPayload = JSON.stringify({
+        mockIdentity,
+        userWallet: address,
+        destinationAccount: deriveMockTradingAccount(address),
+        amount: draftAmount,
+        amountRaw: amountRaw.toString(),
+        sourceChainId: CHAIN.id,
+        kolRef,
+        approvalMode,
+        approveTxHash,
       });
-      const createBody = await createRes.json();
-      if (createRes.status === 409) {
+      let createRes: Response | null = null;
+      let createBody: { deposit?: DepositRecord; error?: string } = {};
+      // The wallet RPC may broadcast before the public RPC used by the API
+      // can see the hash. Retry only that propagation case; other validation
+      // failures are immediate and must not create a reservation.
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        createRes = await fetch("/api/deposits", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: createPayload,
+        });
+        createBody = await createRes.json();
+        if (createRes.status !== 425 || attempt === 3) break;
+        await new Promise((resolve) => setTimeout(resolve, 700 * (attempt + 1)));
+      }
+      if (!createRes) throw new Error("CREATE_FAILED");
+      if (createRes.status === 409 && createBody.deposit) {
         // The preflight and create requests are separate; another request can
         // win between them after this wallet has already submitted approval.
         setUntrackedApprovalTxHash(approveTxHash);
@@ -165,8 +176,8 @@ export default function DepositApprovePage() {
         setStep("blocked");
         return;
       }
-      if (!createRes.ok) throw new Error(createBody.error ?? "CREATE_FAILED");
-      const deposit: DepositRecord = createBody.deposit;
+      if (!createRes.ok || !createBody.deposit) throw new Error(createBody.error ?? "CREATE_FAILED");
+      const deposit = createBody.deposit;
       createdDepositId = deposit.id;
 
       setStep("confirming-approval");
