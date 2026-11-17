@@ -39,7 +39,7 @@
   }
   body {
     color: var(--foreground);
-    background-color: #0a0c10;
+    background-color: var(--background);
     /* Dot-matrix telemetry texture (fine, low-opacity grid) plus one
        restrained accent glow at the very top of the page — a cryptographic
        telemetry surface, not a marketing hero. */
@@ -163,7 +163,8 @@
 
   /* App shell header — trading-terminal chrome */
   .app-header {
-    @apply sticky top-0 z-20 border-b border-white/[0.1] bg-[#0a0c10]/90 backdrop-blur-md;
+    @apply sticky top-0 z-20 border-b border-white/[0.1] backdrop-blur-md;
+    background-color: color-mix(in srgb, var(--background) 90%, transparent);
   }
   .pill {
     @apply inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-white/[0.15] bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] font-medium uppercase tracking-wide text-slate-400;

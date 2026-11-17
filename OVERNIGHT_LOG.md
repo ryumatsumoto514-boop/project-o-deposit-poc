@@ -48019,3 +48019,90 @@ Claude Code session not logged in / expired. Skipping this tick.
 
 ### [Codex review] 2026-11-17 — Root error screen background token drift fixed
 Fetched the live `/`, `/login`, and `/deposit` HTML with `curl -sS -L --max-time 20`, confirming all three routes returned HTML successfully. Then read `app/globals.css` and `tailwind.config.ts`: the app's shared `background` token resolves to `#0a0c10`. A focused color-value search across `app/` found that `app/global-error.tsx` alone hardcoded its body background as `#05070A`, while `app/error.tsx` uses the shared `bg-background` styling. This made the root-layout crash fallback depart from the established page surface. Changed the global error body to `bg-background` so it follows the same token if the palette changes. Verified with `npm run build` (passed; emitted existing optional dependency/dynamic import warnings in MetaMask SDK, WalletConnect, and viem). Committed and deployed below; verified the production homepage and deployed client chunk after deployment. The global error screen only renders when the root layout fails, so it cannot be directly exercised through a normal page fetch.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T14:38:57Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T15:01:58Z
+
+### [Codex review] 2026-11-17 — Independent live validation of malformed amount/wallet handling; no actionable issue found
+Read the brief and the recent log first to avoid repeating the prior metadata, accessibility, styling, and generic malformed-JSON passes. Then traced the deposit-create and duplicate-preflight validators in `app/api/deposits/route.ts` and `app/api/deposits/check/route.ts`, and followed failed/unconfirmed approval handling through `lib/pull.ts`, `lib/reconcile.ts`, and `lib/stateMachine.ts`. Focused on whether exponent-form amounts or malformed wallet values could pass a preflight and later be interpreted differently by `parseUnits`, or whether a failed approval could cause an unsafe transfer/recovery lock. Fetched the deployed endpoints directly: `GET /api/deposits/check?wallet=not-an-address&amount=1` returned HTTP 400 `INVALID_REQUEST`; `POST /api/deposits` with amount `1e2` returned HTTP 400 explaining the decimal/precision requirement; and `GET /api/gas` returned HTTP 200 with a numeric `gwei`. Source tracing showed failed receipts and invalid approval calldata are not transferred, and timeout states can recover if a valid confirmation later appears. These checks found no concrete defect worth changing. No application code changed; therefore no build, commit, push, or redeployment was performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T15:08:58Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T15:36:58Z
+
+### [Codex review] 2026-11-17 — Independent CSP/provider and crawler endpoint check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the recent log before choosing a new surface; prior reviews had already covered page metadata, accessibility, color contrast, and common API validation. Fetched `https://projecto-blond.vercel.app/` and inspected its live `Content-Security-Policy` response header (`connect-src 'self' https://sepolia-rollup.arbitrum.io`), then read `next.config.mjs`, `app/providers.tsx`, and `lib/wagmiConfig.ts`: the app uses only the injected connector and the Arbitrum Sepolia chain's configured RPC, so the policy's allowed connection origin matches the wallet setup; I found no blocked WalletConnect/Coinbase dependency. Also fetched `/robots.txt` (200, allows crawlers so they can observe the global noindex directive) and `/sitemap.xml` (404). Read `app/layout.tsx` and confirmed the site intentionally declares `robots: { index: false, follow: false }`; in this noindex demo a sitemap would not be useful, so the 404 is not a product defect. No actionable CSP/crawler issue was substantiated. No app source changed; no build, commit, push, or redeployment was performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T15:38:58Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-17T16:08:59Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T16:11:59Z
+
+### [Codex review] 2026-11-17 — Independent amount-boundary and live 404 check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the latest review entries before selecting a new angle. Inspected `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`, `lib/constants.ts`, and `lib/chain.ts` to compare accepted amount syntax, the shared 1,000 MockUSDC cap, six-decimal precision, and `parseUnits` conversion. The creation path validates the decimal string and cap before converting with the same six decimals; preflight applies the same syntax and cap, so I found no amount-boundary mismatch. Separately fetched `https://projecto-blond.vercel.app/this-route-should-not-exist` with `curl -sS -L -D /tmp/projecto-codex-404.hdr ... -o /tmp/projecto-codex-404.html`; it returned HTTP 404 and the custom not-found page, English document language, `noindex`, and a home link. No actionable issue was substantiated, so no application source change was made and no build, commit, push, or deployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T16:39:02Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T16:47:04Z
+
+### [Codex review] 2026-11-17 — Independent route metadata and persisted-flow boundary check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the recent Codex review entries before choosing an uncovered angle; prior work already covered homepage metadata, status route behavior, referral deep links, contrast, and API malformed-input paths. Fetched `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` from `https://projecto-blond.vercel.app` with curl, recording status/content type/body size and inspecting emitted `<html>`, `<title>`, description, robots, Open Graph, and Twitter tags. All six returned HTTP 200 HTML, declared English, carried the noindex directive and current testnet/mock/simulation disclosure, and emitted route-specific titles; no canonical tag is configured, but the site is intentionally noindex and not intended for search indexing. Read `app/flow-context.tsx`, `app/components/CaptureKolRef.tsx`, and `app/providers.tsx` to check sessionStorage parsing failures and restore ordering: stored fields are type-checked, storage access is caught, and referral capture waits for hydration before URL precedence. This focused pass did not substantiate a concrete defect. No product code changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T17:09:06Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T17:22:06Z
+
+### [Codex review] 2026-11-17 — Independent duplicate canonicalization probe; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the final complete review entries in `OVERNIGHT_LOG.md`, and `SPEC.md` before selecting a narrow edge case not explicitly evidenced in those entries. Read `app/api/deposits/check/route.ts`, `app/api/deposits/route.ts`, and `lib/store.ts`, focusing on address case normalization and equivalent decimal spellings in the duplicate-deposit guard. The store compares wallet addresses case-insensitively and numeric amounts numerically; both the preflight and creation paths use the same lookup. Probed the deployed `GET https://projecto-blond.vercel.app/api/deposits/check?wallet=0x1E9d508D55eCE8D36Ec3Aa94299EC943c4f4Eb37&amount=1` with curl; it returned HTTP 200 JSON `{ "conflict": null }` for the currently empty in-memory store. The code inspection confirms capitalization cannot bypass a matching record, and decimal equivalents such as `1`/`1.00` cannot bypass it either. This pass found no concrete defect worth changing. No application source changed, so no build, commit, push, or redeployment was performed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T17:39:06Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T17:57:06Z
+
+### [Codex review] 2026-11-17 — Independent status-poll recovery and store behavior review; no actionable issue found
+After reading `OVERNIGHT_BRIEF.md` and the recent review entries, I avoided repeating the prior metadata, contrast, accessibility, malformed-input, and duplicate-canonicalization checks. Read `app/deposit/status/[id]/page.tsx` for the polling lifecycle (including repeated 404s, network errors, background-tab visibility, and terminal CREDITED handling), `app/api/deposits/[id]/route.ts` for client-reported failure transitions, `app/api/deposits/route.ts` for creation validation and duplicate checks, `lib/store.ts` for instance/disk behavior, and the corresponding README limitations. Then fetched `https://projecto-blond.vercel.app/deposit/status/demo` with `curl -sS -L --max-time 20 -D /tmp/projecto-codex-fresh-status.hdr ... -o /tmp/projecto-codex-fresh-status.html`; it returned HTTP/2 200 and 14,789 bytes of HTML with the MockUSDC/simulated disclosures. The reviewed poll paths retain the last known record on transient failures, retry misses, and stop after CREDITED; the instance-local persistence and duplicate limits are explicitly documented in README. No concrete new defect was substantiated. No application code changed, so no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T18:09:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T18:32:07Z
+
+### [Codex review] 2026-11-17 — Independent landing/status copy and live deployment cross-check; no actionable issue found
+Read `SPEC.md`, `README.md`, and `testnet-evidence.md`, then compared the actual user-facing copy in `app/page.tsx`, `app/components/EngineVisual.tsx`, `app/components/PipelineStepper.tsx`, `app/deposit/confirm/page.tsx`, and `app/deposit/status/[id]/page.tsx` against the documented mock/real boundary. Focused on whether illustrative landing-page telemetry could be mistaken for a real deposit and whether the final success screen implied actual Hyperliquid collateral. The landing visual labels itself illustrative; its hashes say “example format”; bridge and credit steps explicitly say simulated/no funds move/no trading balance; the confirmation step identifies MockUSDC as not Circle USDC; and the final status copy says “Simulated credit complete” and states no actual trading balance is credited. Fetched `https://projecto-blond.vercel.app/deposit/status/demo` with `curl -sS -L --max-time 20 -D /tmp/projecto-review-live.hdr ... -o /tmp/projecto-review-live.html`; it returned HTTP/2 200 with private no-store caching, and the HTML includes the MockUSDC/simulation disclosure. The README and testnet evidence likewise identify the self-deployed MockUSDC and mocked Hyperliquid check. This specific copy/deployment cross-check did not substantiate a misleading-claim or documentation mismatch worth fixing. No product code changed; no build, commit, push, or redeployment was needed.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T18:39:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T19:07:07Z
+
+### [Codex review] 2026-11-17 — Independent server-rendered control-label check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the latest review entries in `OVERNIGHT_LOG.md` before choosing a narrow check. Fetched `https://projecto-blond.vercel.app/login` with `curl -sS -L --max-time 20` into `/tmp/projecto-codex-login-live.html`, then parsed its raw HTML controls: the skip link, home link, and three server-rendered buttons are present, and the buttons have visible text (Google, Email, wallet connection). Read `app/login/page.tsx`, `app/deposit/confirm/page.tsx`, and the shared SVG definitions in `app/components/icons.tsx`; the confirmation copy button has an explicit accessible name, the checkbox is associated with its full confirmation text via a label, and decorative SVGs are hidden from assistive technology. This targeted raw-markup/control-name check found no concrete defect to fix. No application source changed; no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-17T19:10:07Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-17T19:41:08Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-17T19:42:08Z
+
+### [Codex review] 2026-11-17 — Background token drift in body and sticky header fixed
+Read `OVERNIGHT_BRIEF.md`, the recent tail of this log, and `SPEC.md` before choosing a styling pass distinct from prior reviews. Fetched the live `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` routes with `curl`; all returned HTTP 200 HTML. Read `app/globals.css` and `tailwind.config.ts`: the shared `background` token is `#0a0c10`, but the body background and sticky header separately hardcoded that same value. Updated the body to `var(--background)` and the header to a 90% `color-mix()` using the same token, so those surfaces stay aligned if the palette changes. `npm run build` passed; it emitted the existing optional MetaMask async-storage, pino-pretty, and viem dynamic-dependency warnings. Deployment and live CSS verification are recorded after completion below.
