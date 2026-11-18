@@ -90,6 +90,22 @@ export async function PATCH(
       { status: 409 }
     );
   }
+  // Receipt lookup yields to other requests. Re-read before writing so a
+  // reconciliation that advanced the deposit while RPC was in flight wins.
+  const current = depositStore.get(deposit.id);
+  if (
+    !current ||
+    current.status !== "SIGNED" ||
+    current.approveTxHash !== deposit.approveTxHash
+  ) {
+    return NextResponse.json(
+      {
+        error: "INVALID_TRANSITION",
+        message: "The deposit changed while the approval failure was being checked. Refresh its status.",
+      },
+      { status: 409 }
+    );
+  }
   const updated = depositStore.update(deposit.id, {
     status: body.status,
     failureReason: "The approval transaction failed on-chain, so we can't pull funds yet.",

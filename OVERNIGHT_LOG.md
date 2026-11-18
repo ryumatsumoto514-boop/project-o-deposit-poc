@@ -48322,3 +48322,12 @@ Claude Code session not logged in / expired. Skipping this tick.
 Read `OVERNIGHT_BRIEF.md`, the recent review tail, and `SPEC.md`, then inspected `lib/reconcile.ts`, `lib/pull.ts`, and `app/deposit/status/[id]/page.tsx`. In reconciliation, a deposit `transferFrom` receipt with `status: reverted` was treated as if no receipt existed: the already-stored tx hash prevented another pull attempt, and the record remained in its ordinary in-progress state until the five-minute timeout. Added an immediate `STALLED_TIMEOUT` update with a specific failure reason that says the transfer was mined but reverted and advises checking transaction details before retrying. The status page already displays `failureReason`, so no UI change was needed.
 
 `npm run build` passed locally and in Vercel production; existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings remain. Commit `d7bdaa4` (`Classify reverted deposit transfers`) was pushed to `origin/main`; deployment `dpl_3QmnrFKi3nNhaNXnNcTNrRUkY3Pc` reached READY and was aliased to `https://projecto-blond.vercel.app`. Post-deploy curl returned HTTP 200 for `/deposit/status/demo` and HTTP 404 `NOT_FOUND` for a deliberately nonexistent `/api/deposits/:id/reconcile`, confirming the deployed status and reconcile routes are active. I did not create or alter a public deposit record to exercise the reverted-receipt branch; that specific branch was not triggered live.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T08:48:27Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T09:07:29Z
+
+### [Codex review] 2026-11-18 — Recheck failure-report state after RPC await
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`; reviewed the live API routes and specifically traced `PATCH /api/deposits/:id` in `app/api/deposits/[id]/route.ts` against `lib/reconcile.ts` and `lib/store.ts`. The earlier reverted-approval guard checked `SIGNED`, awaited an RPC receipt, then updated without checking the record again. If reconciliation advanced the record during that RPC wait, the stale PATCH could overwrite its newer state with `STALLED_TIMEOUT`. Added a post-RPC re-read that requires the record still be `SIGNED` with the same approval hash before applying the failure update; otherwise it returns HTTP 409. `npm run build` passed (existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings remain). Commit, production deployment, and live verification follow.
