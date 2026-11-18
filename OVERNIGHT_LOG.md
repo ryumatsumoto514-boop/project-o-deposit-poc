@@ -48233,3 +48233,12 @@ Claude Code session not logged in / expired. Skipping this tick.
 
 ### [Codex review] 2026-11-18 — Prevent public caching of per-deposit API responses
 Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`, then inspected `app/api/deposits/[id]/route.ts` and fetched the live endpoint with curl. Before the change, `GET https://projecto-blond.vercel.app/api/deposits/00000000-0000-0000-0000-000000000000` returned `cache-control: public, max-age=0, must-revalidate`; successful responses from the same handler contain a deposit record with wallet and transaction details. Added `Cache-Control: private, no-store` to both the found and not-found GET responses. `npm run build` passed locally and in the Vercel production build (existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings remain). Commit `7a8e086` was pushed to `origin/main`; production deployment `dpl_HzSj8YdAti1yfzd5rv2C4wQPaUPT` reached READY and was aliased to the live URL. Verified with curl that the live 404 response now returns `cache-control: private, no-store`.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T03:48:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T03:52:17Z
+
+### [Codex review] 2026-11-18 — Keep wallet-specific duplicate preflight responses private
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review tail first. Fetched raw live HTML with curl for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; all returned HTTP 200 and rendered page HTML. Then fetched the live preflight `GET /api/deposits/check?wallet=…&amount=2` with response headers. It returned `{"conflict":null}` but was marked `cache-control: public, max-age=0, must-revalidate`. Read `app/api/deposits/check/route.ts`: when there is a conflict, the same route returns the wallet's in-flight deposit ID, amount, status, and timestamp; input-validation responses also inherited the public cache default. Added a helper so all duplicate-preflight success and error responses use `Cache-Control: private, no-store`, preventing shared caches from storing wallet-specific conflict data or reusing a prior preflight result. `npm run build` passed; it reported the existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings. Commit, production deploy, and live header verification follow.
