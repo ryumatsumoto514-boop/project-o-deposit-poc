@@ -177,6 +177,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // A reverted approve still has valid-looking calldata. Do not let an old,
+  // failed transaction reserve this wallet/amount pair. A missing receipt is
+  // allowed here because the UI creates the record while the approval is
+  // pending, then waits for its receipt before triggering the pull.
+  try {
+    const receipt = await publicClient.getTransactionReceipt({ hash: body.approveTxHash as `0x${string}` });
+    if (receipt.status === "reverted") {
+      return NextResponse.json(
+        { error: "APPROVAL_FAILED", message: "The approval transaction reverted and did not grant an allowance." },
+        { status: 409 }
+      );
+    }
+  } catch {
+    // Pending transactions have no receipt yet; /pull verifies successful
+    // confirmation before any transferFrom call.
+  }
+
   const conflict = findConflictingInFlightDeposit(body.userWallet, body.amount);
   if (conflict) {
     return NextResponse.json(
