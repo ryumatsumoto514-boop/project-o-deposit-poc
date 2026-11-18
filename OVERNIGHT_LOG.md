@@ -48244,3 +48244,57 @@ Claude Code session not logged in / expired. Skipping this tick.
 Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review tail first. Fetched raw live HTML with curl for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; all returned HTTP 200 and rendered page HTML. Then fetched the live preflight `GET /api/deposits/check?wallet=…&amount=2` with response headers. It returned `{"conflict":null}` but was marked `cache-control: public, max-age=0, must-revalidate`. Read `app/api/deposits/check/route.ts`: when there is a conflict, the same route returns the wallet's in-flight deposit ID, amount, status, and timestamp; input-validation responses also inherited the public cache default. Added a helper so all duplicate-preflight success and error responses use `Cache-Control: private, no-store`, preventing shared caches from storing wallet-specific conflict data or reusing a prior preflight result. `npm run build` passed; it reported the existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings. Commit, production deploy, and live header verification follow.
 
 Production follow-up for the duplicate-preflight fix: commit `9a3759b` (`Prevent caching wallet-specific duplicate checks`) was pushed to `origin/main`. Vercel production deployment `dpl_D5mz9feBNpiK4P7KHAbppDPEZAfp` reached READY and was aliased to `https://projecto-blond.vercel.app`. Verified with live curl after deploy: a valid `/api/deposits/check` request returned HTTP 200 with `cache-control: private, no-store`; an invalid wallet request returned HTTP 400 with the same cache policy. The Vercel build passed with the existing optional dependency warnings.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T04:18:18Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T04:27:18Z
+
+### [Codex review] 2026-11-18 — Gas telemetry endpoint and design-token consistency check; no actionable issue found
+After reading `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`, checked a narrow area not called out in the recent reviews: the live header's gas telemetry path and the design tokens it sits beside. Fetched `https://projecto-blond.vercel.app/api/gas?address=bad` with `curl -sS -L --max-time 20 -D /tmp/codex-review-live-gas.hdr ... -o /tmp/codex-review-live-gas.body`; it returned HTTP 200 JSON with a live numeric gas price, `x-vercel-cache: MISS`, and no wallet-specific data. Read `app/api/gas/route.ts`: it accepts no caller-supplied address and reads the configured Arbitrum Sepolia RPC directly, so the extra query parameter is ignored and cannot influence the result. Reviewed `app/globals.css` and `tailwind.config.ts` for palette, radius, and spacing drift; the repeated card/banner radii and semantic warning/error/success colors are consistent, and the remaining smaller button/input radius is a deliberate control distinction. Scanned authored icon/button/link markup in `app/**/*.tsx`; the icon-only copy and wallet controls have accessible names, and external transaction links use `rel="noreferrer"` or `noopener noreferrer`. This specific live/source/style pass did not substantiate a fixable defect. No application code changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T04:48:18Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T05:02:18Z
+
+### [Codex review] 2026-11-18 — Independent raw-page, metadata, and evidence consistency check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the recent `OVERNIGHT_LOG.md` tail first, then reviewed `SPEC.md`, `README.md`, and `testnet-evidence.md` for current deployment, testnet/mock boundary, and transaction-evidence claims. Fetched the production homepage and `/deposit/status/demo` with curl and inspected their raw HTML: both returned HTTP 200, the homepage has the expected title/description/robots/Open Graph/Twitter metadata, and the status page has its route title plus a persistent polite live region for its loading state. Fetched the exact live OG image URL emitted in the homepage metadata; it returned HTTP 200 `image/png` with immutable caching. Fetched `/api/gas`; it returned a numeric live gas price. Compared README's deployed URL, MockUSDC address, real-vs-mocked descriptions, and duplicate-detection limitations against `lib/chain.ts`, the live URL, and the evidence sections containing the deploy/approve/transfer hashes; no material mismatch surfaced. Also checked the landing page's main landmark and the styles used for its supporting text: authored normal copy uses slate-400, while the lower-contrast slate-600 gas LED is decorative and paired with a textual gas state. The lack of a canonical tag is not actionable for these intentionally `noindex, nofollow` pages. This specific fresh-eyes pass did not find a concrete fixable issue. No product code changed, so no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T05:18:19Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T05:37:19Z
+
+### [Codex review] 2026-11-18 — Live route copy and mock/real boundary cross-check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` before selecting a copy-focused pass. Fetched raw production HTML with curl for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; every route returned HTTP 200, and the document titles/descriptions match the intended testnet demo. Read `app/components/FlowChrome.tsx`, `app/deposit/status/[id]/page.tsx`, `lib/reconcile.ts`, and the relevant README sections to compare the live user-facing statements with implementation: status copy says Hyperliquid crediting is simulated and no trading balance is actually credited; Arbitrum transaction links are presented as real only when a hash exists; automatic retry claims on the status screen correspond to the client's polling and reconciliation behavior. This fresh copy-boundary review did not substantiate a concrete fixable issue. No application code changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T05:48:19Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T06:12:19Z
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T06:18:20Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T06:47:20Z
+
+### [Codex review] 2026-11-18 — Referral attribution persistence and disclosure spot check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before choosing a new narrow angle. Fetched the live homepage with `curl -sS -L --max-time 20` and inspected its raw HTML; it returned HTTP 200 and included the rendered page shell and metadata. Fetched `/api/deposits/00000000-0000-0000-0000-000000000000` with response headers; it returned HTTP 404 `NOT_FOUND` and `Cache-Control: private, no-store`. Then read `app/components/CaptureKolRef.tsx`, `app/flow-context.tsx`, and `app/components/KolBanner.tsx` to trace referral capture across deep links, session restoration, and the visible disclosure. URL attribution takes precedence after hydration, persisted flow state survives navigation, names are capped/formatted, and the banner explicitly says the link label does not verify an endorsement and that Exchange O is independent. This fresh referral-disclosure check did not reveal a concrete defect worth changing. No application code changed; no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T06:48:20Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-18T07:18:21Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T07:22:21Z
+
+### [Codex review] 2026-11-18 — Verify public client-reported failure against chain state
+Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and `SPEC.md`, then inspected `app/api/deposits/[id]/route.ts`, `app/deposit/approve/page.tsx`, `lib/pull.ts`, and the live homepage response headers with curl. Found that `PATCH /api/deposits/:id` trusted any caller's `status` and `failureReason` while a record was `SIGNED`; anyone who learned a status URL could falsely mark an otherwise valid deposit as `STALLED_NO_GAS` or `STALLED_TIMEOUT` and inject misleading failure copy. The UI uses PATCH only after an approval receipt is reverted. Changed the handler to accept only `STALLED_TIMEOUT`, require the stored approval hash, query its receipt through the configured chain RPC, and permit the transition only when that receipt is actually reverted; the server now supplies the failure explanation itself. `npm run build` passed; it emitted the existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings. Committed and pushed the change; production deployment and post-deploy curl verification follow.

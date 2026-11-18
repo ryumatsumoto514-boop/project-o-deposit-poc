@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { depositStore } from "@/lib/store";
 import { canTransition } from "@/lib/stateMachine";
+import { publicClient } from "@/lib/chain";
 import type { DepositStatus } from "@/lib/types";
 
 const PRIVATE_NO_STORE = { "Cache-Control": "private, no-store" };
@@ -19,8 +20,6 @@ export async function GET(
 // Client-observed failures only — e.g. the user's own approve() tx reverted
 // or was dropped. Servers can't see wallet-side errors, so the client
 // reports them here to keep the record honest instead of leaving it stuck.
-const ALLOWED_CLIENT_STATUSES: DepositStatus[] = ["STALLED_NO_GAS", "STALLED_TIMEOUT"];
-
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -48,7 +47,10 @@ export async function PATCH(
     );
   }
 
-  if (!body.status || !ALLOWED_CLIENT_STATUSES.includes(body.status)) {
+  // Client-reported failures are not evidence. The only currently supported
+  // client report is a reverted approval; verify that outcome from the
+  // configured chain RPC before allowing it to change the public record.
+  if (body.status !== "STALLED_TIMEOUT") {
     return NextResponse.json({ error: "INVALID_STATUS" }, { status: 400 });
   }
   // Client reports are only used for a failed wallet approval, before the
@@ -73,25 +75,24 @@ export async function PATCH(
       { status: 409 }
     );
   }
-  if (
-    body.failureReason !== undefined &&
-    body.failureReason !== null &&
-    typeof body.failureReason !== "string"
-  ) {
-    return NextResponse.json(
-      { error: "INVALID_REQUEST", message: "failureReason must be a string." },
-      { status: 400 }
-    );
+  if (!deposit.approveTxHash) {
+    return NextResponse.json({ error: "APPROVAL_MISSING" }, { status: 409 });
   }
-  if (typeof body.failureReason === "string" && body.failureReason.length > 500) {
+  let approvalReceipt;
+  try {
+    approvalReceipt = await publicClient.getTransactionReceipt({ hash: deposit.approveTxHash });
+  } catch {
+    return NextResponse.json({ error: "APPROVAL_NOT_CONFIRMED" }, { status: 425 });
+  }
+  if (approvalReceipt.status !== "reverted") {
     return NextResponse.json(
-      { error: "INVALID_REQUEST", message: "failureReason must be at most 500 characters." },
-      { status: 400 }
+      { error: "APPROVAL_NOT_REVERTED", message: "The approval transaction has not been shown to fail on-chain." },
+      { status: 409 }
     );
   }
   const updated = depositStore.update(deposit.id, {
     status: body.status,
-    failureReason: body.failureReason ?? null,
+    failureReason: "The approval transaction failed on-chain, so we can't pull funds yet.",
   });
   return NextResponse.json({ deposit: updated });
 }
