@@ -3,15 +3,17 @@ import { depositStore } from "@/lib/store";
 import { canTransition } from "@/lib/stateMachine";
 import type { DepositStatus } from "@/lib/types";
 
+const PRIVATE_NO_STORE = { "Cache-Control": "private, no-store" };
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const deposit = depositStore.get(params.id);
   if (!deposit) {
-    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404, headers: PRIVATE_NO_STORE });
   }
-  return NextResponse.json({ deposit });
+  return NextResponse.json({ deposit }, { headers: PRIVATE_NO_STORE });
 }
 
 // Client-observed failures only — e.g. the user's own approve() tx reverted
