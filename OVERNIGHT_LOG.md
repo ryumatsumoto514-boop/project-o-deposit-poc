@@ -48409,3 +48409,27 @@ Claude Code session not logged in / expired. Skipping this tick.
 
 ### [Codex review] 2026-11-18 — Make per-deposit action responses private
 Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`, then inspected the live API action handlers in `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`, and `app/api/deposits/[id]/reconcile/route.ts`. Before the change, `curl -i -X POST https://projecto-blond.vercel.app/api/deposits/00000000-0000-0000-0000-000000000000/reconcile` and the matching `/pull` request both returned HTTP 404 with `Cache-Control: public, max-age=0, must-revalidate`; PATCH on the same nonexistent ID did too. These handlers return deposit records on other paths, including wallet and transaction details, so their responses should not be eligible for shared caching. Added `Cache-Control: private, no-store` to every response path from the PATCH, pull, and reconcile handlers. `npm run build` passed locally; the Vercel production build also passed with the existing optional MetaMask async-storage, pino-pretty, and viem warnings. Commit `4862e03` (`Prevent caching of deposit action responses`) was pushed to `origin/main`; deployment `dpl_5GDJU9X1YauhxnTU5CTPCSYrKsvf` reached READY and was aliased to `https://projecto-blond.vercel.app`. Post-deploy curl checks of the same three 404 paths returned `Cache-Control: private, no-store`.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T14:19:33Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T14:22:33Z
+
+### [Codex review] 2026-11-18 — Independent raw-page metadata and link-safety pass; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the latest log tail, and `SPEC.md` before selecting a fresh check. Fetched the live raw HTML for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` with `curl -sS -L --max-time 20`; all returned HTTP 200 HTML (14,443–22,165 bytes). Read `app/layout.tsx` and the route layouts to compare rendered page metadata against source: the shared testnet/MockUSDC and simulated-crediting disclosure is present, `noindex,nofollow` is deliberate, and route-specific title defaults are defined. Also scanned external links in the approval and status pages; explorer links open in a new tab with `rel="noreferrer"` (which implies `noopener`), and the generic Arbiscan link is visibly labeled. This separate live/source pass did not establish a concrete defect to fix. No product code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T14:49:33Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T14:57:33Z
+
+### [Codex review] 2026-11-18 — Independent connector/CSP and duplicate-boundary review; no new fix found
+Read `OVERNIGHT_BRIEF.md`, the recent `OVERNIGHT_LOG.md` tail, and `SPEC.md` before selecting a fresh pass. The log already documents prior checks for duplicate amount/case normalization, public response caching, CSP, route metadata, and common API validation, so I checked the connector setup against the live policy and revisited the duplicate guard's contract. Read `lib/wagmiConfig.ts`, `app/providers.tsx`, `next.config.mjs`, `app/api/deposits/check/route.ts`, `app/api/deposits/route.ts`, `lib/idempotency.ts`, and `lib/store.ts`: only the injected connector is configured, the CSP allows the Arbitrum Sepolia RPC origin, and both preflight and create use the same case-insensitive wallet/numeric amount comparison. Fetched production `/api/deposits/check?wallet=0x1e9d508D55eCE8D36Ec3Aa94299EC943c4f4Eb37&amount=1.0` with `curl -sS -i`; it returned HTTP 200 JSON and `Cache-Control: private, no-store`. Also confirmed from `README.md`/`lib/store.ts` that cross-instance Vercel persistence/duplicate misses are already disclosed. This focused independent pass did not establish a distinct fixable defect. No product code changed; build, commit, push, and redeployment were not warranted. Existing `OVERNIGHT_LOG.md` worktree modification was preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T15:19:34Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T15:32:34Z
