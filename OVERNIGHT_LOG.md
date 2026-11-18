@@ -48185,3 +48185,51 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-11-18 — Enforce the wallet-bound demo destination on deposit creation
 Read `OVERNIGHT_BRIEF.md`, the latest `OVERNIGHT_LOG.md` tail, and `SPEC.md` before choosing a fresh API edge. Fetched the live homepage and malformed duplicate-preflight request with curl; both returned HTTP 200 and the expected HTTP 400 validation response. Read `app/api/deposits/route.ts`, `app/deposit/approve/page.tsx`, and `lib/hyperliquidMock.ts`: the UI always derives the mock trading destination from the funding wallet, but the public create API accepted any syntactically valid `destinationAccount`. The on-chain approval hash proves the wallet approved the token, spender, and amount, but does not commit the separately supplied mock destination; a caller reusing that approval could create a status record that attributes the deposit to a different trading account. The create route now requires the supplied destination to equal the same deterministic address derived from `userWallet`, preventing destination substitution in the public API. `npm run build` passed with the existing optional MetaMask async-storage, pino-pretty, and viem dynamic dependency warnings. Deployment and live negative/positive request verification are recorded below after completion.
 Live deployment `dpl_AoDE8qqYvLNqs7rpFPxeD4vMkfLD` reached READY and was aliased to `https://projecto-blond.vercel.app`. Verified the live POST route with curl: a syntactically valid request using an unrelated destination returned HTTP 400 `INVALID_REQUEST` with the wallet-mapping message; the same wallet/amount and its correctly derived destination advanced to HTTP 425 `APPROVAL_NOT_FOUND` for a deliberately fake approval hash, showing the valid mapping passed and the existing on-chain approval check followed. Commit `1a16b53` was pushed to `origin/main`; this live-verification note is included in the amended commit.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T00:45:13Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T00:57:14Z
+
+### [Codex review] 2026-11-18 — Live deposit-flow and API cache boundary check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the latest log entries before choosing a check distinct from the prior metadata, styling, accessibility, amount validation, approval ownership, and destination-binding passes. Fetched the raw live HTML for `/`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` with curl; all returned HTTP 200 HTML. Then traced `app/api/deposits/[id]/pull/route.ts`, `lib/pull.ts`, `lib/store.ts`, and `app/api/deposits/[id]/route.ts`: concurrent pull/reconcile attempts share an in-process promise, the pull independently verifies the approval receipt and calldata, and status lookup exposes only the stored record for its ID. Finally fetched the live status lookup, duplicate-preflight, and gas endpoints with response headers. They returned expected JSON; Vercel showed `age: 0` and `x-vercel-cache: MISS` on the lookups, with `cache-control: public, max-age=0, must-revalidate`, so no stale/shared-cache behavior was observed. This focused pass did not substantiate a concrete defect worth fixing. No product code changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T01:15:15Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T01:32:15Z
+
+### [Codex review] 2026-11-18 — Approval-scope copy and enforcement cross-check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent log tail before choosing a distinct narrow pass. Fetched `https://projecto-blond.vercel.app/deposit` with `curl -sS -L --max-time 20 -D /tmp/codex-live-deposit.hdr ... -o /tmp/codex-live-deposit.html`; it returned HTTP/2 200 HTML (Vercel HIT, age 2096). Read `app/deposit/approve/page.tsx`, `app/api/deposits/route.ts`, and `lib/pull.ts` to compare the approval-scope explanation against the actual transaction and server checks. The default exact option signs `approve(spender, requestedAmount)` and create/pull require that precise allowance; the opt-in future-deposits option signs max allowance, is explicitly labeled higher risk, and server validation requires allowance >= requested amount. The visible copy accurately describes total approved allowance and future spending. Also checked the live deployment page response and the shared `MAX_DEMO_AMOUNT` against the UI/API validators and README; all agree on the 1,000 MockUSDC cap. This focused copy/implementation check did not substantiate a defect worth changing. No application code changed, so no build, commit, push, or deployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T01:46:16Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T02:07:16Z
+
+### [Codex review] 2026-11-18 — Mixed-case wallet duplicate-preflight and live HTML response check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the recent log tail before choosing a check outside the repeated approval and UI validators. Fetched the live raw HTML for `/` and `/deposit/status/demo` with curl; both returned HTTP 200. Probed `/api/deposits/check` first with the create-route field name `userWallet` and observed HTTP 400 `MISSING_PARAMS`, then with the endpoint's documented `wallet` parameter and a mixed-case valid address; the live endpoint returned HTTP 200 `{"conflict":null}`. Read `app/api/deposits/check/route.ts`, `lib/idempotency.ts`, and `lib/store.ts`: the endpoint validates the full address, and duplicate lookup normalizes wallet casing and compares amount values numerically (so `1`, `1.0`, and `1.000000` match). Cross-checked `README.md`'s Vercel persistence caveat, which already describes per-instance records and duplicate-detection risks. This focused check did not reveal a new fixable defect; the observed cross-instance persistence limit is already documented. No product code changed, so no build, commit, push, or deployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T02:16:16Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T02:42:16Z
+
+### [Codex review] 2026-11-18 — Live crawl-directive and route availability check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, and `SPEC.md`. For a fresh SEO/crawler check, fetched `https://projecto-blond.vercel.app/robots.txt` and `/sitemap.xml` with curl, then fetched raw HTML for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`. `robots.txt` returned HTTP 200 with `User-Agent: *` and `Allow: /`; the app layout emits `noindex, nofollow`, so crawlers can fetch pages and see the intentional exclusion from search. The sitemap request returned 404, but the app is explicitly noindex and the live canonical flow routes all returned HTTP 200 with their expected page titles, so no sitemap omission is a user-facing or discoverability defect for this private demo. Read `app/robots.ts` and `app/layout.tsx` and confirmed their crawler behavior matches. This specific live/source check found no actionable issue worth changing. No application source changed; no build, commit, push, or redeployment was appropriate.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T02:47:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-18T03:17:17Z
+
+## Codex review tick: 2026-11-18T03:17:17Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+### [Codex review] 2026-11-18 — Prevent public caching of per-deposit API responses
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`, then inspected `app/api/deposits/[id]/route.ts` and fetched the live endpoint with curl. Before the change, `GET https://projecto-blond.vercel.app/api/deposits/00000000-0000-0000-0000-000000000000` returned `cache-control: public, max-age=0, must-revalidate`; successful responses from the same handler contain a deposit record with wallet and transaction details. Added `Cache-Control: private, no-store` to both the found and not-found GET responses. `npm run build` passed locally and in the Vercel production build (existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings remain). Commit `7a8e086` was pushed to `origin/main`; production deployment `dpl_HzSj8YdAti1yfzd5rv2C4wQPaUPT` reached READY and was aliased to the live URL. Verified with curl that the live 404 response now returns `cache-control: private, no-store`.
