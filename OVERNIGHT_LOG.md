@@ -48331,3 +48331,81 @@ Claude Code session not logged in / expired. Skipping this tick.
 
 ### [Codex review] 2026-11-18 — Recheck failure-report state after RPC await
 Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`; reviewed the live API routes and specifically traced `PATCH /api/deposits/:id` in `app/api/deposits/[id]/route.ts` against `lib/reconcile.ts` and `lib/store.ts`. The earlier reverted-approval guard checked `SIGNED`, awaited an RPC receipt, then updated without checking the record again. If reconciliation advanced the record during that RPC wait, the stale PATCH could overwrite its newer state with `STALLED_TIMEOUT`. Added a post-RPC re-read that requires the record still be `SIGNED` with the same approval hash before applying the failure update; otherwise it returns HTTP 409. `npm run build` passed (existing optional MetaMask async-storage, pino-pretty, and viem dependency warnings remain). Commit `98e8cf7` (`Guard stale approval failure updates`) was pushed to `origin/main`. Production deployment `dpl_os6gF28U6Eq3bdgXCQk6QwsEJvJf` reached READY and was aliased to `https://projecto-blond.vercel.app`; the Vercel production build passed with the existing optional dependency warnings. Live curl after deploy returned HTTP 200 for `/` and HTTP 404 `NOT_FOUND` for PATCH on a deliberately nonexistent deposit ID, confirming the deployed handler is active. I did not create or alter a public deposit to force the narrow concurrent race; that branch is protected by the final state/hash recheck and included in the successful local and production builds.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T09:18:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T09:42:29Z
+
+### [Codex review] 2026-11-18 — Status-page client rendering and retry-path review; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the recent log tail first. Fetched `https://projecto-blond.vercel.app/deposit/status/demo` with curl, inspected its raw HTML and headers, and confirmed HTTP 200, private/no-store response headers, route metadata, a persistent polite loading live region, and the no-JavaScript warning. Then traced `app/deposit/status/[id]/page.tsx`, `app/api/deposits/[id]/reconcile/route.ts`, `lib/reconcile.ts`, `lib/pull.ts`, and `lib/store.ts`, including the not-found/retry UI, status announcements, slow-poll exceptions, repeated pull attempts, approval receipt/calldata validation, and reverted-transfer handling. The copy and behavior were consistent: a status record is not treated as proof of an on-chain transfer, missing records warn users to inspect wallet history, and the mocked credit is explicitly distinguished from real Arbitrum transactions. No concrete new defect surfaced in this focused pass. No product code changed; no build, commit, push, or redeployment was warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T09:48:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T10:17:30Z
+
+### [Codex review] 2026-11-18 — Live amount-boundary and testnet-claim cross-check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, and `SPEC.md`, then reviewed `README.md`, `testnet-evidence.md`, `app/api/deposits/route.ts`, and `app/api/deposits/check/route.ts`. Chose a narrow API-boundary check distinct from the prior transaction-ownership, state-transition, and mixed-case duplicate checks. Fetched live `GET /api/deposits/check` with `amount=-1` and `amount=1e100`; both returned HTTP 400 `INVALID_REQUEST` and `Cache-Control: private, no-store`. Fetched the live `/api/gas`; it returned HTTP 200 JSON with a numeric gas reading and no caller-specific fields. Source inspection confirms create and preflight reject non-decimal/exponent notation, negative/zero values, >6 decimal places, and values above the shared 1000 MockUSDC cap before any token-unit parsing; destination and approval checks remain consistent with the proof described in the docs. Cross-checked the README/evidence contract address, real testnet vs mocked Hyperliquid boundary, and documented local-API vs production evidence; no material inconsistency surfaced. This specific pass found no concrete fixable defect. No product code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T10:18:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-18T10:48:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T10:52:30Z
+
+### [Codex review] 2026-11-18 — Independent live route response sweep; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the latest `OVERNIGHT_LOG.md` tail before selecting a check distinct from the recent state-machine, amount, metadata, and status-rendering passes. Fetched the production homepage, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` with curl; all returned HTTP 200 HTML. Also fetched `/api/gas` (HTTP 200 JSON with numeric gwei), `/api/deposits/check?wallet=bad&amount=1` (HTTP 400 `INVALID_REQUEST`), `/api/deposits/nope` (HTTP 404 `NOT_FOUND`), and `/robots.txt` (HTTP 200). Read `app/robots.ts` and `app/layout.tsx`; the robots allow rule is deliberate because crawlers need to read the site's noindex metadata. This specific live response pass did not reveal a new concrete defect worth changing. No product code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T11:18:31Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T11:27:31Z
+
+### [Codex review] 2026-11-18 — Independent idempotency race and deposit-flow accessibility pass; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` first. Reviewed `lib/store.ts`, `lib/idempotency.ts`, `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`, the create/approval sequencing in `app/deposit/approve/page.tsx`, and deposit pull/status handlers. The duplicate lookup and store insertion have no async yield between them after the chain RPC checks, so concurrent requests within one warm instance serialize at that point; cross-instance persistence remains the already documented PoC limitation. The preflight-to-create gap is handled by the create endpoint's second duplicate check and the UI's 409 path, which preserves the untracked approval hash and points to the winning deposit. Separately scanned interactive controls and labels across the deposit flow and fetched live raw HTML for `/deposit`, `/deposit/confirm`, and `/deposit/approve` with curl: all returned HTTP 200 HTML with a page title, `<main>`, and `<noscript>` fallback. Relevant icon controls have accessible names; amount input is labeled; approval controls are labeled; status/error feedback uses live/status or alert roles. This targeted review did not find a concrete fixable issue. No application code changed, so build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T11:48:31Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T12:02:31Z
+
+### [Codex review] 2026-11-18 — Raw production metadata and social-card check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before selecting this pass. Fetched the raw production HTML with `curl -sS -L --max-time 20` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; each returned HTTP 200. Parsed the literal `<title>`, description, robots, and canonical tags: screen-specific titles and the inherited testnet/mock disclosure description render, every route emits `noindex, nofollow`, and canonical tags are absent. Since the application is intentionally excluded from search results in `app/layout.tsx`, absent canonical tags do not create an actionable issue for this demo. The homepage's Open Graph image URL returned HTTP 200 with `content-type: image/png`; the source `metadataBase` resolves it to the live Vercel origin. The descriptions clearly distinguish testnet assets from simulated sign-in, bridging, and crediting. This independent raw-HTML pass found no concrete fixable defect. No application code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T12:18:31Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T12:37:32Z
+
+### [Codex review] 2026-11-18 — Fresh global-style and API-boundary check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md` and the latest review entries in `OVERNIGHT_LOG.md` before choosing a narrow pass. Fetched `https://projecto-blond.vercel.app/` with `curl -sS -L --max-time 20`; it returned HTTP 200 with 22,165 bytes of HTML. Read `app/globals.css` and `tailwind.config.ts`, focusing on foreground/accent/severity token consistency and motion accessibility. The shared dark background/foreground tokens and turquoise accent scale are coherent, amber remains distinct for warnings, and the global `prefers-reduced-motion: reduce` rule disables animations/transitions (including Tailwind spinner animations) while hiding decorative flow/LED motion. Then reviewed `app/api/deposits/route.ts` and `app/api/deposits/check/route.ts` for malformed body shapes, address casing, decimal parsing, source chain, amount caps, and approval matching; both routes validate before parsing or duplicate lookup, and the create route binds approval sender/token/spender/amount to the request. This focused pass found no concrete fixable issue. No application code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T12:48:32Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T13:12:32Z
+
+### [Codex review] 2026-11-18 — Independent live status API and identity exposure check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before choosing a review angle distinct from prior metadata, styling, amount-validation, transaction-verification, and state-transition checks. Fetched raw live HTML with `curl -sS -L --max-time 20` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; each returned HTTP 200 HTML. Fetched a nonexistent live status record with `curl -sS -i` and confirmed HTTP 404 JSON plus `Cache-Control: private, no-store`. Read `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/reconcile/route.ts`, `app/deposit/status/[id]/page.tsx`, `app/login/page.tsx`, and `lib/types.ts` to trace the returned record fields and login-identity flow. The API does return the stored mock identity with status data, but the shipped UI only permits fixed demo identities (`google:demo.user`, `demo@exchangeo.test`) or the connected wallet address, and status IDs are generated as random UUIDs; I found no new actionable exposure beyond the already documented public, unauthenticated PoC API and public testnet wallet/transaction details. This focused pass did not substantiate a concrete fixable defect. No application code changed; build, commit, push, and redeployment were not warranted.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-18T13:19:32Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-18T13:47:32Z
+
+## Cron tick: 2026-11-18T13:49:33Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+### [Codex review] 2026-11-18 — Make per-deposit action responses private
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`, then inspected the live API action handlers in `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`, and `app/api/deposits/[id]/reconcile/route.ts`. Before the change, `curl -i -X POST https://projecto-blond.vercel.app/api/deposits/00000000-0000-0000-0000-000000000000/reconcile` and the matching `/pull` request both returned HTTP 404 with `Cache-Control: public, max-age=0, must-revalidate`; PATCH on the same nonexistent ID did too. These handlers return deposit records on other paths, including wallet and transaction details, so their responses should not be eligible for shared caching. Added `Cache-Control: private, no-store` to every response path from the PATCH, pull, and reconcile handlers. `npm run build` passed locally; the Vercel production build also passed with the existing optional MetaMask async-storage, pino-pretty, and viem warnings. Commit `4862e03` (`Prevent caching of deposit action responses`) was pushed to `origin/main`; deployment `dpl_5GDJU9X1YauhxnTU5CTPCSYrKsvf` reached READY and was aliased to `https://projecto-blond.vercel.app`. Post-deploy curl checks of the same three 404 paths returned `Cache-Control: private, no-store`.

@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { depositStore } from "@/lib/store";
 import { attemptPull } from "@/lib/pull";
 
+function privateJson(body: unknown, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: { "Cache-Control": "private, no-store" },
+  });
+}
+
 // Triggers the relayer's real transferFrom() call — the second half of the
 // approve() + transferFrom() pattern — once the user's approve() has been
 // signed. Independently re-checks the approve receipt server-side rather
@@ -13,7 +20,7 @@ export async function POST(
 ) {
   const deposit = depositStore.get(params.id);
   if (!deposit) {
-    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+    return privateJson({ error: "NOT_FOUND" }, 404);
   }
 
   const outcome = await attemptPull(deposit);
@@ -28,10 +35,10 @@ export async function POST(
         : outcome.reason === "APPROVAL_INVALID"
         ? 400
         : 502;
-    return NextResponse.json(
+    return privateJson(
       { error: outcome.reason, deposit: outcome.deposit },
-      { status }
+      status
     );
   }
-  return NextResponse.json({ deposit: outcome.deposit });
+  return privateJson({ deposit: outcome.deposit });
 }
