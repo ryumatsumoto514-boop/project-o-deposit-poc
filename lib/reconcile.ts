@@ -52,6 +52,17 @@ export async function reconcileDeposit(id: string): Promise<DepositRecord | unde
       const receipt = await publicClient.getTransactionReceipt({
         hash: deposit.txHash,
       });
+      if (receipt.status === "reverted") {
+        return depositStore.update(id, {
+          status: "STALLED_TIMEOUT",
+          failureReason:
+            "The deposit transfer was confirmed on Arbitrum Sepolia but reverted, so the tokens were not transferred. Check the transaction details before trying again.",
+          reconciliation: {
+            ...deposit.reconciliation,
+            lastCheckedAt: new Date().toISOString(),
+          },
+        });
+      }
       onchainConfirmed = receipt.status === "success";
     } catch {
       // Not mined yet — leave as unconfirmed, timeout logic below handles staleness.
