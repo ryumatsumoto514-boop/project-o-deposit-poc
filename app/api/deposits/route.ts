@@ -4,6 +4,7 @@ import { CHAIN, DEPOSIT_ADDRESS, ERC20_ABI, publicClient, USDC_ADDRESS, USDC_DEC
 import { depositStore } from "@/lib/store";
 import { findConflictingInFlightDeposit } from "@/lib/idempotency";
 import { MAX_DEMO_AMOUNT } from "@/lib/constants";
+import { deriveMockTradingAccount } from "@/lib/hyperliquidMock";
 import type { CreateDepositInput, DepositRecord } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
@@ -64,6 +65,15 @@ export async function POST(req: NextRequest) {
   if (typeof body.destinationAccount !== "string" || !ADDRESS_RE.test(body.destinationAccount)) {
     return NextResponse.json(
       { error: "INVALID_REQUEST", message: "destinationAccount must be a valid 0x-prefixed Ethereum address." },
+      { status: 400 }
+    );
+  }
+  // The approval transaction binds the wallet, token, spender, and amount,
+  // but it cannot bind the mocked trading destination. Keep that public
+  // metadata tied to the signing wallet instead of accepting caller input.
+  if (body.destinationAccount.toLowerCase() !== deriveMockTradingAccount(body.userWallet as `0x${string}`).toLowerCase()) {
+    return NextResponse.json(
+      { error: "INVALID_REQUEST", message: "destinationAccount does not match this wallet's demo trading account." },
       { status: 400 }
     );
   }
