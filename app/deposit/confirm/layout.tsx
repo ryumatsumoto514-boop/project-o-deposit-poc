@@ -11,11 +11,13 @@ export const metadata: Metadata = {
     title: "Confirm address · Exchange O",
     description:
       "Review the full destination account address before continuing with this Arbitrum Sepolia testnet deposit.",
+    images: ["/opengraph-image"],
   },
   twitter: {
     title: "Confirm address · Exchange O",
     description:
       "Review the full destination account address before continuing with this Arbitrum Sepolia testnet deposit.",
+    images: ["/opengraph-image"],
   },
 };
 

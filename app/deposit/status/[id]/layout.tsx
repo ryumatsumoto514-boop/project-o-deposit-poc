@@ -11,11 +11,13 @@ export const metadata: Metadata = {
     title: "Deposit status · Exchange O",
     description:
       "Track this deposit's Arbitrum Sepolia confirmation and simulated bridging and tradable-credit status.",
+    images: ["/opengraph-image"],
   },
   twitter: {
     title: "Deposit status · Exchange O",
     description:
       "Track this deposit's Arbitrum Sepolia confirmation and simulated bridging and tradable-credit status.",
+    images: ["/opengraph-image"],
   },
 };
 
