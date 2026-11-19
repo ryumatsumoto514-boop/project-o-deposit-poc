@@ -48927,3 +48927,9 @@ Codex review tick finished, exit code 0
 Claude Code session not logged in / expired. Skipping this tick.
 
 ## Codex review tick: 2026-11-19T21:53:20Z
+
+## Cron tick: 2026-11-19T21:57:21Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+### [Codex review] 2026-11-19 — Add missing alt text to flow-page social previews
+Read `OVERNIGHT_BRIEF.md` and the recent log tail, then fetched raw production HTML with `curl -sS -L --max-time 20` from `/` and `/deposit/status/demo`. The root page included `og:image:alt` and `twitter:image:alt`; the status page and the other child-route source layouts had social image URLs but no image alt text because their metadata overrides replaced the root image entry. Updated Open Graph and Twitter image entries in `app/login/layout.tsx`, `app/deposit/layout.tsx`, `app/deposit/confirm/layout.tsx`, `app/deposit/approve/layout.tsx`, and `app/deposit/status/[id]/layout.tsx` to provide `Exchange O — Testnet deposit demo` as alt text. `npm run build` passed (with the existing optional MetaMask/WalletConnect dependency and viem critical-dependency warnings). Committed as `597cb9e` (`Add alt text to flow page social previews`), pushed to `origin main`, and deployed production as `dpl_D6KV8wEeLijCim6o46yzzfTkfnqx`. Re-fetched all five live flow routes with `curl`; each returned HTTP 200 with both expected `og:image:alt` and `twitter:image:alt` tags. The required `git add -A` in that code commit also captured the pre-existing uncommitted overnight-log tail.
