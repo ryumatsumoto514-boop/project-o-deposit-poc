@@ -140,18 +140,15 @@ export default function DepositAmountPage() {
               id="deposit-amount"
               aria-invalid={Boolean(error)}
               aria-describedby={error ? "deposit-amount-error" : undefined}
-              type="number"
-              min="0"
-              step="0.000001"
+              type="text"
               inputMode="decimal"
               value={amount}
               onChange={(e) => {
                 setAmount(e.target.value);
                 setError(null);
               }}
-              onWheel={(e) => e.currentTarget.blur()}
               placeholder="10.00"
-              className="input pr-16 font-mono text-lg [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="input pr-16 font-mono text-lg"
             />
             <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-slate-400">
               MockUSDC
