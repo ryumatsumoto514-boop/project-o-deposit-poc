@@ -2,8 +2,18 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sign in",
-  openGraph: { title: "Sign in" },
-  twitter: { title: "Sign in" },
+  description:
+    "Choose a simulated sign-in method or connect a wallet to explore the Arbitrum Sepolia deposit demo.",
+  openGraph: {
+    title: "Sign in",
+    description:
+      "Choose a simulated sign-in method or connect a wallet to explore the Arbitrum Sepolia deposit demo.",
+  },
+  twitter: {
+    title: "Sign in",
+    description:
+      "Choose a simulated sign-in method or connect a wallet to explore the Arbitrum Sepolia deposit demo.",
+  },
 };
 
 export default function LoginLayout({ children }: { children: React.ReactNode }) {

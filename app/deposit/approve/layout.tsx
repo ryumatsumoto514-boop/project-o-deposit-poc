@@ -5,8 +5,18 @@ export const metadata: Metadata = {
     template: "%s · Exchange O",
     default: "Approve & sign",
   },
-  openGraph: { title: "Approve & sign · Exchange O" },
-  twitter: { title: "Approve & sign · Exchange O" },
+  description:
+    "Review the requested MockUSDC approval amount and sign the testnet deposit transaction.",
+  openGraph: {
+    title: "Approve & sign · Exchange O",
+    description:
+      "Review the requested MockUSDC approval amount and sign the testnet deposit transaction.",
+  },
+  twitter: {
+    title: "Approve & sign · Exchange O",
+    description:
+      "Review the requested MockUSDC approval amount and sign the testnet deposit transaction.",
+  },
 };
 
 export default function ApproveLayout({ children }: { children: React.ReactNode }) {
