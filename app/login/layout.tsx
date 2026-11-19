@@ -8,13 +8,13 @@ export const metadata: Metadata = {
     title: "Sign in",
     description:
       "Choose a simulated sign-in method or connect a wallet to explore the Arbitrum Sepolia deposit demo.",
-    images: ["/opengraph-image"],
+    images: [{ url: "/opengraph-image", alt: "Exchange O — Testnet deposit demo" }],
   },
   twitter: {
     title: "Sign in",
     description:
       "Choose a simulated sign-in method or connect a wallet to explore the Arbitrum Sepolia deposit demo.",
-    images: ["/opengraph-image"],
+    images: [{ url: "/opengraph-image", alt: "Exchange O — Testnet deposit demo" }],
   },
 };
 

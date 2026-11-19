@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     title: "Deposit amount",
     description:
       "Enter a testnet MockUSDC amount and review the funding and destination accounts for this deposit demo.",
-    images: ["/opengraph-image"],
+    images: [{ url: "/opengraph-image", alt: "Exchange O — Testnet deposit demo" }],
   },
   twitter: {
     title: "Deposit amount",
     description:
       "Enter a testnet MockUSDC amount and review the funding and destination accounts for this deposit demo.",
-    images: ["/opengraph-image"],
+    images: [{ url: "/opengraph-image", alt: "Exchange O — Testnet deposit demo" }],
   },
 };
 

@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     title: "Approve & sign · Exchange O",
     description:
       "Review the requested MockUSDC approval amount and sign the testnet deposit transaction.",
-    images: ["/opengraph-image"],
+    images: [{ url: "/opengraph-image", alt: "Exchange O — Testnet deposit demo" }],
   },
   twitter: {
     title: "Approve & sign · Exchange O",
     description:
       "Review the requested MockUSDC approval amount and sign the testnet deposit transaction.",
-    images: ["/opengraph-image"],
+    images: [{ url: "/opengraph-image", alt: "Exchange O — Testnet deposit demo" }],
   },
 };
 
