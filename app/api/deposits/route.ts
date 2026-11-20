@@ -138,9 +138,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (body.approvalMode !== "exact" && body.approvalMode !== "unlimited") {
+  if (body.approvalMode !== "exact") {
     return privateJson(
-      { error: "INVALID_REQUEST", message: "approvalMode must be \"exact\" or \"unlimited\"." },
+      { error: "INVALID_REQUEST", message: "Only exact-amount approvals are supported." },
       { status: 400 }
     );
   }
@@ -168,9 +168,7 @@ export async function POST(req: NextRequest) {
     const approval = decodeFunctionData({ abi: ERC20_ABI, data: approvalTx.input });
     const requestedAmount = parseUnits(body.amount, USDC_DECIMALS);
     const approvedAmount = approval.args[1];
-    const amountMatches = body.approvalMode === "exact"
-      ? approvedAmount === requestedAmount
-      : typeof approvedAmount === "bigint" && approvedAmount >= requestedAmount;
+    const amountMatches = approvedAmount === requestedAmount;
     if (
       approvalTx.from.toLowerCase() !== body.userWallet.toLowerCase() ||
       approvalTx.to?.toLowerCase() !== USDC_ADDRESS.toLowerCase() ||

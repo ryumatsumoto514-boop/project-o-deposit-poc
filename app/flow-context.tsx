@@ -13,7 +13,6 @@ interface FlowState {
   kolRef: string | null;
   mockIdentity: string | null; // e.g. "demo@exchangeo.test" or a wallet address
   draftAmount: string;
-  approvalMode: "exact" | "unlimited";
   addressConfirmed: boolean; // set once the user checks the box on /deposit/confirm
 }
 
@@ -21,7 +20,6 @@ const DEFAULT_STATE: FlowState = {
   kolRef: null,
   mockIdentity: null,
   draftAmount: "",
-  approvalMode: "exact",
   addressConfirmed: false,
 };
 
@@ -32,7 +30,6 @@ interface FlowContextValue extends FlowState {
   setKolRef: (ref: string | null) => void;
   setMockIdentity: (identity: string | null) => void;
   setDraftAmount: (amount: string) => void;
-  setApprovalMode: (mode: "exact" | "unlimited") => void;
   setAddressConfirmed: (confirmed: boolean) => void;
 }
 
@@ -56,9 +53,6 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
           addressConfirmed: saved?.addressConfirmed === true,
           // A malformed saved referral must not crash the disclosure formatter.
           kolRef: typeof saved?.kolRef === "string" ? saved.kolRef : null,
-          // Stored data is untyped. Only an explicit unlimited selection
-          // may restore broader spending permission; otherwise use exact.
-          approvalMode: saved?.approvalMode === "unlimited" ? "unlimited" : "exact",
         });
       }
     } catch {
@@ -104,7 +98,6 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
     // confirmation from a previous deposit amount silently carry over.
     setDraftAmount: (draftAmount) =>
       setState((s) => ({ ...s, draftAmount, addressConfirmed: false })),
-    setApprovalMode: (approvalMode) => setState((s) => ({ ...s, approvalMode })),
     setAddressConfirmed: (addressConfirmed) =>
       setState((s) => ({ ...s, addressConfirmed })),
   };

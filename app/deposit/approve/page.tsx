@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useBalance, useSwitchChain } from "wagmi";
 import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
-import { parseUnits, maxUint256, formatEther, parseEther } from "viem";
+import { parseUnits, formatEther, parseEther } from "viem";
 import { useFlow } from "../../flow-context";
 import { KolBanner } from "../../components/KolBanner";
 import { WalletRoles } from "../../components/WalletRoles";
@@ -40,7 +40,7 @@ const PROGRESS_COPY: Partial<Record<Step, string>> = {
 export default function DepositApprovePage() {
   useDocumentTitle("Approve");
   const router = useRouter();
-  const { mockIdentity, draftAmount, addressConfirmed, kolRef, approvalMode, setApprovalMode, hydrated } =
+  const { mockIdentity, draftAmount, addressConfirmed, kolRef, hydrated } =
     useFlow();
   const { address, chainId, status: accountStatus } = useAccount();
   const {
@@ -71,22 +71,6 @@ export default function DepositApprovePage() {
     const timer = setTimeout(() => router.replace("/deposit"), 1500);
     return () => clearTimeout(timer);
   }, [hydrated, walletSettling, mockIdentity, draftAmount, address, addressConfirmed, router]);
-
-  // The gas-insufficient banner above this fieldset only knows to render
-  // once the balance fetch resolves — so the fieldset would otherwise go
-  // disabled->enabled in the exact same tick the banner pushes it down,
-  // letting a click already in flight land on the wrong approval-scope
-  // radio right as the layout shifts. Hold it disabled for one more paint
-  // so it only becomes interactive once the shifted layout is on screen.
-  const [gasLayoutSettled, setGasLayoutSettled] = useState(false);
-  useEffect(() => {
-    if (gasCheckLoading) {
-      setGasLayoutSettled(false);
-      return;
-    }
-    const raf = requestAnimationFrame(() => setGasLayoutSettled(true));
-    return () => cancelAnimationFrame(raf);
-  }, [gasCheckLoading]);
 
   if (!hydrated || walletSettling || !mockIdentity || !draftAmount || !address || !addressConfirmed) return <FlowLoading />;
 
@@ -138,7 +122,7 @@ export default function DepositApprovePage() {
         address: USDC_ADDRESS,
         abi: ERC20_ABI,
         functionName: "approve",
-        args: [DEPOSIT_ADDRESS, approvalMode === "exact" ? amountRaw : maxUint256],
+        args: [DEPOSIT_ADDRESS, amountRaw],
       });
 
       const createPayload = JSON.stringify({
@@ -149,7 +133,7 @@ export default function DepositApprovePage() {
         amountRaw: amountRaw.toString(),
         sourceChainId: CHAIN.id,
         kolRef,
-        approvalMode,
+        approvalMode: "exact",
         approveTxHash,
       });
       let createRes: Response | null = null;
@@ -377,42 +361,13 @@ export default function DepositApprovePage() {
         </div>
       )}
 
-      <fieldset
-        disabled={isBusy || gasCheckLoading || gasCheckFailed || !gasLayoutSettled}
-        className="card flex flex-col gap-3 disabled:opacity-60"
-      >
-        <legend className="label-caps px-1">Approval scope</legend>
-        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-accent-400/40 has-[:checked]:bg-accent-500/[0.06]">
-          <input
-            type="radio"
-            name="approval-scope"
-            checked={approvalMode === "exact"}
-            onChange={() => setApprovalMode("exact")}
-            className="mt-1 h-4 w-4 accent-accent-500"
-          />
-          <span>
-            <strong className="text-slate-100">Approve this amount only</strong> (recommended) — the app
-            can spend up to {draftAmount} MockUSDC in total under this approval, even
-            across multiple transfers.
-          </span>
-        </label>
-        <label className="flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm text-slate-300 transition-colors has-[:checked]:border-amber-400/40 has-[:checked]:bg-amber-500/[0.06]">
-          <input
-            type="radio"
-            name="approval-scope"
-            checked={approvalMode === "unlimited"}
-            onChange={() => setApprovalMode("unlimited")}
-            className="mt-1 h-4 w-4 accent-amber-500"
-          />
-          <span>
-            <strong className="text-slate-100">Approve for future deposits too</strong> —{" "}
-            <span className="text-amber-300">
-              higher risk: this lets the app spend more in the future without
-              asking again.
-            </span>
-          </span>
-        </label>
-      </fieldset>
+      <div className="card text-sm text-slate-300">
+        <span className="label-caps">Approval scope</span>
+        <p className="mt-2">
+          This approval is limited to {draftAmount} MockUSDC for this deposit.
+          Future deposits require a new wallet approval.
+        </p>
+      </div>
 
       {errorMessage && (
         <div role="alert" className="banner-red flex items-start gap-2.5">

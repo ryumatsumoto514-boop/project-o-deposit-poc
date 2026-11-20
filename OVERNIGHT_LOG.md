@@ -48933,3 +48933,48 @@ Claude Code session not logged in / expired. Skipping this tick.
 
 ### [Codex review] 2026-11-19 — Add missing alt text to flow-page social previews
 Read `OVERNIGHT_BRIEF.md` and the recent log tail, then fetched raw production HTML with `curl -sS -L --max-time 20` from `/` and `/deposit/status/demo`. The root page included `og:image:alt` and `twitter:image:alt`; the status page and the other child-route source layouts had social image URLs but no image alt text because their metadata overrides replaced the root image entry. Updated Open Graph and Twitter image entries in `app/login/layout.tsx`, `app/deposit/layout.tsx`, `app/deposit/confirm/layout.tsx`, `app/deposit/approve/layout.tsx`, and `app/deposit/status/[id]/layout.tsx` to provide `Exchange O — Testnet deposit demo` as alt text. `npm run build` passed (with the existing optional MetaMask/WalletConnect dependency and viem critical-dependency warnings). Committed as `597cb9e` (`Add alt text to flow page social previews`), pushed to `origin main`, and deployed production as `dpl_D6KV8wEeLijCim6o46yzzfTkfnqx`. Re-fetched all five live flow routes with `curl`; each returned HTTP 200 with both expected `og:image:alt` and `twitter:image:alt` tags. The required `git add -A` in that code commit also captured the pre-existing uncommitted overnight-log tail.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-19T22:27:21Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-19T22:28:21Z
+
+### [Codex review] 2026-11-19 — Independent public asset and response-header pass; no actionable defect found
+Read `OVERNIGHT_BRIEF.md` and the recent log tail first; the recent cycles already covered route metadata/social previews, live API errors, major input edges, and accessibility. For a separate production surface check, fetched `/sitemap.xml`, `/manifest.webmanifest`, `/apple-icon`, `/icon`, `/favicon.ico`, and `/opengraph-image` from `https://projecto-blond.vercel.app` with `curl -sS -L --max-time 15`, recording status, MIME type, and byte count. The two absent endpoints returned 404, while all three icon endpoints and the OG image returned 200 with image content types; the app is explicitly configured `noindex, nofollow` and presents itself as a testnet demo, so a sitemap/manifest omission did not establish a user-facing defect. Also inspected `app/robots.ts`, the root metadata in `app/layout.tsx`, `next.config.mjs`, and live root response headers via `curl -D -`: crawler access is allowed so crawlers can read the noindex directive, and production sends the configured CSP, frame denial, MIME-sniffing/referrer protections, permissions policy, and HSTS. This focused live/source check found no concrete, fixable issue. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the existing worktree modification to `OVERNIGHT_LOG.md`.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-19T22:57:21Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-19T23:03:21Z
+
+### [Codex review] 2026-11-19 — Independent token and mock-boundary copy pass; no actionable defect found
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest review tail before choosing this pass; recent cycles already covered metadata, common API inputs, wallet role wording, and mobile layout behavior. Read `app/globals.css` and `tailwind.config.ts` for repeated palette, type, and radius values: the accent scale is centralized, semantic warning/success/error colors remain distinct, and the recurring card/button/input radii are consistently 8px/6px. Searched the actual UI and README copy for claims about returns, real funds, fees, tradability, and mock/testnet boundaries, then read the relevant live-flow copy in `app/deposit/approve/page.tsx` and `app/components/FlowChrome.tsx`; the approval screen identifies the self-deployed MockUSDC and the footer explicitly says bridging and Hyperliquid crediting are simulated. Fetched raw production `/` and `/deposit/confirm` HTML with `curl -sS -L --max-time 20` (21,165 and 14,825 bytes respectively); both returned successfully. Also followed the approval screen's Alchemy Arbitrum Sepolia faucet link with curl; it returned HTTP 200 HTML. This focused token/copy/live-route review found no concrete fixable defect. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the existing worktree modification to `OVERNIGHT_LOG.md`.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-19T23:27:22Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-19T23:38:22Z
+
+### [Codex review] 2026-11-19 — Referral-label hostile-input rendering check; no actionable defect found
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review tail before choosing this pass. Since prior cycles had already checked long referral labels, I inspected the separate hostile-content boundary in `app/components/CaptureKolRef.tsx`, `app/components/KolBanner.tsx`, `app/flow-context.tsx`, and `app/api/deposits/route.ts`: URL refs are capped at 64 characters, server-recorded refs at 120, unknown values are converted to plain display text, and React renders the label as text rather than HTML. Fetched `https://projecto-blond.vercel.app/?ref=%3Cscript%3Ealert(1)%3C%2Fscript%3E` with `curl -sS -L --max-time 20`; production returned the normal HTTP 200 app shell and did not server-render the client-side banner, so raw HTML alone cannot establish its final rendered text. Source inspection confirms this input cannot execute as markup, and the bounded formatter caps its display length. This targeted malicious-referral check found no concrete fixable defect. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the pre-existing worktree modification to `OVERNIGHT_LOG.md`.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-19T23:57:22Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T00:13:22Z
+
+### [Codex review] 2026-11-20 — Independent README/evidence and production amount-boundary cross-check; no actionable defect found
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, `SPEC.md`, `README.md`, and `testnet-evidence.md` before selecting a fresh pass. The docs consistently identify the deployed URL, self-deployed MockUSDC address, the local API transaction proof boundary, the mocked Hyperliquid result, and the per-instance Vercel store limitation; the recorded evidence does not claim that its transactions ran through production. Fetched raw production HTML with `curl` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; each had its route-specific description and deliberate `noindex, nofollow` metadata. Then read `app/api/deposits/check/route.ts` alongside the amount validation in `app/api/deposits/route.ts` and made read-only production GET requests to `/api/deposits/check` using the wallet recorded in `testnet-evidence.md` and amounts `-1`, `0`, `0.0000001`, `1000`, `1000.000001`, `1e3`, and `999999999999999999999999`. Invalid boundaries consistently returned HTTP 400; the allowed cap `1000` returned HTTP 200 with `conflict: null`. The validation policy and public response behavior matched, and this distinct docs/live boundary pass found no concrete fixable issue. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the existing `OVERNIGHT_LOG.md` worktree modification.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T00:27:22Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T00:48:23Z
+
+### [Codex review] 2026-11-20 — Remove reusable unlimited spender approval
+Read `OVERNIGHT_BRIEF.md` and the recent log tail, then compared the approval path against `SPEC.md`'s exact-amount requirement. In `app/deposit/approve/page.tsx`, the live UI offered an opt-in unlimited approval to the relayer EOA. In `app/api/deposits/route.ts` and `lib/pull.ts`, approval validation accepted unlimited allowance and the public create/pull path could use it for requested amounts up to the demo cap. Since approval hashes are public on-chain, a reused unlimited approval could authorize additional pulls up to the remaining allowance. The production `/deposit/approve` route fetched with `curl -sS -L --max-time 20` returned HTTP 200 (14,964 bytes); the client-only flow text is not present in that raw response, so the finding came from source inspection rather than claiming a raw-HTML proof. Removed the unlimited choice and flow-context state, made the UI sign only the entered amount, and made the create API reject non-exact approval mode and verify exact equality. Updated the README's live behavior table. `npm run build` passes; it reports the existing optional MetaMask/WalletConnect dependency and viem critical-dependency warnings. Production deployment and live verification are pending this commit.
