@@ -48988,3 +48988,51 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-11-20 — Enforce exact approval again at transfer execution
 Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the recent review tail first. After the prior exact-approval fix in `app/api/deposits/route.ts`, traced the actual stored-deposit execution path in `lib/pull.ts`: it still accepted `approvalMode === "unlimited"` and an allowance greater than the deposit amount. That leaves a legacy or otherwise pre-existing stored record able to trigger a larger reusable allowance at `transferFrom`, despite new records being restricted to exact approval. Changed the pull-time check to require both `approvalMode === "exact"` and strict equality between the confirmed `approve()` amount and `deposit.amountRaw`; other transaction sender/token/spender checks remain in place. `npm run build` passed; it emitted the existing optional MetaMask/WalletConnect dependency and viem critical-dependency warnings. Production before deployment was fetched with `curl` at `/`, `/deposit`, `/deposit/approve`, and `/api/gas` (HTTP 200), establishing the live endpoint used for post-deploy verification. Commit, push, production deployment, and live verification follow in this cycle.
 Post-deploy: commit `01becc8` was pushed to `origin main`; Vercel production deployment `dpl_4mrWzPK2mCJdK7JooC83eZe8eaQD` reached `READY` and was aliased to `https://projecto-blond.vercel.app`. Re-fetched `/deposit/approve` and `/api/gas` with `curl -sS -L --max-time 20`; both returned HTTP 200 (approval shell 14,964 bytes; gas endpoint returned JSON with a numeric GWEI reading). The deployed pull-time invariant is included in the production build; raw HTML cannot expose this server-side branch directly.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T01:27:27Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-20T01:57:27Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T01:58:27Z
+
+### [Codex review] 2026-11-20 — Independent post-deploy lifecycle and raw-route check; no new defect found
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest log tail before selecting a pass distinct from the already-addressed exact-approval issue. Fetched raw production responses with `curl -sS -L --max-time 15` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; each returned HTTP 200 HTML. A parameterless `/api/deposits/check` returned HTTP 400 JSON, consistent with the route requiring a wallet and amount. Then traced the current lifecycle implementation in `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`, `app/api/deposits/[id]/reconcile/route.ts`, `lib/pull.ts`, `lib/reconcile.ts`, `lib/hyperliquidMock.ts`, and `lib/stateMachine.ts`, focusing on whether a reverted transfer can be mislabeled credited, a stalled bridge silently revert to normal progress, or overlapping relayer retries submit duplicate transfers. Reverted receipts stay out of CREDITED; ambiguous bridge state persists until the mock credit resolves; and per-deposit in-flight pull sharing prevents concurrent retries in one process from double-submitting. This independent lifecycle pass did not establish one reliable, fixable defect. No application code changed; build, commit, push, and redeployment were not warranted. Existing uncommitted overnight-log changes were preserved.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T02:27:28Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T02:33:28Z
+
+### [Codex review] 2026-11-20 — Independent deposit-create race and live HTML check; no actionable defect found
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md` before choosing this pass; prior reviews had already covered amount boundaries, duplicate casing, approval scope, and lifecycle transitions. Read `app/api/deposits/route.ts`, `app/api/deposits/check/route.ts`, and `app/api/deposits/[id]/route.ts` to follow request validation, RPC awaits, duplicate lookup, record creation, and client failure reporting. The create handler performs its conflict lookup immediately before synchronous record creation, after approval verification; malformed addresses, decimal formats, amounts, approval mode, and destination binding are rejected before storage. The preflight check uses the same wallet/amount conflict function and matching amount bounds. Client timeout reports are restricted to `SIGNED` records and require an on-chain reverted approval receipt, with a state re-read after the RPC await. Then fetched the production root with `curl -sS -L --max-time 20 -D /tmp/projecto-live-headers https://projecto-blond.vercel.app/ -o /tmp/projecto-live-root`; it returned HTTP 200 and 22,165 bytes. Inspected the raw response's button/image/meta tags: it includes the configured noindex directive, description, and Open Graph/Twitter image alts, and exposed no unlabelled icon-only button in the server-rendered markup. This independent route-concurrency and live-markup pass did not reveal one reliable, fixable defect. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the pre-existing log modification.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T02:58:28Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T03:08:28Z
+
+### [Codex review] 2026-11-20 — Independent public API and error-boundary review; no actionable defect found
+Read `OVERNIGHT_BRIEF.md` and the recent log tail first; recent checks already covered amount limits, exact approvals, duplicate blocking, route metadata, and deposit lifecycle transitions. For a separate pass, inspected `app/api/deposits/route.ts`, `app/api/deposits/[id]/route.ts`, `app/api/deposits/[id]/pull/route.ts`, `app/api/deposits/[id]/reconcile/route.ts`, `app/api/gas/route.ts`, `lib/store.ts`, `next.config.mjs`, `app/error.tsx`, and `app/global-error.tsx`. Traced the public failure-report PATCH path through its chain receipt verification and re-read-before-write guard, the create endpoint's transaction-bound exact approval checks, and the error boundaries' warning not to resend a signed transaction based on a UI error. Fetched production with `curl -sS -L --max-time 15` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, `/deposit/status/demo`, `/api/deposits/check`, and `/api/gas`: UI routes returned HTTP 200 HTML, the parameterless duplicate-check returned HTTP 400 JSON, and gas returned HTTP 200 JSON. This independent API/error-surface pass found no concrete, fixable issue. No application code changed; build, commit, push, and deployment were not warranted. Preserved the existing application worktree state.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T03:28:28Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T03:43:29Z
+
+### [Codex review] 2026-11-20 — Independent production document-shell and keyboard entry check; no actionable issue found
+Read `OVERNIGHT_BRIEF.md`, the recent review tail, and `SPEC.md` before checking a small surface not established by the earlier API/lifecycle passes: whether production routes expose a valid document language and whether the global skip link has a real destination. Fetched raw HTML with `curl -sS -L --max-time 15` for `/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo`; each returned HTTP 200 HTML and began with `<html lang="en">`. Read `app/layout.tsx`, `app/global-error.tsx`, and searched all route components for `id="main-content"` / `<main>`; the shared skip link targets the main landmark present on all ordinary flow routes, and the global error document has its own main landmark. This focused live/source check found no concrete defect to fix. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the existing worktree state.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T03:58:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T04:18:29Z
+
+### [Codex review] 2026-11-20 — Clarify the low-gas faucet recovery link
+Read `OVERNIGHT_BRIEF.md` and the recent review tail, then checked the exact recovery copy in `app/deposit/approve/page.tsx` against the funding notes in `OVERNIGHT_BRIEF.md`. Both low-gas states labeled the destination “Open a testnet faucet,” but the linked URL is Alchemy's specific Arbitrum Sepolia faucet; the brief records that this faucet path required an existing mainnet balance and was unavailable to this user. Changed both links to name Alchemy's faucet and added a nearby note that faucet eligibility may require an existing mainnet balance. Ran `npm run build`; it passed. Build output retained the existing optional MetaMask/WalletConnect dependency and viem critical-dependency warnings. Production deployment and live verification are pending.

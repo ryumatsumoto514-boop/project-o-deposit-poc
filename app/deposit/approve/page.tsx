@@ -354,9 +354,10 @@ export default function DepositApprovePage() {
                 rel="noopener noreferrer"
                 className="inline-block -my-3 py-3 underline hover:text-amber-100"
               >
-                Open a testnet faucet ↗
+                Open Alchemy&apos;s Arbitrum Sepolia faucet ↗
               </a>.
             </span>
+            Faucet eligibility may require an existing mainnet balance.
           </span>
         </div>
       )}
@@ -384,9 +385,10 @@ export default function DepositApprovePage() {
                     rel="noopener noreferrer"
                     className="inline-block -my-3 py-3 text-rose-200 underline hover:text-rose-100"
                   >
-                    Open a testnet faucet ↗
+                    Open Alchemy&apos;s Arbitrum Sepolia faucet ↗
                   </a>.
                 </span>
+                Faucet eligibility may require an existing mainnet balance.
               </>
             )}
             {orphanedDepositId && (
