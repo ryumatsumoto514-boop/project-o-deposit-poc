@@ -15,9 +15,17 @@ function privateJson(body: unknown, status = 200) {
 // than trusting the client's word that it confirmed. Safe to call again if
 // a prior attempt failed (e.g. the relayer was out of gas) — see lib/pull.ts.
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // This endpoint can cause an on-chain transfer once approval is confirmed.
+  // Reject cross-origin browser requests so a third-party page cannot trigger
+  // a pull merely by learning a public status URL.
+  const origin = req.headers.get("origin");
+  if (!origin || origin !== req.nextUrl.origin) {
+    return privateJson({ error: "INVALID_ORIGIN" }, 403);
+  }
+
   const deposit = depositStore.get(params.id);
   if (!deposit) {
     return privateJson({ error: "NOT_FOUND" }, 404);

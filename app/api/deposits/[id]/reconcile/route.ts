@@ -9,9 +9,16 @@ function privateJson(body: unknown, status = 200) {
 }
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Reconciliation may submit transferFrom() when a confirmed approval has
+  // not yet been pulled, so it needs the same browser-origin check as /pull.
+  const origin = req.headers.get("origin");
+  if (!origin || origin !== req.nextUrl.origin) {
+    return privateJson({ error: "INVALID_ORIGIN" }, 403);
+  }
+
   const deposit = await reconcileDeposit(params.id);
   if (!deposit) {
     return privateJson({ error: "NOT_FOUND" }, 404);
