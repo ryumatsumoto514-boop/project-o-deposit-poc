@@ -18,6 +18,14 @@ function privateJson(body: unknown, init?: ResponseInit) {
 }
 
 export async function POST(req: NextRequest) {
+  // Creating a record reserves this wallet/amount pair and can block the
+  // user's next attempt. Require a same-origin browser request so a third
+  // party cannot use a public approval transaction to create that reservation.
+  const origin = req.headers.get("origin");
+  if (!origin || origin !== req.nextUrl.origin) {
+    return privateJson({ error: "INVALID_ORIGIN" }, { status: 403 });
+  }
+
   let body: CreateDepositInput;
   try {
     body = (await req.json()) as CreateDepositInput;
