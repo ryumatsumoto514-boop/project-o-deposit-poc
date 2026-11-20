@@ -13,3 +13,5 @@ coverage
 shots-out
 .data
 *.tsbuildinfo
+.overnight-codex-stdout.log
+video/.venv-pptx
