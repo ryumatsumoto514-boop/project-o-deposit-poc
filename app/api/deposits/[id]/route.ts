@@ -28,6 +28,13 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Keep all state-changing deposit endpoints same-origin. This PATCH can
+  // change the user's visible deposit state after a failed approval.
+  const origin = req.headers.get("origin");
+  if (!origin || origin !== req.nextUrl.origin) {
+    return privateJson({ error: "INVALID_ORIGIN" }, 403);
+  }
+
   const deposit = depositStore.get(params.id);
   if (!deposit) {
     return privateJson({ error: "NOT_FOUND" }, 404);
