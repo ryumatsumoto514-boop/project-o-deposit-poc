@@ -49037,3 +49037,24 @@ Claude Code session not logged in / expired. Skipping this tick.
 ### [Codex review] 2026-11-20 — Clarify the low-gas faucet recovery link
 Read `OVERNIGHT_BRIEF.md` and the recent review tail, then checked the exact recovery copy in `app/deposit/approve/page.tsx` against the funding notes in `OVERNIGHT_BRIEF.md`. Both low-gas states labeled the destination “Open a testnet faucet,” but the linked URL is Alchemy's specific Arbitrum Sepolia faucet; the brief records that this faucet path required an existing mainnet balance and was unavailable to this user. Changed both links to name Alchemy's faucet and added a nearby note that faucet eligibility may require an existing mainnet balance. Ran `npm run build`; it passed. Build output retained the existing optional MetaMask/WalletConnect dependency and viem critical-dependency warnings. Production deployment and live verification are pending.
 Post-deploy: committed as `bf7c313` and pushed to `origin main`. Production deployment `dpl_FRU3GQNvLcAmfihUJBZuEam8Wvzp` reached `READY` and was aliased to `https://projecto-blond.vercel.app`. Fetched `/deposit/approve` with `curl` (HTTP 200) and followed its deployed client chunk `/_next/static/chunks/app/deposit/approve/page-700cefe3dd6d1d91.js`; the bundle contains both the corrected Alchemy faucet label and mainnet-balance eligibility note in both low-gas states.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T04:28:29Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Codex review tick: 2026-11-20T04:53:30Z
+
+### [Codex review] 2026-11-20 — Production route-link integrity pass; no actionable defect found
+Read `OVERNIGHT_BRIEF.md`, `SPEC.md`, and the latest log tail before choosing a pass distinct from the recent metadata, API validation, lifecycle, and accessibility reviews. Fetched raw HTML from `https://projecto-blond.vercel.app/`, `/login`, `/deposit`, `/deposit/confirm`, `/deposit/approve`, and `/deposit/status/demo` using Python `urllib` and inspected the response bodies for same-origin `href`/`src` targets. Followed each non-asset route target; all exposed page targets returned HTTP 200. Since most flow links are client-rendered and therefore absent from the raw response, searched `app/` for `href` and `<Link>` usage; the flow targets (`/login`, `/deposit`, and dynamic `/deposit/status/${id}`) correspond to existing App Router pages. This specific production link-integrity check found no concrete broken link worth changing. No application code changed; build, commit, push, and redeployment were not warranted. Preserved the worktree modification to this log.
+Codex review tick finished, exit code 0
+
+## Cron tick: 2026-11-20T04:58:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+## Cron tick: 2026-11-20T05:28:30Z
+
+## Codex review tick: 2026-11-20T05:28:30Z
+Claude Code session not logged in / expired. Skipping this tick.
+
+### [Codex review] 2026-11-20 — Correct README's removed approval-scope choice
+Read `OVERNIGHT_BRIEF.md`, the recent log tail, and `SPEC.md`, then cross-checked `README.md`'s real on-chain flow instructions against `app/deposit/approve/page.tsx` and `app/api/deposits/route.ts`. The README told users to choose an approval scope, but the current UI only offers exact-amount approval and the create API rejects every other mode. Updated that one setup instruction to say the user approves only the exact deposit amount. `npm run build` passed; it emitted the existing optional MetaMask/WalletConnect and viem warnings. Next: publish the docs/log update and confirm the live approval page remains healthy and its client bundle states the exact-only behavior.

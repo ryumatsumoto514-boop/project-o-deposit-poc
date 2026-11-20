@@ -101,8 +101,8 @@ Open http://localhost:3000.
 3. Add Arbitrum Sepolia to MetaMask if it isn't already there (chain id
    `421614`).
 4. Open the app, click through: landing → sign in (mock) → connect wallet →
-   enter an amount → confirm the destination address → choose an approval
-   scope → Approve & deposit.
+   enter an amount → confirm the destination address → approve only the
+   exact deposit amount → Approve & deposit.
 5. Approve the transaction in your wallet. The app will then submit the
    `transferFrom()` via the relayer automatically and take you to the
    status tracker, which polls the reconciliation engine every few seconds.
