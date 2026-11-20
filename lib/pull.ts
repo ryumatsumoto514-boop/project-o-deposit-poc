@@ -71,9 +71,10 @@ async function attemptPullOnce(deposit: DepositRecord): Promise<PullOutcome> {
     }
     const approvedAmount = approval.args[1];
     const expectedAmount = BigInt(deposit.amountRaw);
-    const amountMatches = deposit.approvalMode === "exact"
-      ? approvedAmount === expectedAmount
-      : typeof approvedAmount === "bigint" && approvedAmount >= expectedAmount;
+    // Keep the execution path strict too: a stored legacy record must never
+    // turn a reusable allowance into permission to pull more than this deposit.
+    const amountMatches = deposit.approvalMode === "exact" &&
+      approvedAmount === expectedAmount;
     if (
       approveTx.from.toLowerCase() !== deposit.userWallet.toLowerCase() ||
       approveTx.to?.toLowerCase() !== USDC_ADDRESS.toLowerCase() ||
